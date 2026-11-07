@@ -50,7 +50,7 @@ Look rules that came from the user's feedback:
 
 ## User preferences
 
-- **Do not install on the user's phone unless they ask.** They asked once (the Blender rework build); the latest build (animation and sound) is only on the emulator.
+- **Do not install on the user's phone unless they ask.** They asked for the Blender rework build and the storage/Collector build (`6185994`), which is what the phone has now.
 - Each round of feedback becomes its own commit.
 - Wants game-feel: animation, effects, sound, eased motion.
 - No taglines, filler text or fake features in the UI.

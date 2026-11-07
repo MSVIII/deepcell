@@ -5,7 +5,7 @@ Record each build and test here, newest first. Say plainly what was not tested.
 ## 2026-11-07: storage, Collector, main menu, title shots, sound loudness, performance
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 63 warnings (most new ones are `IconDuplicates` from identical animation frames in each density folder).
-- Emulator `Medium_Phone` (API 37) only; **not installed on the phone**.
+- Emulator `Medium_Phone` (API 37). Afterwards **installed on the user's Pixel 7** at their request (wireless debugging); not tested there by us.
 
 | Check | Result |
 |---|---|
