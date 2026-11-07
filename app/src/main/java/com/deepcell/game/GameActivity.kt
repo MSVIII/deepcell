@@ -26,9 +26,11 @@ import com.deepcell.game.model.Upgrade
 import com.deepcell.game.model.Wave
 import com.deepcell.game.ui.FloorAdapter
 import com.deepcell.game.ui.Fx
+import com.deepcell.game.ui.Music
 import com.deepcell.game.ui.Notifier
 import com.deepcell.game.ui.Quality
 import com.deepcell.game.ui.Sfx
+import com.deepcell.game.ui.Tutorial
 import com.deepcell.game.ui.UpgradeAdapter
 import kotlin.random.Random
 
@@ -67,7 +69,6 @@ class GameActivity : AppCompatActivity() {
         private const val UP_FARM_TOOLS = "farm_tools"
         private const val AUTO_TURRET = "auto_turret"
         private const val DRILL_RIG = "drill_rig"
-        private const val COLLECTOR = "collector"
         private const val STORAGE = "storage"
 
         // Rooms: each worker adds this much progress per second by themselves; storage holds
@@ -75,7 +76,7 @@ class GameActivity : AppCompatActivity() {
         private const val WORKER_RATE = 1
         private const val STORAGE_BARS = 10
         private const val STORAGE_PER_LEVEL = 25
-        // Collector walking speed in dp per second: base, plus per level after the first.
+        // Collector walking speed in dp per second: base, plus per extra survivor on the job.
         private const val COLLECTOR_SPEED_DP = 70f
         private const val COLLECTOR_SPEED_PER_LEVEL = 25f
         private const val COLLECTOR_GRAB_MS = 480L
@@ -87,12 +88,27 @@ class GameActivity : AppCompatActivity() {
         private const val GUARD_DP = 47
         private const val FEET_Y = 0.93f          // feet in the guard frame
         private const val GUARD_FIRE_MS = 230L
+        // Roof guards also shoot by themselves: together they fire once every
+        // GUARD_AUTO_MS / guards, each shot doing GUARD_DAMAGE to the enemy nearest the hatch.
+        private const val GUARD_AUTO_MS = 1600L
+        private const val GUARD_DAMAGE = 1
+        /** Guards only shoot at drones that have come this far down the sky (0 top, 1 hatch). */
+        private const val GUARD_RANGE = 0.4f
+        // Auto-Turret, mounted on the hatch dome in the middle of the deck: spot (fractions of
+        // the bunker image), size, and where the foot is in its frame.
+        private const val TURRET_X = 0.5f
+        private const val DOME_Y = 0.43f
+        private const val TURRET_DP = 50
+        private const val TURRET_FOOT_Y = 0.64f
+        private const val TRACER_MS = 160L
         private const val HATCH_Y = 0.30f         // hatch on the bunker image, for sparks
         // Enemy flight: side-to-side sway and up-down bob (sine waves, so they ease in and out
         // at each end of the swing).
         private const val SWAY_DP = 10f
         private const val BOB_DP = 3f
         private const val SWAY_SPEED = 2.2f
+
+        private const val BOSS = "boss"
 
         /** Enemy HP multiplier for each entry of R.array.difficulty_names. */
         private val DIFFICULTY_HP = doubleArrayOf(0.75, 1.0, 1.5)
@@ -120,7 +136,13 @@ class GameActivity : AppCompatActivity() {
     // ---- data ----
     private lateinit var db: GameDatabase
     private lateinit var sfx: Sfx
+    private lateinit var music: Music
+    private lateinit var tutorial: Tutorial
     private val guardViews = ArrayList<ImageView>()
+    private var guardTimerMs = 0L
+    private var nextGuard = 0
+    private var turretGun: ImageView? = null
+    private var tracer: View? = null
     private lateinit var upgrades: List<Upgrade>
     private lateinit var waveData: JsonLoader.WaveData
     private lateinit var floorAdapter: FloorAdapter
@@ -139,6 +161,7 @@ class GameActivity : AppCompatActivity() {
     private val spawnQueue = ArrayList<String>()
     private var currentWave: Wave? = null
     private var waveHpScale = 1.0
+    private var waveSpeedScale = 1f
     private var spawnTimerMs = 0L
     private var automationTimerMs = 0L
     /** Goes up every time a wave (re)starts, so the loop can tell a breach happened mid-frame. */
@@ -168,6 +191,7 @@ class GameActivity : AppCompatActivity() {
         roofCrew = findViewById(R.id.roofCrew)
         fxLayer = findViewById(R.id.fxLayer)
         sfx = Sfx(this)
+        music = Music(this)
         hatchBar = findViewById(R.id.hatchBar)
         hatchText = findViewById(R.id.hatchText)
         hudScrap = findViewById(R.id.hudScrap)
@@ -179,7 +203,9 @@ class GameActivity : AppCompatActivity() {
 
         digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", 10, 5)
         farmFloor = Floor("farm", getString(R.string.floor_farm), "food", 10, 3)
-        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) }) { onFloorTapped(it) }
+        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) }, { openSurvivors() }) {
+            onFloorTapped(it)
+        }
         floorList = findViewById(R.id.floorList)
         floorList.addFooterView(layoutInflater.inflate(R.layout.footer_bedrock, floorList, false), null, false)
         floorList.adapter = floorAdapter
@@ -198,11 +224,10 @@ class GameActivity : AppCompatActivity() {
         defense.setOnClickListener { pop(it); selectTab(GameState.TYPE_DEFENSE) }
         supplies.setOnClickListener { pop(it); selectTab(GameState.TYPE_SUPPLIES) }
         automation.setOnClickListener { pop(it); selectTab(GameState.TYPE_AUTOMATION) }
-        findViewById<ImageButton>(R.id.tabSurvivors).setOnClickListener {
+        val survivorsTab = findViewById<ImageButton>(R.id.tabSurvivors)
+        survivorsTab.setOnClickListener {
             pop(it)
-            val intent = Intent(this, SurvivorsActivity::class.java)
-            intent.putExtra(SurvivorsActivity.EXTRA_BUNKER_NAME, state?.bunkerName)
-            startActivity(intent)
+            openSurvivors()
         }
         findViewById<ImageButton>(R.id.settingsButton).setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
@@ -218,6 +243,29 @@ class GameActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.welcome, name), Toast.LENGTH_SHORT).show()
         }
         selectTab(null)
+
+        // Tutorial: what each step points at on this screen.
+        tutorial = Tutorial(this, db) { step ->
+            when (step) {
+                Tutorial.SHOOT -> sky
+                Tutorial.DIG -> roomRow(0)?.findViewById(R.id.room)
+                Tutorial.RECRUIT, Tutorial.JOBS -> survivorsTab
+                // The storage of the room the new worker went to.
+                Tutorial.STORAGE -> roomRow(if (workersIn(farmFloor) > workersIn(digFloor)) 1 else 0)
+                    ?.findViewById(R.id.roomStorage)
+                Tutorial.UPGRADES -> defense
+                else -> null
+            }
+        }
+    }
+
+    /** The on-screen row of room [index], or null while it is scrolled away. */
+    private fun roomRow(index: Int): View? = floorList.getChildAt(index - floorList.firstVisiblePosition)
+
+    private fun openSurvivors() {
+        val intent = Intent(this, SurvivorsActivity::class.java)
+        intent.putExtra(SurvivorsActivity.EXTRA_BUNKER_NAME, state?.bunkerName)
+        startActivity(intent)
     }
 
     // ---------------- lifecycle (Module 5) ----------------
@@ -232,6 +280,7 @@ class GameActivity : AppCompatActivity() {
         state = loaded
         survivors = db.getSurvivors()
         sfx.enabled = db.getSetting(GameDatabase.SETTING_SOUND, "true") == "true"
+        music.enabled = db.getSetting(GameDatabase.SETTING_MUSIC, "true") == "true"
         lowDetail = Quality.lowDetail(this, db.getSetting(GameDatabase.SETTING_DETAIL, Quality.AUTO))
         floorAdapter.lowDetail = lowDetail
         frameMs = if (lowDetail) FRAME_MS_LOW else FRAME_MS
@@ -249,20 +298,26 @@ class GameActivity : AppCompatActivity() {
         addOfflineEarnings(loaded)
 
         if (currentWave == null) startWave()
+        updateMusic()
         refreshAll()
         handler.post(gameLoop)
+        // Recruited in the Survivors screen: that tutorial step is done.
+        if (tutorial.step == Tutorial.RECRUIT && survivors.size > 1) tutorial.complete(Tutorial.RECRUIT)
+        floorList.post { tutorial.show() }
     }
 
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(gameLoop)
         cancelCollector()
+        music.pause()
         saveNow()
     }
 
     override fun onDestroy() {
         handler.removeCallbacks(gameLoop)
         sfx.release()
+        music.release()
         db.close()
         super.onDestroy()
     }
@@ -287,7 +342,7 @@ class GameActivity : AppCompatActivity() {
         val seconds = ((now - s.lastPlayed) / 1000L).coerceIn(0L, MAX_OFFLINE_SECONDS)
         s.lastPlayed = now
         if (seconds <= 0) return
-        val collector = s.level(COLLECTOR) > 0
+        val collector = collectors() > 0
         var scrap = 0
         var food = 0
         for (floor in listOf(digFloor, farmFloor)) {
@@ -345,7 +400,7 @@ class GameActivity : AppCompatActivity() {
         val pxPerDp = resources.displayMetrics.density
         val now = System.currentTimeMillis() / 1000f
         for (enemy in ArrayList(enemies)) {
-            enemy.y += enemy.type.speedDp * pxPerDp * frameMs / 1000f
+            enemy.y += enemy.speedDp * pxPerDp * frameMs / 1000f
             val fallen = (enemy.y / sky.height).coerceIn(0f, 1f)
             // Drift towards the bunker with ease-in-out (smoothstep): it turns slowly at the
             // start, crosses fastest in the middle, and lines up gently over the roof.
@@ -369,6 +424,7 @@ class GameActivity : AppCompatActivity() {
         }
 
         updateCollector()
+        guardsAutoFire()
 
         // Machines work once per second.
         automationTimerMs += frameMs
@@ -384,9 +440,10 @@ class GameActivity : AppCompatActivity() {
         // Auto-Turret: shoots the enemy closest to the hatch. Damage = its level.
         val turret = s.level(AUTO_TURRET)
         if (turret > 0) {
-            val nearest = enemies.maxByOrNull { it.y }
+            val nearest = enemies.filter { it.y > 0 }.maxByOrNull { it.y }
             if (nearest != null) {
                 sfx.play(Sfx.Sound.TURRET)
+                turretShot(nearest)
                 hitEnemy(nearest, turret)
             }
         }
@@ -401,10 +458,13 @@ class GameActivity : AppCompatActivity() {
         }
         if (changed) floorAdapter.refresh(floorList)
         // Collector: walks to the next room that has something stored.
-        if (s.level(COLLECTOR) > 0 && trip == null) startCollectorTrip(s)
+        if (collectors() > 0 && trip == null) startCollectorTrip()
     }
 
     // ---------------- collector ----------------
+
+    /** Survivors with the Collector job. One walks the rooms; each extra one makes it faster. */
+    private fun collectors(): Int = survivors.count { it.job == Survivor.JOB_COLLECTOR }
 
     /** One Collector trip through a room: walk in, grab, walk out. Driven by the game loop. */
     private class Trip(val floor: Floor, val index: Int, val walkMs: Long) {
@@ -416,12 +476,12 @@ class GameActivity : AppCompatActivity() {
     private var collectorNext = 0
 
     /** Sends the Collector to the next room (in order) with something in storage. */
-    private fun startCollectorTrip(s: GameState) {
+    private fun startCollectorTrip() {
         val floors = listOf(digFloor, farmFloor)
         val index = (0 until floors.size).map { (collectorNext + it) % floors.size }
             .firstOrNull { floors[it].stock > 0 } ?: return
         collectorNext = index + 1
-        val speed = (COLLECTOR_SPEED_DP + COLLECTOR_SPEED_PER_LEVEL * (s.level(COLLECTOR) - 1)) *
+        val speed = (COLLECTOR_SPEED_DP + COLLECTOR_SPEED_PER_LEVEL * (collectors() - 1)) *
             resources.displayMetrics.density
         val walkMs = (floorAdapter.collectorDistancePx() / speed * 1000).toLong().coerceAtLeast(400L)
         trip = Trip(floors[index], index, walkMs)
@@ -472,18 +532,41 @@ class GameActivity : AppCompatActivity() {
 
     // ---------------- waves and enemies ----------------
 
-    /** Wave n uses entry (n-1) % 10 of waves.json. Each later 10-wave cycle adds HP. */
+    /**
+     * Wave n uses entry (n-1) % 10 of waves.json as its mix of enemies, and gets harder as n
+     * grows: countPerWave more enemies per wave (wave 11 has 1.8x the drones of wave 1), spawns
+     * closer together, and each later 10-wave cycle adds HP and speed and one more boss every
+     * second cycle. The order is shuffled (the same way each time for a wave), bosses in the middle.
+     */
     private fun startWave() {
         val s = state ?: return
         val index = (s.wave - 1) % waveData.waves.size
         val cycle = (s.wave - 1) / waveData.waves.size
-        val wave = waveData.waves[index]
-        currentWave = wave
+        val n = s.wave - 1
+        val template = waveData.waves[index]
+        val countScale = 1.0 + n * waveData.countPerWave
+        val ids = ArrayList<String>()
+        for ((type, group) in template.enemyIds.filter { it != BOSS }.groupBy { it }) {
+            repeat(Math.round(group.size * countScale).toInt()) { ids.add(type) }
+        }
+        ids.shuffle(Random(s.wave))
+        val bosses = template.enemyIds.count { it == BOSS }.let { if (it > 0) it + cycle / 2 else 0 }
+        for (b in 1..bosses) ids.add(ids.size * b / (bosses + 1), BOSS)
+        val spawnScale = Math.max(waveData.minSpawnScale, 1.0 - n * waveData.spawnFasterPerWave)
+        currentWave = Wave((template.spawnMs * spawnScale).toLong(), ids)
         waveGeneration++
         waveHpScale = (1.0 + cycle * waveData.hpScalePerCycle) * difficultyHp
+        waveSpeedScale = (1.0 + cycle * waveData.speedPerCycle).toFloat()
         spawnQueue.clear()
-        spawnQueue.addAll(wave.enemyIds)
+        spawnQueue.addAll(ids)
         spawnTimerMs = -WAVE_BREAK_MS
+        updateMusic()
+    }
+
+    /** Boss waves get their own music. */
+    private fun updateMusic() {
+        val s = state ?: return
+        music.play(if (s.wave % 10 == 0) R.raw.music_boss else R.raw.music_game)
     }
 
     private fun spawnEnemy(typeId: String) {
@@ -506,13 +589,15 @@ class GameActivity : AppCompatActivity() {
         val spread = bunker.width * 0.35f
         val targetX = sky.width / 2f - sizePx / 2f + Random.nextFloat() * 2 * spread - spread
         val hp = Math.max(1, Math.round(type.hp * waveHpScale).toInt())
-        val enemy = Enemy(type, hp, -sizePx.toFloat(), startX, targetX, view, Random.nextFloat() * 6.28f)
+        val enemy = Enemy(type, hp, -sizePx.toFloat(), startX, targetX, view, Random.nextFloat() * 6.28f,
+            type.speedDp * waveSpeedScale)
         view.translationX = startX
         view.translationY = enemy.y
         view.setOnClickListener {
             guardsFire()
             sfx.play(Sfx.Sound.SHOT)
             hitEnemy(enemy, tapDamage())
+            tutorial.complete(Tutorial.SHOOT)
         }
         sky.addView(view)
         view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enemy_in))
@@ -525,9 +610,10 @@ class GameActivity : AppCompatActivity() {
         return 1 + s.level(UP_TAP_POWER) + survivors.count { it.job == Survivor.JOB_ROOF }
     }
 
-    private fun hitEnemy(enemy: Enemy, damage: Int) {
-        val s = state ?: return
-        if (!enemies.contains(enemy)) return
+    /** Damages [enemy]; returns true if this hit destroyed it. */
+    private fun hitEnemy(enemy: Enemy, damage: Int): Boolean {
+        val s = state ?: return false
+        if (!enemies.contains(enemy)) return false
         enemy.hp -= damage
         enemy.view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hit_flash))
         val cx = enemy.view.translationX + enemy.view.width / 2f
@@ -539,10 +625,11 @@ class GameActivity : AppCompatActivity() {
             s.scrap += enemy.type.reward
             refreshHud()
             refreshUpgrades()
-        } else {
-            Fx.burst(fxLayer, R.drawable.fx_sparks, cx, cy, enemy.view.width)
-            sfx.play(Sfx.Sound.HIT)
+            return true
         }
+        Fx.burst(fxLayer, R.drawable.fx_sparks, cx, cy, enemy.view.width)
+        sfx.play(Sfx.Sound.HIT)
+        return false
     }
 
     private fun removeEnemy(enemy: Enemy) {
@@ -585,19 +672,25 @@ class GameActivity : AppCompatActivity() {
         refreshHud()
     }
 
-    /** Breach rule: lose 25% of scrap, the hatch is patched, and the same wave repeats. */
+    /**
+     * Breach rule: lose 25% of scrap, fall back one wave, and the hatch is patched. Falling back
+     * means a bunker that can't hold its wave stops advancing, instead of climbing for free.
+     */
     private fun onHatchBreached(s: GameState) {
         sfx.play(Sfx.Sound.ALARM)
         val lost = s.scrap / 4
+        val breachedWave = s.wave
         s.scrap -= lost
+        s.wave = Math.max(1, s.wave - 1)
         s.hatchHp = maxHatchHp()
         clearSky()
         startWave()
         saveNow()
-        Toast.makeText(this, getString(R.string.breach_toast, lost), Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.breach_toast, lost, s.wave), Toast.LENGTH_LONG).show()
+        refreshHud()
         Notifier.show(
             this, Notifier.ID_HATCH_BREACHED,
-            getString(R.string.notif_breach_title), getString(R.string.notif_breach_text, s.wave, lost)
+            getString(R.string.notif_breach_title), getString(R.string.notif_breach_text, breachedWave, lost)
         )
         refreshUpgrades()
     }
@@ -631,7 +724,9 @@ class GameActivity : AppCompatActivity() {
         val tools = s.level(if (isDig) UP_DIG_TOOLS else UP_FARM_TOOLS)
         sfx.play(if (isDig) Sfx.Sound.DIG else Sfx.Sound.HARVEST, 0.92f + Random.nextFloat() * 0.16f)
         floor.work(1 + tools)
-        if (collectFrom(floor) == 0) floorAdapter.refresh(floorList)
+        val collected = collectFrom(floor)
+        if (collected == 0) floorAdapter.refresh(floorList)
+        else if (isDig) tutorial.complete(Tutorial.DIG)
     }
 
     private fun buyUpgrade(upgrade: Upgrade) {
@@ -652,6 +747,7 @@ class GameActivity : AppCompatActivity() {
         when (upgrade.id) {
             UP_HATCH_PLATING -> s.hatchHp += HATCH_HP_PER_PLATING
             DRILL_RIG -> digFloor.automated = true
+            AUTO_TURRET -> showRoofCrew()
             STORAGE -> updateCapacity(s)
         }
         saveNow()   // purchases are saved straight away
@@ -687,7 +783,7 @@ class GameActivity : AppCompatActivity() {
         if (!wasOpen) upgradeSheet.startAnimation(AnimationUtils.loadAnimation(this, R.anim.sheet_in))
     }
 
-    /** Survivors working in a room. They are drawn in the room and add +1 per tap each. */
+    /** Survivors working in a room. They are drawn in the room and fill it by themselves. */
     private fun workersIn(floor: Floor): Int {
         val job = if (floor === digFloor) Survivor.JOB_DIG else Survivor.JOB_FARM
         return survivors.count { it.job == job }
@@ -717,18 +813,96 @@ class GameActivity : AppCompatActivity() {
             guardViews.add(figure)
             Fx.loop(figure, R.drawable.anim_guard_idle, it * 300L)
         }
+        // The Auto-Turret sits on the hatch dome once bought: a fixed base, and a gun
+        // that turns towards each target (both frames share one centre, the gun's axis).
+        turretGun = null
+        if ((state?.level(AUTO_TURRET) ?: 0) > 0) {
+            val tSize = (TURRET_DP * resources.displayMetrics.density).toInt()
+            for (res in intArrayOf(R.drawable.turret_base, R.drawable.turret_gun)) {
+                val part = ImageView(this)
+                part.layoutParams = FrameLayout.LayoutParams(tSize, tSize)
+                part.translationX = bunkerW * TURRET_X - tSize / 2f
+                part.translationY = bunkerH * DOME_Y - tSize * TURRET_FOOT_Y
+                part.setImageResource(res)
+                part.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                roofCrew.addView(part)
+                if (res == R.drawable.turret_gun) turretGun = part
+            }
+        }
     }
 
-    /** Every roof guard plays one shot (muzzle flash in the frames), then goes back to idle. */
-    private fun guardsFire() {
-        for (guard in guardViews) {
-            (guard.tag as? Runnable)?.let { guard.removeCallbacks(it) }
-            guard.setImageResource(R.drawable.anim_guard_fire)
-            (guard.drawable as? AnimationDrawable)?.start()
-            val back = Runnable { Fx.loop(guard, R.drawable.anim_guard_idle) }
-            guard.tag = back
-            guard.postDelayed(back, GUARD_FIRE_MS)
+    /**
+     * Guards on the roof shoot by themselves, taking turns: one shot every GUARD_AUTO_MS divided
+     * by the number of guards, at the enemy nearest the hatch once it is within GUARD_RANGE.
+     */
+    private fun guardsAutoFire() {
+        if (guardViews.isEmpty()) return
+        guardTimerMs += frameMs
+        if (guardTimerMs < GUARD_AUTO_MS / guardViews.size) return
+        val target = enemies.filter { it.y > sky.height * GUARD_RANGE }.maxByOrNull { it.y } ?: return
+        guardTimerMs = 0
+        nextGuard = (nextGuard + 1) % guardViews.size
+        guardFire(guardViews[nextGuard])
+        sfx.play(Sfx.Sound.SHOT, 1.15f)
+        hitEnemy(target, GUARD_DAMAGE)
+    }
+
+    /**
+     * The turret turns to face [enemy] (eased), fires (flash and recoil frames) and draws a
+     * short tracer from the muzzle to the target.
+     */
+    private fun turretShot(enemy: Enemy) {
+        val gun = turretGun ?: return
+        val layer = IntArray(2).also { fxLayer.getLocationInWindow(it) }
+        val g = IntArray(2).also { gun.getLocationInWindow(it) }
+        val e = IntArray(2).also { enemy.view.getLocationInWindow(it) }
+        val gx = g[0] - layer[0] + gun.width / 2f
+        val gy = g[1] - layer[1] + gun.height / 2f
+        val ex = e[0] - layer[0] + enemy.view.width / 2f
+        val ey = e[1] - layer[1] + enemy.view.height / 2f
+        // 0 degrees = barrels straight up; clockwise is positive, like View.rotation.
+        val angle = Math.toDegrees(Math.atan2((ex - gx).toDouble(), (gy - ey).toDouble())).toFloat()
+        gun.animate().rotation(angle).setDuration(90).start()
+        gun.setImageResource(R.drawable.anim_turret_fire)
+        (gun.drawable as? AnimationDrawable)?.start()
+        if (lowDetail) return
+        // Tracer: a thin bright line from the muzzle to the target, gone in a blink.
+        val muzzle = gun.height * 0.42f
+        val sx = gx + muzzle * Math.sin(Math.toRadians(angle.toDouble())).toFloat()
+        val sy = gy - muzzle * Math.cos(Math.toRadians(angle.toDouble())).toFloat()
+        val length = Math.hypot((ex - sx).toDouble(), (ey - sy).toDouble()).toFloat()
+        val line = tracer ?: View(this).also {
+            it.setBackgroundColor(0xFFFFD98A.toInt())
+            it.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            fxLayer.addView(it, FrameLayout.LayoutParams((3f * resources.displayMetrics.density).toInt(), 1))
+            tracer = it
         }
+        line.layoutParams.height = Math.max(1, length.toInt())
+        line.requestLayout()
+        line.pivotX = line.layoutParams.width / 2f
+        line.pivotY = length
+        line.translationX = sx - line.layoutParams.width / 2f
+        line.translationY = sy - length
+        line.rotation = angle
+        line.animate().cancel()
+        line.alpha = 1f
+        line.visibility = View.VISIBLE
+        line.animate().alpha(0f).setDuration(TRACER_MS).start()
+    }
+
+    /** Every roof guard fires with the player's tap. */
+    private fun guardsFire() {
+        for (guard in guardViews) guardFire(guard)
+    }
+
+    /** One guard plays one shot (muzzle flash in the frames), then goes back to idle. */
+    private fun guardFire(guard: ImageView) {
+        (guard.tag as? Runnable)?.let { guard.removeCallbacks(it) }
+        guard.setImageResource(R.drawable.anim_guard_fire)
+        (guard.drawable as? AnimationDrawable)?.start()
+        val back = Runnable { Fx.loop(guard, R.drawable.anim_guard_idle) }
+        guard.tag = back
+        guard.postDelayed(back, GUARD_FIRE_MS)
     }
 
     /** Prices in the upgrade sheet follow the scrap count; only redraw them while it is open. */

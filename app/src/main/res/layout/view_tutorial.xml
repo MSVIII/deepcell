@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tutorial overlay (ui/Tutorial). Covers the screen without catching touches; only the card's
+    buttons are clickable. The arrow is moved next to the thing the step is about.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tutorialLayer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/tutorialArrow"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_tutorial_arrow" />
+
+    <LinearLayout
+        android:id="@+id/tutorialCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/np_panel"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tutorialText"
+            style="@style/BunkerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/tutorialSkip"
+                style="@style/BunkerButton.Dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tutorial_skip" />
+
+            <Button
+                android:id="@+id/tutorialNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/tutorial_next" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

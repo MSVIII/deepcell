@@ -37,11 +37,18 @@ object JsonLoader {
         return result
     }
 
-    /** Parsed waves.json: enemy kinds, the 10-wave cycle, and the HP scaling per cycle. */
+    /**
+     * Parsed waves.json: enemy kinds, the 10-wave cycle, and how waves grow: more enemies per
+     * wave, shorter gaps between spawns (down to minSpawnScale), more HP and speed per cycle.
+     */
     class WaveData(
         val enemyTypes: Map<String, EnemyType>,
         val waves: List<Wave>,
-        val hpScalePerCycle: Double
+        val hpScalePerCycle: Double,
+        val countPerWave: Double,
+        val spawnFasterPerWave: Double,
+        val minSpawnScale: Double,
+        val speedPerCycle: Double
     )
 
     fun loadWaves(context: Context): WaveData {
@@ -75,6 +82,10 @@ object JsonLoader {
             }
             waves.add(Wave(o.getLong("spawnMs"), ids))
         }
-        return WaveData(types, waves, root.getDouble("hpScalePerCycle"))
+        return WaveData(
+            types, waves, root.getDouble("hpScalePerCycle"),
+            root.optDouble("countPerWave", 0.0), root.optDouble("spawnFasterPerWave", 0.0),
+            root.optDouble("minSpawnScale", 1.0), root.optDouble("speedPerCycle", 0.0)
+        )
     }
 }

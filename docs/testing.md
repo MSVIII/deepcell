@@ -2,6 +2,27 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: tutorial, harder waves, Collector job, turret, music
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator `Medium_Phone` only; **not installed on the phone**.
+
+| Check | Result |
+|---|---|
+| Installed over the previous build: save opens (DB v2 to v3) | Pass |
+| New game: name, then Tutorial/Skip dialog | Pass (screenshot) |
+| New game has one Roof survivor, 15 food, empty rooms with the no-workers hint | Pass (screenshot) |
+| Tutorial: shoot, dig and collect, recruit (arrow on Survivors, then on Recruit), job (arrow on the recruit), storage (arrow on the room with the worker), upgrades, finish | Pass (screenshots each step) |
+| Recruit gets a generated name (Ivo) | Pass |
+| Job picker: four jobs with figures and effects, current job marked; change applies | Pass (screenshot) |
+| Guard shoots by themselves; wave 1 to 5 held without tapping | Pass |
+| Waves get harder: hatch down to 1/100 by wave 8 with little tapping; breach dropped wave 7 to 6 | Pass |
+| Auto-Turret bought: shows on the hatch dome, turns to targets, flashes | Pass (recording) |
+| Collector job: farm storage emptied into food (0 to 30) | Pass (counts); walk not re-recorded |
+| Collector machine gone from the Machines tab | Pass |
+| Music files: 55 s, 69 s, 55 s loops, 1.9 MB total | Generated; not listened to |
+
+Not checked: how the music and the quieter explosions sound, the boss track switching in at wave 10, the Music switch, migration of a save that owned the Collector machine, the tutorial on a small screen, the turret tracer at full speed (too fast for the recording).
+
 ## 2026-11-07: storage, Collector, main menu, title shots, sound loudness, performance
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 63 warnings (most new ones are `IconDuplicates` from identical animation frames in each density folder).

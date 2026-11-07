@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One survivor: figure, name, job. Tapping the row moves them to the next job. -->
+<!-- One survivor: figure, name, what the job does, job chip. Tapping the row opens the job picker. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="wrap_content"
+    android:minHeight="72dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingStart="14dp"
-    android:paddingEnd="14dp">
+    android:paddingTop="6dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="6dp">
 
     <ImageView
         android:id="@+id/survivorFigure"
@@ -14,15 +17,29 @@
         android:layout_height="48dp"
         android:importantForAccessibility="no" />
 
-    <TextView
-        android:id="@+id/survivorName"
-        style="@style/BunkerText"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/survivorName"
+            style="@style/BunkerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/survivorEffect"
+            style="@style/BunkerSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/survivorJob"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tutorial pointer: amber arrow pointing down, dark edge so it reads on any background. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="48dp"
+    android:viewportWidth="40"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#FFE3A23B"
+        android:pathData="M13,3 L27,3 L27,24 L36,24 L20,44 L4,24 L13,24 Z"
+        android:strokeColor="#FF15130F"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2.5" />
+</vector>

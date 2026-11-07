@@ -5,10 +5,14 @@
     The upgrade sheet slides up over the rooms when a tab is selected.
     Scene art is Blender renders (drawable-nodpi); panels are 9-patches (drawable-xxhdpi).
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <!-- HUD: resources left, wave in the middle, settings right. -->
@@ -339,3 +343,7 @@
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
+
+    <!-- Tutorial card and arrow, over everything. -->
+    <include layout="@layout/view_tutorial" />
+</FrameLayout>

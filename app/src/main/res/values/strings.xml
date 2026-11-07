@@ -44,7 +44,7 @@
 
     <!-- Waves -->
     <string name="wave_cleared">Wave %1$d cleared</string>
-    <string name="breach_toast">Hatch breached: lost %1$d scrap. Wave restarts.</string>
+    <string name="breach_toast">Hatch breached: lost %1$d scrap. Back to wave %2$d.</string>
     <string name="hatch_full">Hatch is at full health</string>
 
     <!-- Notifications -->
@@ -57,9 +57,7 @@
 
     <!-- Survivors -->
     <string name="survivors_title">%1$s</string>
-    <string name="recruit_name_hint">Name</string>
     <string name="recruit_cost">Recruit %1$d</string>
-    <string name="enter_a_name">Enter a name first</string>
     <string name="not_enough_food">Not enough food</string>
     <string name="recruited">%1$s joined the bunker</string>
     <string name="back">Back</string>
@@ -87,5 +85,35 @@
     <string name="storage_description">Storage %1$d of %2$d. Tap the room to collect.</string>
     <string name="offline_stored">While you were away: %1$d scrap and %2$d food waiting in storage</string>
     <string name="collected">While you were away the Collector brought up %1$d scrap and %2$d food</string>
+    <!-- Tutorial -->
+    <string name="tutorial_title">Tutorial</string>
+    <string name="tutorial_question">Play a short tutorial first?</string>
+    <string name="tutorial_yes">Tutorial</string>
+    <string name="tutorial_no">Skip</string>
+    <string name="tutorial_skip">Skip tutorial</string>
+    <string name="tutorial_next">Got it</string>
+    <string name="tutorial_shoot">Drones are diving at your hatch. Tap them to shoot. Your guard on the roof fires by themselves too.</string>
+    <string name="tutorial_dig">Tap Scrap Dig to dig by hand. Each full bar puts scrap into the room\'s storage; tap the room again to collect it.</string>
+    <string name="tutorial_recruit">Recruit a worker in Survivors. It costs food.</string>
+    <string name="tutorial_jobs">Tap a survivor to change their job. Workers in Scrap Dig and Mushroom Farm work by themselves, Roof guards shoot, Collectors carry storage up.</string>
+    <string name="tutorial_storage">Workers fill their room\'s storage by themselves. Work stops when it is full: tap the room to collect, or give a survivor the Collector job.</string>
+    <string name="tutorial_upgrades">Spend scrap on upgrades in Defense, Supplies and Machines. Tap the bunker to repair the hatch for 1 scrap. Waves get bigger as you go.</string>
+
+    <!-- Jobs (Survivors screen) -->
+    <string name="survivors_hint">Tap a survivor to change their job</string>
+    <string name="job_for">Job for %1$s</string>
+    <string name="job_roof_effect">Shoots drones by themselves. +1 damage to your taps.</string>
+    <string name="job_dig_effect">Fills Scrap Dig by themselves.</string>
+    <string name="job_farm_effect">Fills Mushroom Farm by themselves.</string>
+    <string name="job_collector_effect">Walks to every room and brings the storage up. More Collectors walk faster.</string>
+    <string name="job_changed">%1$s: %2$s</string>
+
+    <!-- Rooms without workers -->
+    <string name="no_workers_dig">No workers: tap to dig by hand. Assign one in Survivors.</string>
+    <string name="no_workers_farm">No workers: tap to farm by hand. Assign one in Survivors.</string>
+
+    <!-- Music -->
+    <string name="music">Music</string>
+
     <string name="share_text">My bunker %1$s has held out to wave %2$d in Deepcell.</string>
 </resources>

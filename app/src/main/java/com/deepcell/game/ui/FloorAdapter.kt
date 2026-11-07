@@ -25,12 +25,14 @@ import com.deepcell.game.model.Floor
  * place instead of re-binding the whole list. [lowDetail] drops the purely decorative
  * animations (lamp flicker, storage pulse, dust/spore bursts) on weak phones.
  *
- * [workersIn] returns how many survivors work in a room, so the row can draw them.
+ * [workersIn] returns how many survivors work in a room, so the row can draw them. A room
+ * with nobody in it shows a hint chip; tapping the chip calls [onAssign] (opens Survivors).
  */
 class FloorAdapter(
     private val context: Context,
     private val floors: List<Floor>,
     private val workersIn: (Floor) -> Int,
+    private val onAssign: () -> Unit,
     private val onAction: (Floor) -> Unit
 ) : BaseAdapter() {
 
@@ -73,6 +75,7 @@ class FloorAdapter(
         val room: FrameLayout = row.findViewById(R.id.room)
         val fx: FrameLayout = row.findViewById(R.id.roomFx)
         val collector: ImageView = row.findViewById(R.id.roomCollector)
+        val hint: TextView = row.findViewById(R.id.roomHint)
         var art = 0                  // room image shown, so it is only set when it changes
         var position = -1
         var shownStock = -1          // storage text shown, same idea
@@ -104,6 +107,8 @@ class FloorAdapter(
                 if (!lowDetail) showWorkEffect(h, isScrap)
                 onAction(floor)
             }
+            h.hint.setText(if (isScrap) R.string.no_workers_dig else R.string.no_workers_farm)
+            h.hint.setOnClickListener { onAssign() }
         }
         val art = when {
             !isScrap -> R.drawable.room_farm
@@ -127,6 +132,7 @@ class FloorAdapter(
         // Workers: one figure per survivor in this room, each looping its work animation
         // (pickaxe swing or picking mushrooms), started a little apart so they don't swing in step.
         val count = Math.min(workersIn(floor), MAX_WORKERS_SHOWN)
+        h.hint.visibility = if (count == 0) View.VISIBLE else View.GONE
         if (h.workers.childCount != count) {
             h.workers.removeAllViews()
             placeInWorkZone(h.workers, count, isScrap)

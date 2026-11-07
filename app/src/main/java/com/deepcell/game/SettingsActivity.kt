@@ -39,6 +39,13 @@ class SettingsActivity : AppCompatActivity() {
             db.setSetting(GameDatabase.SETTING_SOUND, isChecked.toString())
         }
 
+        // Music: the title and game screens read this on resume (ui/Music).
+        val musicSwitch = findViewById<Switch>(R.id.musicSwitch)
+        musicSwitch.isChecked = db.getSetting(GameDatabase.SETTING_MUSIC, "true") == "true"
+        musicSwitch.setOnCheckedChangeListener { _, isChecked ->
+            db.setSetting(GameDatabase.SETTING_MUSIC, isChecked.toString())
+        }
+
         // Difficulty: index into R.array.difficulty_names. GameActivity scales enemy HP with it.
         val spinner = findViewById<Spinner>(R.id.difficultySpinner)
         val adapter = ArrayAdapter.createFromResource(

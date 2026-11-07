@@ -90,7 +90,9 @@ data class Enemy(
     val targetX: Float,
     val view: ImageView,
     /** Start point of the flight sway, so enemies don't bob in step. */
-    val phase: Float = 0f
+    val phase: Float = 0f,
+    /** Falling speed; later waves fly faster than the type's base speed. */
+    val speedDp: Float = type.speedDp
 )
 
 /** One wave from assets/waves.json, already expanded to a spawn queue of type ids. */
@@ -109,7 +111,29 @@ data class Survivor(
         const val JOB_ROOF = "Roof"
         const val JOB_DIG = "Scrap Dig"
         const val JOB_FARM = "Mushroom Farm"
-        val JOBS = listOf(JOB_ROOF, JOB_DIG, JOB_FARM)
+        const val JOB_COLLECTOR = "Collector"
+        val JOBS = listOf(JOB_ROOF, JOB_DIG, JOB_FARM, JOB_COLLECTOR)
+
+        /** Names for new recruits; one is picked at random, avoiding names already in the bunker. */
+        private val NAMES = listOf(
+            "Ada", "Bram", "Cass", "Dov", "Edda", "Finn", "Greta", "Hollis", "Ines", "Jory",
+            "Kit", "Lio", "Mina", "Nils", "Oona", "Pell", "Quinn", "Rhea", "Sol", "Tamsin",
+            "Ulla", "Vik", "Wren", "Yara", "Zed", "Abel", "Brix", "Cora", "Dace", "Elsa",
+            "Fenn", "Gil", "Hana", "Ivo", "Juno", "Kade", "Lark", "Moss", "Nell", "Otto",
+            "Pia", "Rook", "Sage", "Teo", "Ula", "Vera", "Wade", "Yuri", "Zia", "Bex"
+        )
+
+        fun randomName(taken: Collection<String>): String {
+            val free = NAMES.filter { it !in taken }
+            if (free.isNotEmpty()) return free.random()
+            // Every name used: add a number to one.
+            var n = 2
+            while (true) {
+                val name = "${NAMES.random()} $n"
+                if (name !in taken) return name
+                n++
+            }
+        }
     }
 }
 

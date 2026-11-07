@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Survivor roster: header, list (tap to change job), recruit row. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Survivor roster: header, list (tap a survivor to pick their job), recruit button. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -62,6 +66,18 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <TextView
+        style="@style/BunkerSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="14dp"
+        android:drawableStart="@drawable/ic_swap"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:text="@string/survivors_hint" />
+
     <ListView
         android:id="@+id/survivorList"
         android:layout_width="match_parent"
@@ -81,27 +97,17 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <EditText
-            android:id="@+id/recruitName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints="name"
-            android:background="@drawable/np_field"
-            android:hint="@string/recruit_name_hint"
-            android:inputType="textCapWords"
-            android:maxLength="16"
-            android:textColor="@color/text_main"
-            android:textColorHint="@color/text_dim" />
-
+        <!-- New recruits get a generated name (Survivor.randomName). -->
         <Button
             android:id="@+id/recruitButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:drawableEnd="@drawable/ic_food"
             android:drawablePadding="4dp"
             android:paddingStart="14dp"
             android:paddingEnd="12dp" />
     </LinearLayout>
 </LinearLayout>
+
+    <include layout="@layout/view_tutorial" />
+</FrameLayout>

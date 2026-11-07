@@ -10,7 +10,10 @@ import android.widget.TextView
 import com.deepcell.game.R
 import com.deepcell.game.model.Survivor
 
-/** Rows for the Survivors screen: figure dressed for the job, name, and job chip. */
+/**
+ * Rows for the Survivors screen: figure dressed for the job, name, what the job does, and the
+ * job chip with a swap icon (tapping the row opens the job picker).
+ */
 class SurvivorAdapter(
     private val context: Context,
     private var survivors: List<Survivor>
@@ -29,25 +32,18 @@ class SurvivorAdapter(
         val row = convertView ?: LayoutInflater.from(context).inflate(R.layout.row_survivor, parent, false)
         val survivor = survivors[position]
 
-        val figure = when (survivor.job) {
-            Survivor.JOB_ROOF -> R.drawable.survivor_guard
-            Survivor.JOB_FARM -> R.drawable.survivor_farmer
-            else -> R.drawable.survivor_digger
-        }
-        val jobIcon = when (survivor.job) {
-            Survivor.JOB_ROOF -> R.drawable.icon_tab_defense
-            Survivor.JOB_FARM -> R.drawable.icon_food
-            else -> R.drawable.icon_scrap
-        }
-        row.findViewById<ImageView>(R.id.survivorFigure).setImageResource(figure)
+        row.findViewById<ImageView>(R.id.survivorFigure).setImageResource(Jobs.figure(survivor.job))
         row.findViewById<TextView>(R.id.survivorName).text = survivor.name
+        row.findViewById<TextView>(R.id.survivorEffect).setText(Jobs.effect(survivor.job))
 
         val job = row.findViewById<TextView>(R.id.survivorJob)
         job.text = survivor.job
-        val icon = context.getDrawable(jobIcon)
         val size = (18 * context.resources.displayMetrics.density).toInt()
+        val icon = context.getDrawable(Jobs.icon(survivor.job))
         icon?.setBounds(0, 0, size, size)
-        job.setCompoundDrawablesRelative(icon, null, null, null)
+        val swap = context.getDrawable(R.drawable.ic_swap)
+        swap?.setBounds(0, 0, size * 4 / 5, size * 4 / 5)
+        job.setCompoundDrawablesRelative(icon, null, swap, null)
         return row
     }
 }

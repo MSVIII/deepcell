@@ -210,6 +210,12 @@ def guard(frames=True):
     return pose, idle
 
 
+def collector_still():
+    """survivor_collector.png: the Collector standing, framed like the other survivor portraits."""
+    build(survivor, "collector", STEEL_BLUE, GREY, lambda: (cap(), sack()))
+    render("survivor_collector.png", 256, 384, transparent=True)
+
+
 def collector(frames=True):
     """The Collector: walks into each room, picks up the pile into a sack, walks back."""
     build(survivor, "collector", STEEL_BLUE, GREY, lambda: (cap(), sack()))
@@ -280,6 +286,59 @@ def shrike_flap():
     shoot("enemy_shrike", 256, 256, range(6), pose)
 
 
+def turret_model():
+    """Auto-Turret on the bunker roof: a fixed base, and a twin-barrel gun that turns about
+    the point (0, 0, 0.35). Both are framed by the same camera, centred on that point, so in
+    the app the gun image rotates about its own centre and sits exactly on the base image.
+    Base parts are named T*, gun parts G*."""
+    setup("turret", 2.6, cam_z=0.35, tilt=80, rim=0.5)
+    cyl("TFoot", 0.5, 0.12, (0, 0, 0.06), "DC_Hazard", verts=20, bevel=0.02, outline=0.02)
+    cyl("TDrum", 0.36, 0.26, (0, 0, 0.24), "DC_Plate", verts=20, bevel=0.03, outline=0.02)
+    for a in range(0, 360, 60):
+        r = math.radians(a)
+        box(f"TBolt{a}", (0.06, 0.06, 0.06), (0.37 * math.cos(r), 0.37 * math.sin(r), 0.2), "DC_Dark")
+    ball("GHousing", 0.27, (0, 0, 0.38), "DC_Olive", scale=(1.15, 0.9, 0.85), outline=0.022)
+    box("GShroud", (0.34, 0.24, 0.3), (0, 0, 0.62), "DC_Steel", bevel=0.04, outline=0.02)
+    for i, sx in enumerate((-0.08, 0.08)):
+        cyl(f"GBarrel{i}", 0.05, 0.62, (sx, 0, 0.95), "DC_Dark", verts=12, outline=0.015)
+        cyl(f"GMuzzle{i}", 0.065, 0.08, (sx, 0, 1.25), "DC_Steel", verts=12)
+    box("GAmmo", (0.16, 0.22, 0.24), (0.3, 0, 0.42), "DC_Hazard", bevel=0.02, outline=0.015)
+    ball("GLens", 0.05, (-0.2, -0.17, 0.48), "DC_RedEye")
+    cyl("GFlash", 0.16, 0.34, (0, 0, 1.45), "DC_Ember", r2=0.0, verts=6)
+    cyl("GFlashCross", 0.09, 0.42, (0, 0, 1.44), "DC_Bulb", r2=0.0, verts=4, rot=(0, 0, 45))
+    render("turret_base.png", 256, 256, transparent=True)
+
+
+def turret():
+    """turret_base.png, turret_gun.png (at rest), turret_gun_0..2 (flash, recoil, rest)."""
+    build(turret_model)
+    names = [o.name for o in scene().objects if o.type == "MESH"]
+    gun = [n for n in names if n.startswith("G")]
+    base = [n for n in names if n.startswith("T")]
+    axis = pivot("GunAxis", (0, 0, 0.35))
+    attach(gun, axis)
+
+    def show(group, on):
+        for n in group:
+            ob(n).hide_render = not on
+            for c in ob(n).children:       # toon outlines, if any are child objects
+                c.hide_render = not on
+
+    show(gun, False)
+    show(base, True)
+    render("turret_base.png", 256, 256, transparent=True)
+    show(base, False)
+
+    def pose(k):
+        dz, flash = k
+        show(gun, True)
+        axis.location.z = 0.35 + dz
+        show(["GFlash", "GFlashCross"], flash)
+    # Firing: flash, recoil, back in place. turret_gun.png is the gun at rest.
+    shoot("turret_gun", 256, 256, [(0.0, True), (-0.06, False), (0.0, False)], pose)
+    render("turret_gun.png", 256, 256, transparent=True)
+
+
 STEEL_BLUE = ((0.22, 0.30, 0.40), (0.27, 0.36, 0.46))
 GREY = ((0.36, 0.36, 0.34), (0.42, 0.42, 0.40))
 
@@ -289,6 +348,8 @@ if not globals().get("ANIM_DEFS_ONLY"):
     farmer()
     guard()
     collector()
+    collector_still()
+    turret()
     spin_rotors("enemy_scout", scout)
     spin_rotors("enemy_bomber", bomber)
     spin_rotors("enemy_boss", boss, size=384)

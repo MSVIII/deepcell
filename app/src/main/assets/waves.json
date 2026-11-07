@@ -1,5 +1,9 @@
 {
   "hpScalePerCycle": 0.5,
+  "countPerWave": 0.08,
+  "spawnFasterPerWave": 0.02,
+  "minSpawnScale": 0.45,
+  "speedPerCycle": 0.08,
   "enemyTypes": [
     { "id": "scout",  "name": "Scout Drone",  "hp": 2,  "speedDp": 45, "damage": 5,  "reward": 2,  "sizeDp": 40 },
     { "id": "shrike", "name": "Shrike",       "hp": 1,  "speedDp": 80, "damage": 3,  "reward": 2,  "sizeDp": 36 },

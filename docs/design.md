@@ -43,10 +43,15 @@ No other resources.
 
 Each survivor has one job:
 
-- **Roof**: +1 damage on every manual tap on an enemy.
-- **Scrap Dig** or **Mushroom Farm**: +1 progress on every manual tap in that room.
+- **Roof**: shoots by themselves (guards take turns, one shot per 1.6 s / guards, 1 damage, at drones in the lower 60% of the sky) and +1 damage on every manual tap.
+- **Scrap Dig** or **Mushroom Farm**: fills that room by themselves (1 progress per second each).
+- **Collector**: walks into each room in turn and brings its storage up; more Collectors walk faster. With a Collector, offline output is collected too.
 
-Survivors make manual work stronger; they do not earn anything while the app is closed. Survivors are never killed. A new game starts with Mara (Roof) and Tobin (Scrap Dig). Recruiting costs 15 food; new survivors start in Scrap Dig. Tap a survivor in the Survivors screen to move them to the next job.
+Survivors are never killed. A new game starts with one survivor on the Roof and 15 food. Recruiting costs 15 food; recruits get a generated name and start in Scrap Dig. Tap a survivor in the Survivors screen to open the job picker.
+
+## Tutorial
+
+Offered after naming a new bunker. Steps: shoot a drone, dig and collect, recruit, change a job, storage and collecting, upgrades and repair. Can be skipped at any step.
 
 ## Enemies
 
@@ -62,7 +67,7 @@ The numbers live in `assets/waves.json`.
 ## Waves
 
 - `waves.json` defines a 10-wave cycle. Wave 10 has the boss, so every 10th wave is a boss wave.
-- Wave *n* uses cycle entry (n − 1) mod 10. Each full cycle adds 50% enemy HP (`hpScalePerCycle`).
+- Wave *n* uses cycle entry (n − 1) mod 10 for its mix of enemies. Waves grow: +8% enemies per wave (`countPerWave`), spawns 2% closer per wave down to 45% (`spawnFasterPerWave`, `minSpawnScale`), and each full cycle adds 50% HP and 8% speed (`hpScalePerCycle`, `speedPerCycle`) and one more boss every second cycle.
 - Difficulty multiplies enemy HP: Easy ×0.75, Normal ×1, Hard ×1.5.
 - Enemies spawn one at a time, every `spawnMs`. There is a 2-second break before each wave.
 - A wave is cleared when every enemy has spawned and none are left. Clearing a boss wave sends a notification.
@@ -70,14 +75,15 @@ The numbers live in `assets/waves.json`.
 ## Combat
 
 - **Manual shot**: tap an enemy. Damage = 1 + Sharpened Rounds level + survivors on the Roof.
-- **Auto-Turret**: once per second, hits the enemy closest to the hatch. Damage = turret level.
+- **Roof guards**: shoot by themselves (see Survivors).
+- **Auto-Turret**: sits on the hatch dome; once per second it turns to the enemy closest to the hatch and fires. Damage = turret level.
 - An enemy that reaches the bottom of the sky hits the hatch for its damage and disappears.
 
 ## Hatch and losing
 
 - Max hatch health = 100 + 20 per Hatch Plating level. Buying plating also adds 20 to current health.
 - Tap the bunker to repair the hatch: 1 scrap for +5 health.
-- **Breach**: when hatch health reaches 0, the bunker loses 25% of its scrap (rounded down), the sky is cleared, the hatch is restored to full, and the same wave starts again. A notification is sent. Nothing else is lost.
+- **Breach**: when hatch health reaches 0, the bunker loses 25% of its scrap (rounded down), the sky is cleared, the hatch is restored to full, and the game goes back one wave. A notification is sent. Nothing else is lost.
 
 ## Floors
 
@@ -111,7 +117,8 @@ When the game screen resumes, the app counts the seconds since it was last pause
 - Effects: explosion when an enemy dies or hits the hatch, sparks when a bullet hits or the hatch is repaired, dust or spores when a room is worked.
 - Sound: dig, harvest, rifle, turret, bullet hit, explosion, hatch impact, repair, upgrade bought, wave cleared, breach alarm, tab click. The Sound switch mutes them.
 - Easing: movement uses ease-in/ease-out, not constant speed. Enemies drift towards the roof on a smoothstep curve with a sine sway that dies out near the hatch; the upgrade sheet eases in (decelerate) and out (accelerate); payout text pops with overshoot, rises with ease-out and fades with ease-in; tabs squash and spring back; HUD numbers pop when they go up; the title camera eases in and out of each pan. Continuous spins (gear, rotors) stay linear.
-- Rooms produce by themselves: workers (and the Drill Rig) fill the bar; each full bar goes into the room's storage (shown as a chip, e.g. 12/50, red when full). Work stops when storage is full. Tapping a room adds a little work and collects the storage. The Collector, once bought, walks into each room in turn and collects for you, also while the app is closed.
+- Rooms produce by themselves: workers (and the Drill Rig) fill the bar; each full bar goes into the room's storage (shown as a chip, e.g. 12/50, red when full). Work stops when storage is full. Tapping a room adds a little work and collects the storage. A survivor on the Collector job walks into each room in turn and collects for you, also while the app is closed. A room with no workers says so and links to Survivors.
+- Music: menu, gameplay and boss loops (composed in `tools/audio/gen_music.py`); Settings has a Music switch.
 - Main menu: Continue (card with bunker name, wave, scrap, food, crew), New game (name dialog), Settings.
 
 ## Originality

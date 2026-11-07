@@ -20,10 +20,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.deepcell.game.data.GameDatabase
+import com.deepcell.game.ui.Music
 import com.deepcell.game.ui.Notifier
 import com.deepcell.game.ui.Quality
 import com.deepcell.game.ui.TitleAmbience
 import com.deepcell.game.ui.TitleSlideshow
+import com.deepcell.game.ui.Tutorial
 
 /**
  * Title screen: animated camera shots with drifting dust, the logo, and the menu.
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saveCard: View
     private lateinit var slideshow: TitleSlideshow
     private lateinit var ambience: TitleAmbience
+    private lateinit var music: Music
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             , blurCrossfade = !low
         ) { shot -> ambience.onShot(shot) }
 
+        music = Music(this)
         Notifier.createChannel(this)
         askNotificationPermission()
     }
@@ -78,6 +82,8 @@ class MainActivity : AppCompatActivity() {
         // Refresh every time: the save may have been reset in Settings.
         slideshow.start()
         ambience.start()
+        music.enabled = db.getSetting(GameDatabase.SETTING_MUSIC, "true") == "true"
+        music.play(R.raw.music_menu)
         val state = db.loadState()
         if (state == null) {
             saveCard.visibility = View.GONE
@@ -97,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         // Lifecycle (Module 5): no animation work while the screen is hidden.
         slideshow.stop()
         ambience.stop()
+        music.pause()
         super.onPause()
     }
 
@@ -121,7 +128,7 @@ class MainActivity : AppCompatActivity() {
             val bunker = if (typed.isEmpty()) getString(R.string.default_bunker_name) else typed
             db.newGame(bunker, GameActivity.BASE_HATCH_HP)
             dialog.dismiss()
-            openGame(newGame = true)
+            askTutorial()
         }
         dialog.findViewById<Button>(R.id.newGameStart).setOnClickListener { start() }
         dialog.findViewById<Button>(R.id.newGameCancel).setOnClickListener { dialog.dismiss() }
@@ -129,6 +136,27 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
         name.requestFocus()
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+    }
+
+    /** After naming the bunker: play the tutorial, or skip it. Either way the game opens. */
+    private fun askTutorial() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_tutorial)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.86f).toInt(), WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.setCancelable(false)
+        val choose = { tutorial: Boolean ->
+            val step = if (tutorial) Tutorial.SHOOT else Tutorial.OFF
+            db.setSetting(GameDatabase.SETTING_TUTORIAL, step.toString())
+            dialog.dismiss()
+            openGame(newGame = true)
+        }
+        dialog.findViewById<Button>(R.id.tutorialYes).setOnClickListener { choose(true) }
+        dialog.findViewById<Button>(R.id.tutorialNo).setOnClickListener { choose(false) }
+        dialog.show()
     }
 
     /** Explicit Intent with extras (Module 7). GameActivity reads them with intent.extras. */
@@ -150,6 +178,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        music.release()
         db.close()
         super.onDestroy()
     }

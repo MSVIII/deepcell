@@ -10,7 +10,7 @@ import com.deepcell.game.model.Survivor
 /** Contract class: every table and column name in one place (Module 9). */
 object DbContract {
     const val DB_NAME = "deepcell.db"
-    const val DB_VERSION = 2   // 2: room storage (dig_stock, farm_stock)
+    const val DB_VERSION = 3   // 2: room storage (dig_stock, farm_stock); 3: Collector is a survivor job
 
     object State {               // always exactly one row, id = 1
         const val TABLE = "game_state"
@@ -95,6 +95,22 @@ class GameDatabase(context: Context) :
             db.execSQL("ALTER TABLE ${s.TABLE} ADD COLUMN ${s.DIG_STOCK} INTEGER NOT NULL DEFAULT 0")
             db.execSQL("ALTER TABLE ${s.TABLE} ADD COLUMN ${s.FARM_STOCK} INTEGER NOT NULL DEFAULT 0")
         }
+        if (oldVersion < 3) {
+            // The Collector used to be a machine bought in the Automation tab; now it is a
+            // survivor job. A save that owned the machine gets a survivor on that job instead.
+            val a = DbContract.Automation
+            val c = db.query(a.TABLE, arrayOf(a.LEVEL), "${a.ID} = ?", arrayOf("collector"), null, null, null)
+            val owned = c.moveToFirst() && c.getInt(0) > 0
+            c.close()
+            if (owned) {
+                val names = ArrayList<String>()
+                val n = db.query(DbContract.Survivors.TABLE, arrayOf(DbContract.Survivors.NAME), null, null, null, null, null)
+                while (n.moveToNext()) names.add(n.getString(0))
+                n.close()
+                insertSurvivor(db, Survivor.randomName(names), Survivor.JOB_COLLECTOR)
+            }
+            db.delete(a.TABLE, "${a.ID} = ?", arrayOf("collector"))
+        }
     }
 
     // ---------- game state ----------
@@ -106,7 +122,7 @@ class GameDatabase(context: Context) :
         return exists
     }
 
-    /** Replaces the save (settings are kept) with a fresh bunker and two survivors. */
+    /** Replaces the save (settings are kept) with a fresh bunker and one survivor on the roof. */
     fun newGame(bunkerName: String, startHatchHp: Int) {
         val db = writableDatabase
         db.beginTransaction()
@@ -116,7 +132,7 @@ class GameDatabase(context: Context) :
                 put(DbContract.State.ID, 1)
                 put(DbContract.State.BUNKER_NAME, bunkerName)
                 put(DbContract.State.SCRAP, 0)
-                put(DbContract.State.FOOD, 10)
+                put(DbContract.State.FOOD, START_FOOD)
                 put(DbContract.State.WAVE, 1)
                 put(DbContract.State.HATCH_HP, startHatchHp)
                 put(DbContract.State.DIG_PROGRESS, 0)
@@ -126,8 +142,7 @@ class GameDatabase(context: Context) :
                 put(DbContract.State.LAST_PLAYED, System.currentTimeMillis())
             }
             db.insert(DbContract.State.TABLE, null, v)
-            insertSurvivor(db, "Mara", Survivor.JOB_ROOF)
-            insertSurvivor(db, "Tobin", Survivor.JOB_DIG)
+            insertSurvivor(db, Survivor.randomName(emptyList()), Survivor.JOB_ROOF)
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -322,5 +337,9 @@ class GameDatabase(context: Context) :
         const val SETTING_SOUND = "sound_on"          // "true" / "false"
         const val SETTING_DIFFICULTY = "difficulty"   // index into R.array.difficulty_names
         const val SETTING_DETAIL = "detail"           // ui.Quality.AUTO / HIGH / LOW
+        const val SETTING_MUSIC = "music_on"          // "true" / "false"
+        const val SETTING_TUTORIAL = "tutorial_step"  // ui.Tutorial step number, 0 = off or finished
+        /** Enough for the first recruit (SurvivorsActivity.RECRUIT_FOOD_COST). */
+        const val START_FOOD = 15
     }
 }

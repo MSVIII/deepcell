@@ -9,7 +9,7 @@ import com.deepcell.game.R
  * Short sound effects through SoundPool. The sounds are synthesised by tools/audio/gen_sfx.py
  * and stored in res/raw. Create one per screen in onCreate and call [release] in onDestroy.
  * [enabled] follows the Sound switch in Settings. Loudness is balanced in the files
- * (gen_sfx.py), so every sound plays at full volume here.
+ * (gen_sfx.py); explosions are turned down here because they stack up when many drones die.
  */
 class Sfx(context: Context) {
 
@@ -19,8 +19,8 @@ class Sfx(context: Context) {
         SHOT(R.raw.sfx_shot, 1f),
         TURRET(R.raw.sfx_turret, 1f),
         HIT(R.raw.sfx_hit, 1f),
-        EXPLODE(R.raw.sfx_explode, 1f),
-        IMPACT(R.raw.sfx_impact, 1f),
+        EXPLODE(R.raw.sfx_explode, 0.4f),     // plays for every kill: kept well under the rest
+        IMPACT(R.raw.sfx_impact, 0.6f),
         REPAIR(R.raw.sfx_repair, 1f),
         BUY(R.raw.sfx_buy, 1f),
         WAVE(R.raw.sfx_wave, 1f),

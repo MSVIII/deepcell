@@ -13,8 +13,6 @@
     { "id": "auto_turret", "type": "automation", "name": "Auto-Turret",
       "description": "Shoots the enemy nearest the hatch every second. Damage = level", "baseCost": 40, "costGrowth": 2.0, "maxLevel": 5 },
     { "id": "drill_rig", "type": "automation", "name": "Drill Rig",
-      "description": "Fills Scrap Dig by itself, also while the app is closed. Speed = level", "baseCost": 50, "costGrowth": 2.0, "maxLevel": 5 },
-    { "id": "collector", "type": "automation", "name": "Collector",
-      "description": "Walks to every room and brings the storage up, also while the app is closed. Speed = level", "baseCost": 30, "costGrowth": 2.2, "maxLevel": 5 }
+      "description": "Fills Scrap Dig by itself, also while the app is closed. Speed = level", "baseCost": 50, "costGrowth": 2.0, "maxLevel": 5 }
   ]
 }

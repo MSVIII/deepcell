@@ -56,6 +56,15 @@
 - Louder sound effects; outlined icons; labelled tabs; HUD chips.
 - Performance: density-bucketed images, ViewHolder and in-place refresh, effect view reuse, Detail setting with automatic low mode.
 
+## Done in the tutorial and difficulty pass (2026-11-07)
+
+- Tutorial offered on New game (six steps, skippable).
+- Start with only the roof guard; recruits get generated names.
+- Guards shoot by themselves; waves grow in size, speed and HP; breach drops a wave.
+- Collector moved from a machine to a survivor job; job picker with effects; hint in empty rooms.
+- Visible Auto-Turret on the hatch dome (turns, flash, tracer).
+- Explosion sound quieter; menu, gameplay and boss music with a Music switch.
+
 ## Known gaps
 
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.

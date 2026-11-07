@@ -148,6 +148,24 @@
                 android:importantForAccessibility="no" />
         </LinearLayout>
 
+        <!-- Nobody works here: says so, and opens Survivors when tapped. -->
+        <TextView
+            android:id="@+id/roomHint"
+            style="@style/BunkerSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="38dp"
+            android:background="@drawable/np_label"
+            android:drawableEnd="@drawable/ic_swap"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:maxWidth="190dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <!-- "+5" when the bar fills. -->
         <TextView
             android:id="@+id/roomPopup"

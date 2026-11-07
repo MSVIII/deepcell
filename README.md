@@ -49,6 +49,9 @@ app/src/main/
     ui/TitleSlideshow.kt   title screen camera shots
     ui/TitleAmbience.kt    title screen dust and drones
     ui/Quality.kt          detail level (Auto picks Low on weak phones)
+    ui/Tutorial.kt         first-game tutorial card and arrow
+    ui/Music.kt            background music (menu, game, boss)
+    ui/Jobs.kt             picture and description of each survivor job
   assets/                  upgrades.json, waves.json (game balance)
   res/                     layouts, strings, colors, themes, drawables, anim, raw (sounds)
 docs/                      design, module map, roadmap, decisions, testing

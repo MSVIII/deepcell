@@ -26,7 +26,9 @@ These are small, needed by Android itself, and explained in `docs/decisions.md`:
 - `Animation` / `AnimationUtils.loadAnimation` to play the `res/anim` tweens.
 - `AnimationDrawable` (frame animation from an `animation-list`) for survivors, enemies and effects (`ui/Fx.kt`).
 - `SoundPool` with `AudioAttributes` for sound effects (`ui/Sfx.kt`); `volumeControlStream` so the volume keys change game sound.
-- `Dialog` with a custom layout for New Game (`dialog_new_game.xml`).
+- `Dialog` with a custom layout for New Game (`dialog_new_game.xml`), the tutorial question (`dialog_tutorial.xml`) and the job picker (`dialog_job.xml`).
+- `MediaPlayer` for looping background music (`ui/Music.kt`), faded with a `Handler`.
+- `<include>` to reuse the tutorial overlay layout in two screens.
 - ViewHolder pattern in `FloorAdapter` (row views found once, stored in the row's tag).
 - `ActivityManager` (`isLowRamDevice`, `memoryClass`) to pick the detail level (`ui/Quality.kt`).
 - Density-specific resource folders (`drawable-xxhdpi/xhdpi/hdpi`) so each phone decodes images at its own size.
