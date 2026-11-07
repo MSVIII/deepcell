@@ -47,6 +47,7 @@ app/src/main/
   assets/                  upgrades.json, waves.json (game balance)
   res/                     layouts, strings, colors, themes, drawables, anim
 docs/                      design, module map, roadmap, decisions, testing
+tools/art/                 Python scripts that generate the vector art (see its README)
 AGENTS.md                  rules for AI coding assistants
 ```
 
