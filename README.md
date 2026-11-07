@@ -122,6 +122,7 @@ To change an asset, edit its script and re-run it; don't edit the exported files
 | [`docs/decisions.md`](docs/decisions.md) | why things are the way they are |
 | [`docs/testing.md`](docs/testing.md) | every build and what was (and wasn't) tested |
 | [`docs/handoff.md`](docs/handoff.md) | current state, art pipeline, gotchas |
+| [`docs/workflow.md`](docs/workflow.md) | tools, Blender MCP setup, building and testing |
 
 ## Credits
 

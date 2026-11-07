@@ -1,6 +1,6 @@
 # Handoff
 
-Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (economy: upkeep, food prices, tap cap, dearer everything). Read with `AGENTS.md`, `docs/design.md` and `docs/roadmap.md`.
+Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (economy: upkeep, food prices, tap cap, dearer everything). Read with `AGENTS.md`, `docs/design.md`, `docs/roadmap.md` and `docs/workflow.md` (tools, Blender MCP setup, testing).
 
 ## State
 
@@ -46,7 +46,7 @@ Look rules that came from the user's feedback:
 - Pure emission brighter than about 1.3 renders flat white (Standard view transform); keep effect colours low to keep their hue.
 - Screenshots are too slow to catch effects; use `adb shell screenrecord` and pull frames with ffmpeg.
 - `room_dig_auto` is the same room with the Drill Rig; the adapter swaps images when the room is automated.
-- The Blender MCP addon was one protocol version behind (works; update with `uvx mcp-for-blender install-addon`). The asset libraries and 3D generators are off; all models are code-built.
+- The Blender MCP is MCP for Blender (`uvx mcp-for-blender`, formerly `blender-mcp`); setup is in `docs/workflow.md`. The add-on here was one protocol version behind (works; update with `uvx mcp-for-blender install-addon`). The asset libraries and 3D generators are off; all models are code-built.
 - Windows / Git Bash: run adb with `-s emulator-5554` (the user's Pixel 7 is also connected over wireless debugging). Use `MSYS_NO_PATHCONV=1` for `adb shell` paths. Long heredocs in Bash sometimes fail; write a script file and run it instead.
 - Emulator AVD: `Medium_Phone` (API 37). `svc power stayon true` keeps it awake for screenshots. It is started with `-no-snapshot-save`, so a restart throws away app data (the save) made since the snapshot. Don't fire many adb commands in parallel or screenshot in a tight loop: it stalled System UI and killed the adb server once.
 - To test later game states on the emulator, stop the app, copy the save to `/data/local/tmp` with `run-as ... cp`, `adb pull` it, edit it with Python's sqlite3, `adb push` it back and `run-as ... sh -c 'cat /data/local/tmp/dc.db > databases/deepcell.db'`. Don't pipe the file through `adb shell` stdin: that corrupted it once. Tapping moving drones from a script does not work reliably.

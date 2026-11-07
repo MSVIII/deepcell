@@ -23,6 +23,8 @@ The rooms, lift shaft, surface, bunker, survivors, enemies, icons, logo and titl
 
 ## Use
 
+An AI assistant can do these steps through the Blender MCP; setup is in [`docs/workflow.md`](../../docs/workflow.md#4-art-with-blender-and-the-blender-mcp).
+
 1. Open Blender (tested with 5.2). In the Text Editor, run:
 
    ```python

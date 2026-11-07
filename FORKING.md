@@ -30,8 +30,8 @@ any game code yet; I'll tell you what I want to build afterwards.
      (read-only for me). Never push to Yauren/deepcell.
 
 2. Read the project
-   - Read AGENTS.md, README.md, FORKING.md, docs/handoff.md, docs/design.md,
-     docs/module-map.md and docs/roadmap.md.
+   - Read AGENTS.md, README.md, FORKING.md, docs/workflow.md, docs/handoff.md,
+     docs/design.md, docs/module-map.md and docs/roadmap.md.
 
 3. Give me a proper overview, in plain words
    - What the game is: the story, how a round plays, the screens, enemies and waves,
@@ -42,9 +42,14 @@ any game code yet; I'll tell you what I want to build afterwards.
    - The rules from AGENTS.md: only the course modules, no new libraries, never wipe
      player saves, keep the docs accurate.
 
-4. Give me the guides I need
+4. Give me the guides I need (docs/workflow.md has the details)
    - How to open the project in Android Studio and run it on my phone or an emulator,
      and how to build it from the command line.
+   - Which tools I need for what (Android Studio for code; Python, ffmpeg, Blender and the
+     Blender MCP for art and sound). Check which ones are already installed on my PC and
+     offer to install the missing ones; ask me before installing anything.
+   - How to connect you to Blender with the Blender MCP (docs/workflow.md, section 4), so
+     you can render art for me. Offer to set it up now or later.
    - How to ask you for changes, with three example requests that fit this game.
    - How my changes get saved and shared (see "From now on" below).
    - What I must write in docs/forks/<my-github-username>.md and why.
@@ -75,6 +80,7 @@ From now on, in every later conversation:
 2. Clone your fork to your Desktop and open the folder in Android Studio (build steps are in the README).
 3. Build once and run it before you change anything.
 4. Copy `docs/forks/TEMPLATE.md` to `docs/forks/<your-github-username>.md`.
+5. For art, sound or music changes, set up the tools in [`docs/workflow.md`](docs/workflow.md) (Python, ffmpeg, Blender and the Blender MCP).
 
 ## Rules for your fork
 
