@@ -4,7 +4,7 @@ Record each build and test here, newest first. Say plainly what was not tested.
 
 ## 2026-11-07: economy, upkeep, prices, boss bar position
 
-- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator only; **not installed on the phone**. Emulator data was cleared (an earlier save edit piped through `adb shell` corrupted the file; edits now go through `adb push`).
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Tested on the emulator; installed on the user's Pixel 7 at their request (not run there by the author). Emulator data was cleared (an earlier save edit piped through `adb shell` corrupted the file; edits now go through `adb push`).
 
 | Check | Result |
 |---|---|
