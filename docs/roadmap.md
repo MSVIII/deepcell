@@ -72,6 +72,12 @@
 - Harder enemies and waves, pricier upgrades; Guard Training, Work Shifts, Sprinkler, Repair Arm.
 - Wave banner; boss health bar; louder music that phone speakers carry.
 
+## Done in the economy pass (2026-11-07)
+
+- Survivors eat food (also offline); hunger stops workers and guards.
+- Taps capped at one bar; tool upgrades capped at 5; Guard Training and Work Shifts cost food.
+- All prices and recruiting raised; boss bar moved out of the sky.
+
 ## Known gaps
 
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.

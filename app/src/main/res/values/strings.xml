@@ -20,7 +20,7 @@
     <string name="wave_number">Wave %1$d</string>
     <string name="boss_wave">Boss wave</string>
     <string name="boss_incoming">Command Drone incoming</string>
-    <string name="boss_hp">%1$s  %2$d/%3$d</string>
+    <string name="boss_hp">Boss %1$d/%2$d</string>
     <string name="hatch_hp">%1$s  %2$d/%3$d</string>
     <string name="settings">Settings</string>
     <string name="bunker">Bunker. Tap to repair</string>
@@ -100,11 +100,11 @@
     <string name="tutorial_dig_title">Dig for scrap</string>
     <string name="tutorial_dig">Tap Scrap Dig again and again. When the bar fills up, you get scrap.</string>
     <string name="tutorial_recruit_title">Get a worker</string>
-    <string name="tutorial_recruit">Open Survivors and tap Recruit. Your first worker costs 15 food.</string>
+    <string name="tutorial_recruit">Open Survivors and tap Recruit. Each worker costs more food than the last.</string>
     <string name="tutorial_jobs_title">Give them a job</string>
     <string name="tutorial_jobs">Tap your new worker to pick a job. Diggers make scrap, farmers make food.</string>
     <string name="tutorial_storage_title">Collect their work</string>
-    <string name="tutorial_storage">Workers fill this box by themselves. Tap the room to collect it. When the box is full, they stop.</string>
+    <string name="tutorial_storage">Workers fill this box by themselves. Tap the room to collect it. When the box is full, they stop. Everyone eats food, so keep the farm going.</string>
     <string name="tutorial_upgrades_title">Get stronger</string>
     <string name="tutorial_upgrades">Spend scrap on upgrades here. If the hatch gets hurt, tap the bunker to fix it.</string>
 
@@ -126,6 +126,8 @@
         <item quantity="other">%1$d workers</item>
     </plurals>
     <string name="room_crew">%1$s · +%2$d/s</string>
+    <string name="room_hungry">%1$s · no food, stopped</string>
+    <string name="out_of_food">Out of food: workers and guards stop until you farm more</string>
     <string name="more_guards">+%1$d</string>
 
     <!-- Music -->

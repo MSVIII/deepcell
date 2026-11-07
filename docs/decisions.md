@@ -102,3 +102,13 @@ Why the base app is built the way it is. Add a dated entry when the group decide
 - **Wave banner** (Wave 7, plus "Command Drone incoming" on boss waves) replaces only the "Wave cleared" toast, which popped up every few seconds. Toasts stay for purchases, not enough scrap or food, recruiting, job changes, breaches, offline earnings and a full hatch, so the Toast lesson is still covered.
 - **Boss health bar** across the top of the sky while a Command Drone is up.
 - **Music was too quiet on phone speakers**: the game and boss mixes were mostly kick and bass, which phone speakers can't reproduce, and sat about 10 dB under the effects. The master now cuts the sub-bass, normalises to -15 dBFS, the melody and arpeggio are louder, the gameplay melody starts after the 4-bar intro, and the player volume is 0.8.
+
+## 2026-11-07: economy, upkeep, prices
+
+The user found materials too easy: maxed Spore Trays and tapping gave thousands of mushrooms, with nothing to spend them on.
+
+- **Survivors eat**: 1 food per survivor every 40 s, also while the app is closed. At 0 food the bunker is hungry: workers stop (machines keep going), guards stop shooting, the food count turns red, rooms say "no food, stopped", and a toast with the alarm says so once. Offline, workers only work for the share of the time the food lasted. Tapping the farm still works, so the player can always dig out.
+- **A tap finishes at most the current bar**, whatever the tool level; Better Shovels and Spore Trays now stop at level 5.
+- **Food upgrades**: Guard Training and Work Shifts are paid in food (`"currency": "food"` in `upgrades.json`; the price button shows a mushroom).
+- **Everything dearer**: base prices about doubled and growth raised (x1.9 to x2.5). Recruiting 25 food, then x1.9 per survivor (25, 48, 90, 171, 325, ...). A new game starts with 40 food (first recruit plus a few minutes of meals).
+- **Boss bar moved** to the top right, level with the hatch label and the same size, so it no longer covers the sky.

@@ -77,6 +77,9 @@ class GameActivity : AppCompatActivity() {
         /** Each Guard Training level multiplies the guards' time between shots by this. */
         private const val GUARD_TRAINING_FACTOR = 0.85
         private const val BANNER_MS = 1600L
+        // Upkeep: every survivor eats 1 food every EAT_SECONDS, also while the app is closed.
+        // With no food left the bunker is hungry: workers stop and guards stop shooting.
+        private const val EAT_SECONDS = 40.0
 
         // Rooms: each worker adds this much progress per second by themselves; storage holds
         // ten full bars, plus STORAGE_PER_LEVEL per Storage Racks level.
@@ -169,6 +172,10 @@ class GameActivity : AppCompatActivity() {
     private var currentWave: Wave? = null
     private var waveHpScale = 1.0
     private var waveSpeedScale = 1f
+    /** Food owed but not yet eaten (fractions of a meal add up each second). */
+    private var foodDebt = 0.0
+    /** Out of food: workers and guards stop until there is food again. */
+    private var hungry = false
     private var spawnTimerMs = 0L
     private var automationTimerMs = 0L
     /** Goes up every time a wave (re)starts, so the loop can tell a breach happened mid-frame. */
@@ -211,7 +218,7 @@ class GameActivity : AppCompatActivity() {
         digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", 10, 5)
         farmFloor = Floor("farm", getString(R.string.floor_farm), "food", 10, 3)
         floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) },
-            { f -> state?.let { productionPerSecond(f, it) } ?: 0 }, { openSurvivors() }) {
+            { f -> state?.let { productionPerSecond(f, it) } ?: 0 }, { hungry }, { openSurvivors() }) {
             onFloorTapped(it)
         }
         floorList = findViewById(R.id.floorList)
@@ -351,10 +358,14 @@ class GameActivity : AppCompatActivity() {
         s.lastPlayed = now
         if (seconds <= 0) return
         val collector = collectors() > 0
+        // Meals while away. If the food ran out, workers only worked while it lasted.
+        val meals = (survivors.size * seconds / EAT_SECONDS).toInt()
+        val fed = if (meals <= 0) 1.0 else Math.min(1.0, s.food.toDouble() / meals)
+        s.food = Math.max(0, s.food - meals)
         var scrap = 0
         var food = 0
         for (floor in listOf(digFloor, farmFloor)) {
-            val amount = (productionPerSecond(floor, s) * seconds).toInt()
+            val amount = (workerRate(floor, s) * seconds * fed + machineRate(floor, s) * seconds).toInt()
             if (amount <= 0) continue
             val made = if (collector) {
                 floor.addProgress(amount) * floor.yieldPerFill
@@ -375,12 +386,35 @@ class GameActivity : AppCompatActivity() {
     }
 
     /**
-     * Progress per second a room makes by itself: each worker (more with Work Shifts), plus its
-     * machine (Drill Rig in Scrap Dig, Sprinkler in Mushroom Farm).
+     * Progress per second a room makes by itself: each worker (more with Work Shifts), unless the
+     * bunker is hungry, plus its machine (Drill Rig in Scrap Dig, Sprinkler in Mushroom Farm),
+     * which doesn't eat.
      */
-    private fun productionPerSecond(floor: Floor, s: GameState): Int {
-        val machine = s.level(if (floor === digFloor) DRILL_RIG else SPRINKLER)
-        return workersIn(floor) * (WORKER_RATE + s.level(WORK_SHIFTS)) + machine
+    private fun productionPerSecond(floor: Floor, s: GameState): Int =
+        (if (hungry) 0 else workerRate(floor, s)) + machineRate(floor, s)
+
+    private fun workerRate(floor: Floor, s: GameState): Int = workersIn(floor) * (WORKER_RATE + s.level(WORK_SHIFTS))
+
+    private fun machineRate(floor: Floor, s: GameState): Int = s.level(if (floor === digFloor) DRILL_RIG else SPRINKLER)
+
+    /** Called once a second: survivors eat; running out (or getting food again) is announced. */
+    private fun eat(s: GameState) {
+        foodDebt += survivors.size / EAT_SECONDS
+        while (foodDebt >= 1.0 && s.food > 0) {
+            s.food -= 1
+            foodDebt -= 1.0
+        }
+        val nowHungry = s.food == 0 && foodDebt >= 1.0
+        if (nowHungry != hungry) {
+            hungry = nowHungry
+            if (hungry) {
+                sfx.play(Sfx.Sound.ALARM)
+                Toast.makeText(this, R.string.out_of_food, Toast.LENGTH_LONG).show()
+            }
+            floorAdapter.notifyDataSetChanged()
+        }
+        if (!hungry) foodDebt = Math.min(foodDebt, 1.0)
+        refreshHud()
     }
 
     /** Storage: ten full bars per room, more with Storage Racks. */
@@ -458,6 +492,7 @@ class GameActivity : AppCompatActivity() {
                 hitEnemy(nearest, turret)
             }
         }
+        eat(s)
         // Repair Arm: patches the hatch a little every second.
         val arm = s.level(REPAIR_ARM)
         if (arm > 0 && s.hatchHp < maxHatchHp()) {
@@ -693,7 +728,7 @@ class GameActivity : AppCompatActivity() {
         val bar = findViewById<ProgressBar>(R.id.bossBar)
         bar.max = max
         bar.progress = hp
-        findViewById<TextView>(R.id.bossName).text = getString(R.string.boss_hp, bosses[0].type.name, hp, max)
+        findViewById<TextView>(R.id.bossName).text = getString(R.string.boss_hp, hp, max)
         panel.visibility = View.VISIBLE
     }
 
@@ -781,7 +816,8 @@ class GameActivity : AppCompatActivity() {
         val isDig = floor === digFloor
         val tools = s.level(if (isDig) UP_DIG_TOOLS else UP_FARM_TOOLS)
         sfx.play(if (isDig) Sfx.Sound.DIG else Sfx.Sound.HARVEST, 0.92f + Random.nextFloat() * 0.16f)
-        floor.work(1 + tools)
+        // One tap can finish at most the current bar, however strong the tools are.
+        floor.work(Math.min(1 + tools, floor.maxProgress - floor.progress))
         val collected = collectFrom(floor)
         if (collected == 0) floorAdapter.refresh(floorList)
         else if (isDig) tutorial.complete(Tutorial.DIG)
@@ -795,11 +831,13 @@ class GameActivity : AppCompatActivity() {
             return
         }
         val cost = upgrade.costAt(level)
-        if (s.scrap < cost) {
-            Toast.makeText(this, R.string.not_enough_scrap, Toast.LENGTH_SHORT).show()
+        val have = if (upgrade.paidInFood) s.food else s.scrap
+        if (have < cost) {
+            Toast.makeText(this, if (upgrade.paidInFood) R.string.not_enough_food else R.string.not_enough_scrap,
+                Toast.LENGTH_SHORT).show()
             return
         }
-        s.scrap -= cost
+        if (upgrade.paidInFood) s.food -= cost else s.scrap -= cost
         s.setLevel(upgrade, level + 1)
         sfx.play(Sfx.Sound.BUY)
         when (upgrade.id) {
@@ -907,7 +945,7 @@ class GameActivity : AppCompatActivity() {
      * by the number of guards, at the enemy nearest the hatch once it is within GUARD_RANGE.
      */
     private fun guardsAutoFire() {
-        if (guardViews.isEmpty()) return
+        if (guardViews.isEmpty() || hungry) return
         guardTimerMs += frameMs
         val interval = GUARD_AUTO_MS * Math.pow(GUARD_TRAINING_FACTOR, (state?.level(GUARD_TRAINING) ?: 0).toDouble())
         if (guardTimerMs < interval / guardViews.size) return
@@ -1007,6 +1045,7 @@ class GameActivity : AppCompatActivity() {
         val s = state ?: return
         setCount(hudScrap, s.scrap)
         setCount(hudFood, s.food)
+        hudFood.setTextColor(getColor(if (hungry) R.color.alarm_red else R.color.text_main))
         hudWave.text = getString(R.string.wave_number, s.wave)
         hudBossIcon.visibility = if (s.wave % 10 == 0) View.VISIBLE else View.GONE
         val max = maxHatchHp()

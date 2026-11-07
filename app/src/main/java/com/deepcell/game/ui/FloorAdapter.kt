@@ -35,6 +35,7 @@ class FloorAdapter(
     private val floors: List<Floor>,
     private val workersIn: (Floor) -> Int,
     private val rateOf: (Floor) -> Int,
+    private val isHungry: () -> Boolean,
     private val onAssign: () -> Unit,
     private val onAction: (Floor) -> Unit
 ) : BaseAdapter() {
@@ -138,10 +139,9 @@ class FloorAdapter(
         h.hint.text = if (crew == 0) {
             context.getString(if (isScrap) R.string.no_workers_dig else R.string.no_workers_farm)
         } else {
-            context.getString(
-                R.string.room_crew,
-                context.resources.getQuantityString(R.plurals.room_workers, crew, crew), rateOf(floor)
-            )
+            val workers = context.resources.getQuantityString(R.plurals.room_workers, crew, crew)
+            if (isHungry()) context.getString(R.string.room_hungry, workers)
+            else context.getString(R.string.room_crew, workers, rateOf(floor))
         }
         if (h.workers.childCount != count) {
             h.workers.removeAllViews()

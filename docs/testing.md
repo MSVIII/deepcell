@@ -2,6 +2,19 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: economy, upkeep, prices, boss bar position
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator only; **not installed on the phone**. Emulator data was cleared (an earlier save edit piped through `adb shell` corrupted the file; edits now go through `adb push`).
+
+| Check | Result |
+|---|---|
+| Ten survivors, 2 food: food runs out within seconds; food count red; "Out of food" toast; rooms "no food, stopped"; guards stop | Pass (screenshot) |
+| Guard Training priced in food (mushroom icon), dimmed at 0 food | Pass (screenshot) |
+| Boss bar top right, beside the hatch label, "Boss 68/68" | Pass (screenshot) |
+| No crash after the change (only the earlier corrupted-save crash in the log) | Pass |
+
+Not checked: offline meals over a long absence, the tap cap at high tool levels in play, buying a food upgrade, recruit prices past the first.
+
 ## 2026-11-07: tutorial highlight, harder progression, new upgrades, boss bar, music mix
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Tested on the emulator; installed on the user's Pixel 7 at their request (not run there by the author). Later tutorial steps and wave 10 were reached by editing the emulator save (`run-as` copy of `deepcell.db`), because the tap bot could not hit moving drones.

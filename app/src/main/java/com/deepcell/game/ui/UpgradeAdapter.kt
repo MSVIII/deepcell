@@ -73,8 +73,13 @@ class UpgradeAdapter(
             button.text = cost.toString()
             button.isEnabled = true
             // Dim the button when the player can't afford it; tapping still explains why.
-            button.alpha = if (state != null && state.scrap >= cost) 1f else 0.45f
+            val have = if (upgrade.paidInFood) state?.food else state?.scrap
+            button.alpha = if (have != null && have >= cost) 1f else 0.45f
         }
+        // Price icon: scrap for most upgrades, a mushroom for the ones paid in food.
+        button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (upgrade.paidInFood) R.drawable.ic_food else R.drawable.ic_scrap, 0, 0, 0
+        )
         button.setOnClickListener { onBuy(upgrade) }
         return row
     }

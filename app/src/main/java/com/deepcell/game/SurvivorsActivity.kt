@@ -29,9 +29,9 @@ class SurvivorsActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_BUNKER_NAME = "bunker_name"
-        /** Food for the next recruit: 15 for the first, then x1.6 for every survivor after that. */
-        private const val RECRUIT_BASE = 15
-        private const val RECRUIT_GROWTH = 1.6
+        /** Food for the next recruit: 25 for the first, then x1.9 for every survivor after that. */
+        const val RECRUIT_BASE = 25
+        private const val RECRUIT_GROWTH = 1.9
 
         fun recruitCost(survivorCount: Int): Int =
             Math.round(RECRUIT_BASE * Math.pow(RECRUIT_GROWTH, (survivorCount - 1).coerceAtLeast(0).toDouble())).toInt()

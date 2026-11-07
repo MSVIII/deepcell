@@ -174,15 +174,13 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="84dp" />
 
-        <!-- Boss health: shown while a Command Drone is in the sky. -->
+        <!-- Boss health: top-right, level with the hatch label, while a Command Drone is up. -->
         <LinearLayout
             android:id="@+id/bossPanel"
-            android:layout_width="match_parent"
+            android:layout_width="156dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="68dp"
-            android:layout_marginEnd="16dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
             android:background="@drawable/np_label"
             android:orientation="vertical"
             android:visibility="gone">
@@ -193,15 +191,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_skull"
-                android:drawablePadding="6dp"
+                android:drawablePadding="4dp"
                 android:gravity="center_vertical"
-                android:textSize="13sp" />
+                android:maxLines="1"
+                android:textSize="12sp" />
 
             <ProgressBar
                 android:id="@+id/bossBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="9dp"
+                android:layout_height="7dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="2dp"
                 android:progressDrawable="@drawable/progress_boss" />

@@ -35,7 +35,7 @@ The art style is stylized 3D rendered to images: dark, lamp-lit rooms, procedura
 ## Resources
 
 - **Scrap**: earned from killed enemies and from Scrap Dig. Pays for upgrades and repairs.
-- **Food**: earned from Mushroom Farm. Pays for recruiting survivors.
+- **Food**: earned from Mushroom Farm. Pays for recruiting survivors and the food upgrades, and every survivor eats 1 food every 40 s (also offline). At 0 food workers and guards stop until there is food again.
 
 No other resources.
 
@@ -47,7 +47,7 @@ Each survivor has one job:
 - **Scrap Dig** or **Mushroom Farm**: fills that room by themselves (1 progress per second each).
 - **Collector**: walks into each room in turn and brings its storage up; more Collectors walk faster. With a Collector, offline output is collected too.
 
-Survivors are never killed. A new game starts with one survivor on the Roof and 15 food. Recruiting costs 15 food for the first recruit and x1.6 for each survivor already in the bunker; recruits get a generated name and start in Scrap Dig. Rooms show their real crew size and work per second; the roof shows "+N" for guards beyond the four drawn. Tap a survivor in the Survivors screen to open the job picker.
+Survivors are never killed. A new game starts with one survivor on the Roof and 40 food. Recruiting costs 25 food for the first recruit and x1.9 for each survivor already in the bunker; recruits get a generated name and start in Scrap Dig. Rooms show their real crew size and work per second; the roof shows "+N" for guards beyond the four drawn. Tap a survivor in the Survivors screen to open the job picker.
 
 ## Tutorial
 
@@ -98,17 +98,19 @@ From `assets/upgrades.json`. Price of the next level = baseCost × costGrowth^le
 
 | Tab | Upgrade | Effect | Base cost | Growth | Max |
 |---|---|---|---|---|---|
-| Defense | Sharpened Rounds | +1 tap damage | 10 | 1.75 | 10 |
-| Defense | Hatch Plating | +20 max hatch health | 15 | 1.8 | 10 |
-| Defense | Guard Training | guards shoot 15% faster | 30 | 1.9 | 6 |
-| Supplies | Better Shovels | +1 dig progress per tap | 8 | 1.65 | 10 |
-| Supplies | Spore Trays | +1 farm progress per tap | 8 | 1.65 | 10 |
-| Supplies | Storage Racks | +25 storage per room | 20 | 1.9 | 8 |
-| Supplies | Work Shifts | each worker +1 work per second | 60 | 2.4 | 4 |
-| Automation | Auto-Turret | auto shot each second, damage = level | 40 | 2.2 | 5 |
-| Automation | Drill Rig | fills Scrap Dig, speed = level, works offline | 50 | 2.2 | 5 |
-| Automation | Sprinkler | fills Mushroom Farm, speed = level, works offline | 50 | 2.2 | 5 |
-| Automation | Repair Arm | +level hatch health per second | 70 | 2.3 | 5 |
+| Defense | Sharpened Rounds | +1 tap damage | 20 scrap | 1.9 | 10 |
+| Defense | Hatch Plating | +20 max hatch health | 30 scrap | 1.9 | 10 |
+| Defense | Guard Training | guards shoot 15% faster | 40 food | 2.0 | 6 |
+| Supplies | Better Shovels | +1 dig progress per tap | 25 scrap | 2.0 | 5 |
+| Supplies | Spore Trays | +1 farm progress per tap | 25 scrap | 2.0 | 5 |
+| Supplies | Storage Racks | +25 storage per room | 40 scrap | 2.0 | 8 |
+| Supplies | Work Shifts | each worker +1 work per second | 80 food | 2.5 | 4 |
+| Automation | Auto-Turret | auto shot each second, damage = level | 100 scrap | 2.4 | 5 |
+| Automation | Drill Rig | fills Scrap Dig, speed = level, works offline | 120 scrap | 2.4 | 5 |
+| Automation | Sprinkler | fills Mushroom Farm, speed = level, works offline | 120 scrap | 2.4 | 5 |
+| Automation | Repair Arm | +level hatch health per second | 150 scrap | 2.5 | 5 |
+
+A manual tap finishes at most the current bar, however high the tool level.
 
 ## Offline earnings
 

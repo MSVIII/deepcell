@@ -30,7 +30,8 @@ object JsonLoader {
                     description = o.getString("description"),
                     baseCost = o.getInt("baseCost"),
                     costGrowth = o.getDouble("costGrowth"),
-                    maxLevel = o.getInt("maxLevel")
+                    maxLevel = o.getInt("maxLevel"),
+                    currency = o.optString("currency", Upgrade.CURRENCY_SCRAP)
                 )
             )
         }

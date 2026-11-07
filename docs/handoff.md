@@ -1,6 +1,6 @@
 # Handoff
 
-Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (tutorial highlight, harder progression, new upgrades, boss bar). Read with `AGENTS.md`, `docs/design.md` and `docs/roadmap.md`.
+Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (economy: upkeep, food prices, tap cap, dearer everything). Read with `AGENTS.md`, `docs/design.md` and `docs/roadmap.md`.
 
 ## State
 
@@ -49,7 +49,7 @@ Look rules that came from the user's feedback:
 - The Blender MCP addon was one protocol version behind (works; update with `uvx mcp-for-blender install-addon`). The asset libraries and 3D generators are off; all models are code-built.
 - Windows / Git Bash: run adb with `-s emulator-5554` (the user's Pixel 7 is also connected over wireless debugging). Use `MSYS_NO_PATHCONV=1` for `adb shell` paths. Long heredocs in Bash sometimes fail; write a script file and run it instead.
 - Emulator AVD: `Medium_Phone` (API 37). `svc power stayon true` keeps it awake for screenshots. It is started with `-no-snapshot-save`, so a restart throws away app data (the save) made since the snapshot. Don't fire many adb commands in parallel or screenshot in a tight loop: it stalled System UI and killed the adb server once.
-- To test later game states on the emulator, copy the save out with `adb exec-out run-as com.deepcell.game cat databases/deepcell.db`, edit it with Python's sqlite3, and pipe it back with `run-as ... sh -c 'cat > databases/deepcell.db'` while the app is stopped. Tapping moving drones from a script does not work reliably.
+- To test later game states on the emulator, stop the app, copy the save to `/data/local/tmp` with `run-as ... cp`, `adb pull` it, edit it with Python's sqlite3, `adb push` it back and `run-as ... sh -c 'cat /data/local/tmp/dc.db > databases/deepcell.db'`. Don't pipe the file through `adb shell` stdin: that corrupted it once. Tapping moving drones from a script does not work reliably.
 - Turret frames share one centre (the gun's axis) so the gun ImageView rotates about its middle; `TURRET_X`, `DOME_Y` place it on the hatch dome.
 
 ## User preferences
@@ -67,6 +67,6 @@ Look rules that came from the user's feedback:
 - Characters have short loops only (work, idle, fire); no walking. Organic shapes (creatures, faces) are the weak spot of code-built models.
 - Sounds and music were generated without being listened to by the author; the user should judge them.
 - Difficulty curve (`waves.json` growth numbers, guard rate) checked only by a few minutes of emulator play: wave 7 to 9 already broke a lightly upgraded bunker.
-- Economy numbers (worker rate, storage size, Collector cost and speed) are first guesses; the user hasn't tuned them.
+- Economy numbers (prices, recruit growth x1.9, upkeep 1 food / 40 s, wave growth) were raised at the user's request ("too easy"); they still need play on the phone to tune.
 - Low-end mode was measured on the emulator only (forced Low), not on a real weak phone.
 - Mushroom Farm automation, Lift, more floors: see `docs/roadmap.md`.

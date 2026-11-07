@@ -5,7 +5,10 @@ import android.widget.ImageView
 // Plain Kotlin data classes (Module 3). Every game object lives here so
 // groupmates can find them in one place.
 
-/** One row of assets/upgrades.json. type is "defense", "supplies" or "automation". */
+/**
+ * One row of assets/upgrades.json. type is "defense", "supplies" or "automation"; currency is
+ * "scrap" (most upgrades) or "food".
+ */
 data class Upgrade(
     val id: String,
     val name: String,
@@ -13,9 +16,17 @@ data class Upgrade(
     val description: String,
     val baseCost: Int,
     val costGrowth: Double,
-    val maxLevel: Int
+    val maxLevel: Int,
+    val currency: String = CURRENCY_SCRAP
 ) {
-    /** Scrap price of the next level when the current level is [level]. */
+    val paidInFood: Boolean get() = currency == CURRENCY_FOOD
+
+    companion object {
+        const val CURRENCY_SCRAP = "scrap"
+        const val CURRENCY_FOOD = "food"
+    }
+
+    /** Price (in [currency]) of the next level when the current level is [level]. */
     fun costAt(level: Int): Int = Math.round(baseCost * Math.pow(costGrowth, level.toDouble())).toInt()
 }
 
