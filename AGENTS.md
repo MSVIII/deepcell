@@ -1,6 +1,6 @@
 # Deepcell: rules for AI agents
 
-This is a school group project for a Mobile Programming course. The professor allows only what the course modules covered. Read `docs/design.md` (the game) and `docs/module-map.md` (which module each piece of code uses) before changing anything.
+This is a school group project for a Mobile Programming course. The professor allows only what the course modules covered. Read `docs/handoff.md` (current state, art pipeline, gotchas), `docs/design.md` (the game) and `docs/module-map.md` (which module each piece of code uses) before changing anything.
 
 ## Allowed
 
@@ -45,5 +45,6 @@ Update these whenever the code changes:
 - `docs/roadmap.md`: what is done and what is next
 - `docs/decisions.md`: why things are the way they are
 - `docs/testing.md`: what was built and tested, with dates. Say plainly what was not tested.
+- `docs/handoff.md`: current state and gotchas for whoever works next
 
 Run `gradlew assembleDebug` after code changes and record the result in `docs/testing.md`. Don't claim something was tested on a device unless it was.
