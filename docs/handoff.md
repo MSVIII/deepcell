@@ -11,7 +11,7 @@ Where Deepcell stands and what the next person (or agent) needs to know. Last up
 - Economy: rooms produce into storage; tapping collects; the Collector (machine) walks the rooms and collects. See `docs/decisions.md` (2026-11-07 storage entry).
 - Performance: images in `drawable-xxhdpi/xhdpi/hdpi` (not nodpi), `FloorAdapter` ViewHolder + `refresh()`, Detail setting (`ui/Quality.kt`). Measure with `adb shell dumpsys gfxinfo com.deepcell.game` (reset, play 20 s, read percentiles) and `dumpsys meminfo`.
 - Title screen: `ui/TitleSlideshow.kt` + `ui/TitleAmbience.kt` (dust, drones) pans three camera shots and dips through pre-blurred copies between them. First try; the user was unsure about the idea and hasn't judged it yet.
-- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`) → animation, effects, sound, easing (`d85c019`). No remote.
+- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`) → animation, effects, sound, easing (`d85c019`) → storage, Collector, main menu, performance (`6185994`). No remote.
 
 ## Art pipeline
 
