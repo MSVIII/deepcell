@@ -9,7 +9,7 @@ Where Deepcell stands and what the next person (or agent) needs to know. Last up
 - Font: Barlow Condensed (`res/font/barlow.xml`, SIL OFL licence in `docs/licenses/`).
 - Animation: survivors, guards and enemies are rendered frame loops (`AnimationDrawable`), effects are rendered flipbooks (`ui/Fx.kt` plays both). Sounds are synthesised (`tools/audio/gen_sfx.py`) and played by `ui/Sfx.kt` (SoundPool).
 - Title screen: `ui/TitleSlideshow.kt` pans three camera shots and dips through pre-blurred copies between them. First try; the user was unsure about the idea and hasn't judged it yet.
-- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`). No remote.
+- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`) → animation, effects, sound, easing (`d85c019`). No remote.
 
 ## Art pipeline
 
