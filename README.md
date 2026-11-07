@@ -38,6 +38,10 @@ A solar storm woke up an old automated air-defense network. Its drones, and muta
 - **Game feel**: rendered frame animations, eased movement, explosions and sparks, synthesised sound effects and three original music tracks (menu, gameplay, boss).
 - **Runs on weak phones**: a Detail setting (Auto picks Low on low-memory phones) and images in three density sizes.
 
+## Download
+
+Get the latest APK from **[Releases](https://github.com/Yauren/deepcell/releases/latest)** and open it on an Android phone (Android 7.0 or newer). Your phone will ask you to allow installing apps from your browser or file manager the first time.
+
 ## How to play
 
 <img src="docs/images/tutorial.png" width="220" align="right" alt="Tutorial step">

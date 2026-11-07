@@ -15,8 +15,8 @@ repository; every fork started from the tag `fork-base`. The forks are:
 
 1. Read AGENTS.md, README.md, FORKING.md, docs/merging.md and docs/handoff.md.
 2. Add each fork as a git remote and fetch it. For each fork, read its
-   docs/forks/<username>.md, then review `git log fork-base..<remote>/master` and
-   `git diff fork-base <remote>/master`. Build each fork and note what works.
+   docs/forks/<username>.md, then review `git log fork-base..<remote>/main` and
+   `git diff fork-base <remote>/main`. Build each fork and note what works.
 3. Write docs/merge-plan.md: a table of every feature, balance change, database change
    and asset change across all forks, where forks overlap or conflict, and a proposed
    choice for each (keep, combine, or drop, with the reason). Stop and show me the plan
