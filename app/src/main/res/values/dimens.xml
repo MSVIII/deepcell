@@ -2,6 +2,6 @@
 <resources>
     <dimen name="shaft_width">56dp</dimen>
     <dimen name="room_height">140dp</dimen>
-    <dimen name="bunker_width">220dp</dimen>
-    <dimen name="bunker_height">110dp</dimen>
+    <dimen name="bunker_width">240dp</dimen>
+    <dimen name="bunker_height">120dp</dimen>
 </resources>

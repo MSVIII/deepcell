@@ -2,6 +2,14 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: Blender art rework
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 33 warnings (none new from the art).
+- Installed on the `Medium_Phone` emulator (API 37). Title screen checked by screenshot: rendered surface and bunker, slate panel, key-chip buttons.
+- Game screen checked from a screenshot of the emulator: HUD with rendered icons and wave pill, surface with bunker and roof guard, scout drone falling, Scrap Dig and Mushroom Farm renders with worker, payout labels, round tabs.
+- Installed on the user's Pixel 7 over wireless debugging at the user's request, and launched. Not tested further there.
+- Not checked: the upgrade sheet, Survivors and Settings screens in the new style, the Drill Rig room image, the boss and bomber sprites in play.
+
 ## 2026-11-07: renamed to Deepcell
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL** with package `com.deepcell.game`.

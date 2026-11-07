@@ -320,10 +320,10 @@ class GameActivity : AppCompatActivity() {
         val view = ImageView(this)
         view.setImageResource(
             when (type.id) {
-                "shrike" -> R.drawable.ic_shrike
-                "bomber" -> R.drawable.ic_bomber
-                "boss" -> R.drawable.ic_boss
-                else -> R.drawable.ic_scout
+                "shrike" -> R.drawable.enemy_shrike
+                "bomber" -> R.drawable.enemy_bomber
+                "boss" -> R.drawable.enemy_boss
+                else -> R.drawable.enemy_scout
             }
         )
         view.contentDescription = type.name
@@ -502,11 +502,14 @@ class GameActivity : AppCompatActivity() {
         val guards = Math.min(survivors.count { it.job == Survivor.JOB_ROOF }, 4)
         repeat(guards) {
             val figure = ImageView(this)
-            figure.setImageResource(R.drawable.ic_survivor_guard)
-            val params = LinearLayout.LayoutParams((18 * density).toInt(), (28 * density).toInt())
+            figure.setImageResource(R.drawable.survivor_guard)
+            val params = LinearLayout.LayoutParams((24 * density).toInt(), (36 * density).toInt())
             params.marginStart = (3 * density).toInt()
             params.marginEnd = (3 * density).toInt()
             figure.layoutParams = params
+            val sway = AnimationUtils.loadAnimation(this, R.anim.idle_sway)
+            sway.startOffset = it * 300L
+            figure.startAnimation(sway)
             roofCrew.addView(figure)
         }
     }

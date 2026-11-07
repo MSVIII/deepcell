@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Concrete slab above and below each room. -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item><shape><solid android:color="@color/slab" /></shape></item>
-    <item android:top="6dp" android:bottom="4dp"><shape><solid android:color="@android:color/transparent" /></shape></item>
-</layer-list>

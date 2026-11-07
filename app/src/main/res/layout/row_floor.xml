@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    One underground room, drawn as a cutaway: lift shaft with floor number on the left,
-    the room on the right. Tap anywhere in the room to work it.
+    One underground room: lift shaft with floor number on the left, the rendered room on the
+    right. Tap anywhere in the room to work it.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -9,131 +9,111 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal">
 
-    <!-- Lift shaft (rails come from the list background). -->
+    <!-- Lift shaft segment. -->
     <FrameLayout
         android:layout_width="@dimen/shaft_width"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/shaft" />
+
         <TextView
             android:id="@+id/floorNumber"
-            android:layout_width="36dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/bg_plaque"
-            android:fontFamily="monospace"
+            android:background="@drawable/np_plaque"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="center"
-            android:paddingBottom="2dp"
             android:textColor="@color/text_on_amber"
             android:textSize="13sp"
             android:textStyle="bold" />
     </FrameLayout>
 
-    <!-- The room. Concrete slab above and below comes from bg_room_frame. -->
+    <!-- The room. -->
     <FrameLayout
         android:id="@+id/room"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/bg_room_frame"
         android:clickable="true"
-        android:focusable="true"
-        android:paddingTop="6dp"
-        android:paddingBottom="4dp">
+        android:focusable="true">
 
         <ImageView
-            android:id="@+id/roomWall"
+            android:id="@+id/roomArt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:importantForAccessibility="no"
-            android:scaleType="fitXY" />
+            android:scaleType="centerCrop" />
 
-        <!-- Room prop: scrap heap or mushroom trays. -->
-        <ImageView
-            android:id="@+id/roomProp"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            android:adjustViewBounds="true"
-            android:importantForAccessibility="no" />
+        <!-- Warm lamp light that breathes slowly. -->
+        <View
+            android:id="@+id/roomGlow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_lamp_glow" />
 
-        <!-- Machine shown once the room is automated (Drill Rig). -->
-        <ImageView
-            android:id="@+id/roomMachine"
-            android:layout_width="48dp"
-            android:layout_height="64dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="10dp"
-            android:importantForAccessibility="no"
-            android:visibility="gone" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_room_shade" />
 
         <!-- Survivors working here are added in code. -->
         <LinearLayout
             android:id="@+id/roomWorkers"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="40dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="11dp"
             android:gravity="bottom"
             android:orientation="horizontal" />
 
         <!-- Room name. -->
         <TextView
             android:id="@+id/roomName"
+            style="@style/SceneLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_label"
-            android:fontFamily="monospace"
-            android:paddingStart="6dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="6dp"
-            android:paddingBottom="2dp"
-            android:textColor="@color/text_main"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp" />
 
         <!-- Payout per full bar. -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_label"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/np_label"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="6dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="6dp"
-            android:paddingBottom="2dp">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/roomGear"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginEnd="6dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginEnd="5dp"
                 android:contentDescription="@string/automated"
                 android:src="@drawable/ic_gear"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/roomYield"
+                style="@style/SceneLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:textColor="@color/text_main"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textSize="13sp" />
 
             <ImageView
                 android:id="@+id/roomYieldIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_marginStart="3dp"
                 android:importantForAccessibility="no" />
         </LinearLayout>
@@ -144,12 +124,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="monospace"
+            android:fontFamily="sans-serif-condensed"
             android:shadowColor="#FF000000"
             android:shadowDy="2"
-            android:shadowRadius="3"
+            android:shadowRadius="4"
             android:textColor="@color/amber"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="invisible" />
 
@@ -159,8 +139,8 @@
             android:layout_width="match_parent"
             android:layout_height="6dp"
             android:layout_gravity="bottom"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="14dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginBottom="3dp"
             android:progressDrawable="@drawable/progress_floor" />
     </FrameLayout>

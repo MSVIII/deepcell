@@ -30,7 +30,7 @@ Top to bottom:
 3. Underground: a side-on cutaway of the bunker. A lift shaft runs down the left side with floor plates (B1, B2). Each room shows its wall, props, the survivors working there, its payout (for example +5 scrap), and a progress bar. Tap the room itself to work it. Automated rooms show their machine and a spinning gear. Earth continues below the deepest room.
 4. Bottom tabs: Defense, Supplies, Automation open an upgrade sheet over the rooms (tap the tab again or ✕ to close). Survivors opens the Survivors screen.
 
-The art style is flat vector: soot, concrete, rust, sodium-lamp amber, toxic green. Interface text is kept to names and numbers.
+The art style is stylized 3D rendered to images: dark, lamp-lit rooms, procedural rust and grime, banded (toon) lighting, dark outlines and a cool rim light. Palette: soot, concrete, rust, sodium-lamp amber, toxic green, cold slate for the interface. Interface text is kept to names and numbers.
 
 ## Resources
 

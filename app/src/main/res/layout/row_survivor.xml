@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/survivorFigure"
-        android:layout_width="28dp"
-        android:layout_height="44dp"
+        android:layout_width="32dp"
+        android:layout_height="48dp"
         android:importantForAccessibility="no" />
 
     <TextView
@@ -28,9 +28,9 @@
         android:id="@+id/survivorJob"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_chip"
+        android:background="@drawable/np_label"
         android:drawablePadding="6dp"
-        android:fontFamily="monospace"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingTop="4dp"

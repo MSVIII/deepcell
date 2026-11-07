@@ -7,7 +7,8 @@
 
     <View
         android:layout_width="@dimen/shaft_width"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/shaft" />
 
     <ImageView
         android:layout_width="0dp"

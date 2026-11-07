@@ -25,12 +25,19 @@
 - New icons, emblem/logo, launcher icon, monochrome notification icon, button and panel styles.
 - Title, Survivors and Settings screens restyled; extra text removed.
 
+## Done in the Blender art rework (2026-11-07)
+
+- Rooms, lift shaft, surface backdrop, bunker, survivors, enemies and the scrap/food icons are stylized 3D renders made in Blender from code, exported as WebP.
+- Scrap Dig has a second render with the Drill Rig built in, shown once the room is automated.
+- Interface restyled: slate 9-patch panels with cut corners, olive key-chip buttons, round tab slots with a green ring, condensed bold text.
+- Lamp light over each room breathes; roof guards sway.
+
 ## Known gaps
 
 - **Sound**: the Sound switch is saved, but the game has no sound effects yet. Whoever adds sounds must check `GameDatabase.SETTING_SOUND`.
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.
-- **Art**: all art is code-drawn vectors. It is a consistent style, but a groupmate may replace it with hand-drawn art (keep the file names).
-- Not yet tested on a real phone (see `docs/testing.md`).
+- **Art**: scenes, characters and enemies are Blender renders built from code (`tools/blender/`); icons are still code-drawn vectors. Characters are simple and not animated beyond tweens.
+- Only briefly run on a real phone (see `docs/testing.md`).
 
 ## Next (suggested, not agreed)
 

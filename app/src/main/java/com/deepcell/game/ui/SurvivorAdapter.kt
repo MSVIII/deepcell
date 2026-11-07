@@ -30,9 +30,9 @@ class SurvivorAdapter(
         val survivor = survivors[position]
 
         val figure = when (survivor.job) {
-            Survivor.JOB_ROOF -> R.drawable.ic_survivor_guard
-            Survivor.JOB_FARM -> R.drawable.ic_survivor_farmer
-            else -> R.drawable.ic_survivor_digger
+            Survivor.JOB_ROOF -> R.drawable.survivor_guard
+            Survivor.JOB_FARM -> R.drawable.survivor_farmer
+            else -> R.drawable.survivor_digger
         }
         val jobIcon = when (survivor.job) {
             Survivor.JOB_ROOF -> R.drawable.ic_tab_defense

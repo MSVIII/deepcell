@@ -16,7 +16,7 @@ import com.deepcell.game.model.Floor
 
 /**
  * Shows the underground rooms in a ListView (Module 6). Each row is a cutaway room:
- * floor number in the lift shaft, room wall and props, the survivors working there,
+ * floor number in the lift shaft, the rendered room, the survivors working there,
  * and a progress bar. Tapping the room works it.
  *
  * [workersIn] returns how many survivors work in a room, so the row can draw them.
@@ -43,13 +43,23 @@ class FloorAdapter(
 
         row.findViewById<TextView>(R.id.floorNumber).text = context.getString(R.string.floor_number, position + 1)
         row.findViewById<TextView>(R.id.roomName).text = floor.name
-        row.findViewById<ImageView>(R.id.roomWall)
-            .setImageResource(if (isScrap) R.drawable.room_dig_wall else R.drawable.room_farm_wall)
-        row.findViewById<ImageView>(R.id.roomProp)
-            .setImageResource(if (isScrap) R.drawable.prop_scrap_heap else R.drawable.prop_mushroom_beds)
+        row.findViewById<ImageView>(R.id.roomArt).setImageResource(
+            when {
+                !isScrap -> R.drawable.room_farm
+                floor.automated -> R.drawable.room_dig_auto   // same room with the Drill Rig in it
+                else -> R.drawable.room_dig
+            }
+        )
+        // Lamp light breathes; rows start at different points so they don't pulse together.
+        val glow = row.findViewById<View>(R.id.roomGlow)
+        if (glow.animation == null) {
+            val flicker = AnimationUtils.loadAnimation(context, R.anim.lamp_flicker)
+            flicker.startOffset = position * 700L
+            glow.startAnimation(flicker)
+        }
         row.findViewById<TextView>(R.id.roomYield).text = context.getString(R.string.plus_amount, floor.yieldPerFill)
         row.findViewById<ImageView>(R.id.roomYieldIcon)
-            .setImageResource(if (isScrap) R.drawable.ic_scrap else R.drawable.ic_food)
+            .setImageResource(if (isScrap) R.drawable.icon_scrap else R.drawable.icon_food)
 
         val bar = row.findViewById<ProgressBar>(R.id.floorProgress)
         bar.max = floor.maxProgress
@@ -63,27 +73,23 @@ class FloorAdapter(
             val density = context.resources.displayMetrics.density
             repeat(count) {
                 val figure = ImageView(context)
-                figure.setImageResource(if (isScrap) R.drawable.ic_survivor_digger else R.drawable.ic_survivor_farmer)
-                val params = LinearLayout.LayoutParams((22 * density).toInt(), (35 * density).toInt())
-                params.marginEnd = (4 * density).toInt()
+                figure.setImageResource(if (isScrap) R.drawable.survivor_digger else R.drawable.survivor_farmer)
+                val params = LinearLayout.LayoutParams((26 * density).toInt(), (39 * density).toInt())
+                params.marginEnd = (2 * density).toInt()
                 figure.layoutParams = params
                 workers.addView(figure)
             }
         }
 
-        // Automation: machine in the room and a spinning gear on the payout label.
-        val machine = row.findViewById<ImageView>(R.id.roomMachine)
+        // Automation: the room art shows the machine; the payout label gets a spinning gear.
         val gear = row.findViewById<ImageView>(R.id.roomGear)
         if (floor.automated) {
-            machine.setImageResource(R.drawable.prop_drill_rig)
-            machine.visibility = View.VISIBLE
             gear.visibility = View.VISIBLE
             // Only start the animation once, otherwise every refresh restarts it.
             if (gear.animation == null) {
                 gear.startAnimation(AnimationUtils.loadAnimation(context, R.anim.gear_spin))
             }
         } else {
-            machine.visibility = View.GONE
             gear.clearAnimation()
             gear.visibility = View.GONE
         }

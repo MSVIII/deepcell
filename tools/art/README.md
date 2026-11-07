@@ -1,15 +1,15 @@
 # Art generators
 
-All Deepcell art is vector drawables written by these two scripts. They are tools for the team, not part of the app: they only write XML files in `app/src/main/res`. Nothing here is built into the APK.
+The vector icons and interface drawables are written by these two scripts. Scenes, characters and enemies are Blender renders: see [`../blender/`](../blender/README.md). They are tools for the team, not part of the app: they only write XML files in `app/src/main/res`. Nothing here is built into the APK.
 
 | Script | Writes |
 |---|---|
-| `gen_art.py` | `res/drawable/`: bunker, skyline, rooms, props, enemies, survivors, icons, logo, launcher and notification icons |
-| `gen_ui.py` | `res/drawable/` shapes (buttons, panels, tabs, progress bars, lift shaft), `res/anim/` (`work_bob`, `float_up`, `antenna_blink`), `res/values/dimens.xml` |
+| `gen_art.py` | `res/drawable/`: icons, logo, launcher and notification icons, earth footer |
+| `gen_ui.py` | `res/drawable-xxhdpi/` 9-patch panels and key-chip buttons, `res/drawable/` selectors and shapes (buttons, tabs, progress bars, overlays), `res/anim/` (`work_bob`, `float_up`, `antenna_blink`, `lamp_flicker`, `idle_sway`), `res/values/dimens.xml` |
 
 ## Use
 
-Requires Python 3. From the project folder:
+Requires Python 3 (and Pillow for `gen_ui.py`). From the project folder:
 
 ```bash
 python tools/art/gen_art.py

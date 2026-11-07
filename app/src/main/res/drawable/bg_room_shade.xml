@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Soft darkening at the top of each room so the labels read. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:angle="270" android:startColor="#99000000" android:centerColor="#00000000" android:endColor="#00000000" />
+</shape>

@@ -41,17 +41,17 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/bg_chip"
+            android:background="@drawable/np_label"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="6dp"
             android:paddingEnd="12dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:contentDescription="@string/food"
-                android:src="@drawable/ic_food" />
+                android:src="@drawable/icon_food" />
 
             <TextView
                 android:id="@+id/survivorsFood"
@@ -68,15 +68,15 @@
         android:layout_height="0dp"
         android:layout_margin="12dp"
         android:layout_weight="1"
-        android:background="@drawable/bg_panel"
-        android:divider="@color/panel_line"
+        android:background="@drawable/np_panel"
+        android:divider="#338FA3B0"
         android:dividerHeight="1dp"
         android:padding="1dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/soot"
+        android:background="@drawable/bg_tabbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="12dp">
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:autofillHints="name"
-            android:background="@drawable/bg_field"
+            android:background="@drawable/np_field"
             android:hint="@string/recruit_name_hint"
             android:inputType="textCapWords"
             android:maxLength="16"
