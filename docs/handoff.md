@@ -18,7 +18,7 @@ Where Deepcell stands and what the next person (or agent) needs to know. Last up
 ## Art pipeline
 
 1. Edit a script in `tools/blender/` (`room_dig.py`, `room_farm.py`, `shaft.py`, `surface.py`, `bunker.py`, `sprites.py`, `anim_sprites.py`, `vfx.py`, `icons.py`, `logo.py`, `title_shots.py`; shared helpers in `common.py` and `room_shell.py`).
-2. Run it in Blender with `BL_DIR` set to the folder (see `tools/blender/README.md`). With the Blender MCP connector: `execute_blender_code` with `BL_DIR = r"C:/Users/Acer/Desktop/Deepcell/tools/blender"` then `exec(open(BL_DIR + "/room_dig.py").read())`.
+2. Run it in Blender with `BL_DIR` set to the folder (see `tools/blender/README.md`). With the Blender MCP connector: `execute_blender_code` with `BL_DIR = r"<path to your clone>/tools/blender"` then `exec(open(BL_DIR + "/room_dig.py").read())`.
 3. `python tools/blender/export_to_app.py` (Pillow, about 15 s). Writes each image at three densities. It also adds survivor contact shadows, puts the bunker on the surface title shot, makes the blurred title copies, and writes the frame sequences plus their `animation-list` XML (`anim_*.xml`, `fx_*.xml`, frame timings live in its `ANIMS` table). `--frames` exports only the frames (the full export takes about two minutes).
 4. Sounds: `python tools/audio/gen_sfx.py` (numpy, ffmpeg) writes `res/raw/sfx_*.ogg`; music: `python tools/audio/gen_music.py` (numpy, scipy, ffmpeg, about 40 s) writes `res/raw/music_*.ogg`.
 5. Interface drawables and tween animations: `python tools/art/gen_ui.py`; vectors: `python tools/art/gen_art.py`. Both overwrite their files, so edit the scripts, not the outputs.
