@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mushroom Farm room wall. Stretched to fit the row. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="110dp"
+    android:viewportWidth="300"
+    android:viewportHeight="110">
+    <path android:fillColor="#FF46423A" android:pathData="M0,0 h300 v110 h-300 Z" />
+    <path android:fillColor="#FF3A372F" android:pathData="M60,0 h1.5 v100 h-1.5 Z M120,0 h1.5 v100 h-1.5 Z M180,0 h1.5 v100 h-1.5 Z M240,0 h1.5 v100 h-1.5 Z M0,52 h300 v1.2 h-300 Z" />
+    <path android:fillColor="#FF6E6A62" android:pathData="M0,6 h300 v5 h-300 Z" />
+    <path android:fillColor="#FF5A5852" android:pathData="M30,4 h4 v9 h-4 Z M110,4 h4 v9 h-4 Z M190,4 h4 v9 h-4 Z M270,4 h4 v9 h-4 Z" />
+    <path android:fillColor="#14FFF3B0" android:pathData="M66,20 L124,20 L146,96 L44,96 Z M176,20 L234,20 L256,96 L154,96 Z" />
+    <path android:fillColor="#FFE3D07A" android:pathData="M66,16 h58 v4 h-58 Z M176,16 h58 v4 h-58 Z" />
+    <path android:fillColor="#FF2A2620" android:pathData="M0,100 h300 v10 h-300 Z" />
+</vector>

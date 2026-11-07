@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Better Shovels. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path android:fillColor="#FF6B4A32" android:pathData="M22,3 L25,6 L14,17 L11,14 Z" />
+    <path android:fillColor="#FF8C8A84" android:pathData="M11,14 L14,17 L10,26 C8,28 4,28 3,27 C2,26 2,22 4,20 Z" />
+    <path android:fillColor="#FFB8B4AA" android:pathData="M10,16 L12,18 L8.5,24 L6,22.5 Z" />
+    <path android:fillColor="#FF4A3324" android:pathData="M22,1 h7 v3 h-7 Z" />
+</vector>

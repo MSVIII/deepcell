@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Boss wave marker. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="#FFEDE3D0" android:pathData="M4,11 C4,5 8,2 12,2 C16,2 20,5 20,11 C20,14 18.5,15.5 17,16 V20 H7 V16 C5.5,15.5 4,14 4,11 Z" />
+    <path android:fillColor="#FF15130F" android:pathData="M6.3,11 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0 Z M13.3,11 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0 Z M12,13 L13.4,15.6 L10.6,15.6 Z M9.4,18 h1.2 v2 h-1.2 Z M13.4,18 h1.2 v2 h-1.2 Z" />
+</vector>

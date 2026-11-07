@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Main button: an amber metal plate with a darker lower edge. Presses down when tapped. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <layer-list>
+            <item android:top="0dp"><shape><solid android:color="#FF3E3C38" /><corners android:radius="6dp" /></shape></item>
+            <item android:top="0dp" android:bottom="4dp"><shape><solid android:color="@color/steel_dark" /><corners android:radius="6dp" /></shape></item>
+        </layer-list>
+    </item>
+    <item android:state_pressed="true">
+        <layer-list>
+            <item android:top="1dp"><shape><solid android:color="#FF6E4A14" /><corners android:radius="6dp" /></shape></item>
+            <item android:top="1dp" android:bottom="1dp"><shape><solid android:color="@color/amber_dark" /><corners android:radius="6dp" /></shape></item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:top="0dp"><shape><solid android:color="@color/amber_dark" /><corners android:radius="6dp" /></shape></item>
+            <item android:top="0dp" android:bottom="4dp"><shape><solid android:color="@color/amber" /><corners android:radius="6dp" /></shape></item>
+        </layer-list>
+    </item>
+</selector>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Spore Trays. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path android:fillColor="#FF6B4A32" android:pathData="M3,22 h26 v7 h-26 Z" />
+    <path android:fillColor="#FF2E2318" android:pathData="M4,20 h24 v3 h-24 Z" />
+    <path android:fillColor="#FF8FB34A" android:pathData="M9,20 C9,15 15,13 15,13 C15,13 15,19 9,20 Z M16,20 C16,13 24,11 24,11 C24,11 23,18 16,20 Z" />
+    <path android:fillColor="#FF5E7A2E" android:pathData="M15.4,12 h1.2 v9 h-1.2 Z" />
+    <path android:fillColor="#FFEDE3D0" android:pathData="M6.5,9 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 Z M10.8,5 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0 Z M18.6,6 a1.4,1.4 0 1,0 2.8,0 a1.4,1.4 0 1,0 -2.8,0 Z" />
+</vector>

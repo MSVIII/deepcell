@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Food resource icon (mushroom). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="#FF5E7A2E" android:pathData="M2,12.5 C2,6 7,2.5 12,2.5 C17,2.5 22,6 22,12.5 Z" />
+    <path android:fillColor="#FF8FB34A" android:pathData="M3,11.5 C3,6.5 7.5,3.5 12,3.5 C16.5,3.5 21,6.5 21,11.5 Z" />
+    <path android:fillColor="#FFC9E07A" android:pathData="M6.4,7.5 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 Z M13.3,6 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0 Z M15.5,9.5 a1,1 0 1,0 2,0 a1,1 0 1,0 -2,0 Z" />
+    <path android:fillColor="#FFEDE3D0" android:pathData="M9,12 h6 l-0.8,8.5 h-4.4 Z" />
+    <path android:fillColor="#FFC9BFA8" android:pathData="M9.6,18 h4.8 l-0.2,2.5 h-4.4 Z" />
+</vector>

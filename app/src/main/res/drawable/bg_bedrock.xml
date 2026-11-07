@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Earth behind the rooms with the lift shaft running down the left side. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape><solid android:color="@color/earth" /></shape></item>
+    <item android:gravity="left|fill_vertical" android:width="@dimen/shaft_width">
+        <shape><solid android:color="@color/shaft" /></shape>
+    </item>
+    <item android:gravity="left|fill_vertical" android:left="10dp" android:width="3dp">
+        <shape><solid android:color="@color/steel_dark" /></shape>
+    </item>
+    <item android:gravity="left|fill_vertical" android:left="43dp" android:width="3dp">
+        <shape><solid android:color="@color/steel_dark" /></shape>
+    </item>
+</layer-list>

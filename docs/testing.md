@@ -2,6 +2,23 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: graphics and UI rework
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors (new warnings: large vector backgrounds, explained in `docs/decisions.md`).
+- Installed on the `Medium_Phone` emulator (API 37). **Not installed on a real phone.**
+
+| Check | Result |
+|---|---|
+| Title screen: emblem, title, field, buttons, bunker on the horizon | Pass (screenshot) |
+| Game screen: HUD chips, wave badge, bunker with roof guard, enemies falling and drifting to the bunker | Pass (screenshot) |
+| Rooms: B1/B2 plates, room art, worker figure, payout label, progress bar fills when the room is tapped | Pass (screenshot) |
+| Defense tab opens the upgrade sheet with icons, level bars, price buttons; tab highlighted | Pass (screenshot) |
+| Survivors screen: figures by job, job chips, food chip, recruit row | Pass (screenshot) |
+| Settings screen: card with Switch and Spinner, Share, Reset save card | Pass (screenshot) |
+| No crashes in `logcat -b crash` | Pass |
+
+Not checked after the rework: the "+N" popup animation (it plays too fast for screenshots), the Drill Rig machine art in the room, the tab-toggle close, the boss skull icon, the new notification icon, small screens.
+
 ## 2026-11-07: base app
 
 ### Build

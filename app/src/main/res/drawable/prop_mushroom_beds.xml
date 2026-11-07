@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mushroom trays in Mushroom Farm. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="50dp"
+    android:viewportWidth="200"
+    android:viewportHeight="50">
+    <path android:fillColor="#FFEDE3D0" android:pathData="M6.51,31 h2.97 v4 h-2.97 Z M22.86,31 h3.29 v4 h-3.29 Z M41.29,31 h2.63 v4 h-2.63 Z M57.38,31 h4.34 v4 h-4.34 Z M83.68,31 h4.03 v4 h-4.03 Z M105.36,31 h3.57 v4 h-3.57 Z M125.68,31 h2.85 v4 h-2.85 Z M141.65,31 h2.93 v4 h-2.93 Z M162.32,31 h4.16 v4 h-4.16 Z M187.82,31 h4.1 v4 h-4.1 Z" />
+    <path android:fillColor="#FF8FB34A" android:pathData="M2.06,31 a5.94,5.05 0 0,1 11.89,0 Z M17.92,31 a6.58,5.6 0 0,1 13.17,0 Z M37.34,31 a5.27,4.48 0 0,1 10.53,0 Z M50.88,31 a8.67,7.37 0 0,1 17.34,0 Z M77.63,31 a8.06,6.85 0 0,1 16.12,0 Z M100,31 a7.15,6.07 0 0,1 14.29,0 Z M121.41,31 a5.69,4.84 0 0,1 11.38,0 Z M137.26,31 a5.86,4.98 0 0,1 11.72,0 Z M156.08,31 a8.32,7.07 0 0,1 16.63,0 Z M181.67,31 a8.2,6.97 0 0,1 16.4,0 Z" />
+    <path android:fillColor="#FF2E2318" android:pathData="M2,34 h196 v5 h-196 Z" />
+    <path android:fillColor="#FF6B4A32" android:pathData="M0,38 h200 v12 h-200 Z" />
+    <path android:fillColor="#FF4A3324" android:pathData="M0,38 h200 v2 h-200 Z M48,38 h2 v12 h-2 Z M98,38 h2 v12 h-2 Z M148,38 h2 v12 h-2 Z" />
+</vector>

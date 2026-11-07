@@ -40,8 +40,9 @@ app/src/main/
     model/Models.kt        data classes: Upgrade, Floor, Enemy, EnemyType, Wave, Survivor, GameState
     data/GameDatabase.kt   SQLiteOpenHelper: the save file
     data/JsonLoader.kt     reads assets/upgrades.json and assets/waves.json
-    ui/FloorAdapter.kt     ListView rows for underground floors
+    ui/FloorAdapter.kt     ListView rows: cutaway rooms
     ui/UpgradeAdapter.kt   ListView rows for upgrades
+    ui/SurvivorAdapter.kt  ListView rows for survivors
     ui/Notifier.kt         notification channel + NotificationCompat
   assets/                  upgrades.json, waves.json (game balance)
   res/                     layouts, strings, colors, themes, drawables, anim

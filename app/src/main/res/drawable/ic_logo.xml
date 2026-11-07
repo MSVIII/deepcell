@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Burrow Nine emblem: a hatch wheel with a stenciled 9. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <path android:fillColor="#FF5A5852" android:pathData="M109.89,80.66 L80.66,109.89 L39.34,109.89 L10.11,80.66 L10.11,39.34 L39.34,10.11 L80.66,10.11 L109.89,39.34 Z" />
+    <path android:fillColor="#FF6E6A62" android:pathData="M106.19,79.13 L79.13,106.19 L40.87,106.19 L13.81,79.13 L13.81,40.87 L40.87,13.81 L79.13,13.81 L106.19,40.87 Z" />
+    <path android:fillColor="#FFB8B4AA" android:pathData="M103.6,60 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M90.13,92.53 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M57.6,106 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M25.07,92.53 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M11.6,60 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M25.07,27.47 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M57.6,14 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M90.13,27.47 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z" />
+    <path android:fillColor="#FFE3A23B" android:fillType="evenOdd" android:pathData="M22,60 a38,38 0 1,0 76,0 a38,38 0 1,0 -76,0 Z M28,60 a32,32 0 1,0 64,0 a32,32 0 1,0 -64,0 Z" />
+    <path android:fillColor="#FF2A2722" android:pathData="M28,60 a32,32 0 1,0 64,0 a32,32 0 1,0 -64,0 Z" />
+    <path android:fillColor="#FFE3A23B" android:fillType="evenOdd" android:pathData="M45,50 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0 Z M53,50 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 Z" />
+    <path android:fillColor="#FFE3A23B" android:pathData="M66.5,58 L75,52 L68,90 L59,90 Z" />
+</vector>

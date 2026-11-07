@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -67,13 +69,15 @@ class GameActivity : AppCompatActivity() {
 
     // ---- views ----
     private lateinit var sky: FrameLayout
-    private lateinit var hatch: ImageView
+    private lateinit var bunker: FrameLayout
+    private lateinit var roofCrew: LinearLayout
     private lateinit var hatchBar: ProgressBar
     private lateinit var hatchText: TextView
-    private lateinit var hudBunker: TextView
     private lateinit var hudScrap: TextView
     private lateinit var hudFood: TextView
     private lateinit var hudWave: TextView
+    private lateinit var hudBossIcon: ImageView
+    private lateinit var upgradeSheet: LinearLayout
     private lateinit var upgradeTitle: TextView
     private lateinit var tabButtons: List<ImageButton>
 
@@ -86,7 +90,8 @@ class GameActivity : AppCompatActivity() {
     private var state: GameState? = null
     private var survivors: List<Survivor> = emptyList()
     private var difficultyHp = 1.0
-    private var currentTab = GameState.TYPE_DEFENSE
+    /** Upgrade type shown in the sheet, or null when the sheet is closed. */
+    private var currentTab: String? = null
 
     private lateinit var digFloor: Floor
     private lateinit var farmFloor: Floor
@@ -120,24 +125,29 @@ class GameActivity : AppCompatActivity() {
         Notifier.createChannel(this)
 
         sky = findViewById(R.id.sky)
-        hatch = findViewById(R.id.hatch)
+        bunker = findViewById(R.id.bunker)
+        roofCrew = findViewById(R.id.roofCrew)
         hatchBar = findViewById(R.id.hatchBar)
         hatchText = findViewById(R.id.hatchText)
-        hudBunker = findViewById(R.id.hudBunker)
         hudScrap = findViewById(R.id.hudScrap)
         hudFood = findViewById(R.id.hudFood)
         hudWave = findViewById(R.id.hudWave)
+        hudBossIcon = findViewById(R.id.hudBossIcon)
+        upgradeSheet = findViewById(R.id.upgradeSheet)
         upgradeTitle = findViewById(R.id.upgradeTitle)
 
-        digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", getString(R.string.action_dig), 10, 5)
-        farmFloor = Floor("farm", getString(R.string.floor_farm), "food", getString(R.string.action_harvest), 10, 3)
-        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor)) { onFloorTapped(it) }
-        findViewById<ListView>(R.id.floorList).adapter = floorAdapter
+        digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", 10, 5)
+        farmFloor = Floor("farm", getString(R.string.floor_farm), "food", 10, 3)
+        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) }) { onFloorTapped(it) }
+        val floorList = findViewById<ListView>(R.id.floorList)
+        floorList.addFooterView(layoutInflater.inflate(R.layout.footer_bedrock, floorList, false), null, false)
+        floorList.adapter = floorAdapter
 
         upgradeAdapter = UpgradeAdapter(this, { state }) { buyUpgrade(it) }
         findViewById<ListView>(R.id.upgradeList).adapter = upgradeAdapter
+        findViewById<ImageButton>(R.id.upgradeClose).setOnClickListener { selectTab(null) }
 
-        hatch.setOnClickListener { repairHatch() }
+        bunker.setOnClickListener { repairHatch() }
 
         // Bottom bar: three upgrade tabs and the Survivors screen.
         val defense = findViewById<ImageButton>(R.id.tabDefense)
@@ -165,7 +175,7 @@ class GameActivity : AppCompatActivity() {
             val name = extras.getString(EXTRA_BUNKER_NAME) ?: getString(R.string.default_bunker_name)
             Toast.makeText(this, getString(R.string.welcome, name), Toast.LENGTH_SHORT).show()
         }
-        selectTab(GameState.TYPE_DEFENSE)
+        selectTab(null)
     }
 
     // ---------------- lifecycle (Module 5) ----------------
@@ -179,6 +189,7 @@ class GameActivity : AppCompatActivity() {
         }
         state = loaded
         survivors = db.getSurvivors()
+        showRoofCrew()
         difficultyHp = DIFFICULTY_HP[db.getSetting(GameDatabase.SETTING_DIFFICULTY, "1").toInt()]
 
         digFloor.progress = loaded.digProgress
@@ -249,6 +260,9 @@ class GameActivity : AppCompatActivity() {
         for (enemy in ArrayList(enemies)) {
             enemy.y += enemy.type.speedDp * pxPerDp * FRAME_MS / 1000f
             enemy.view.translationY = enemy.y
+            // Drift towards the bunker while falling.
+            val fallen = (enemy.y / sky.height).coerceIn(0f, 1f)
+            enemy.view.translationX = enemy.startX + (enemy.targetX - enemy.startX) * fallen
             if (enemy.y + enemy.view.height >= sky.height) {
                 removeEnemy(enemy)
                 damageHatch(enemy.type.damage)
@@ -276,7 +290,9 @@ class GameActivity : AppCompatActivity() {
         // Drill Rig: fills Scrap Dig by itself. Progress per second = its level.
         val drill = s.level(DRILL_RIG)
         if (drill > 0) {
-            s.scrap += digFloor.addProgress(drill) * digFloor.yieldPerFill
+            val earned = digFloor.addProgress(drill) * digFloor.yieldPerFill
+            s.scrap += earned
+            digFloor.pendingPopup = earned
             floorAdapter.notifyDataSetChanged()
             refreshHud()
         }
@@ -312,9 +328,13 @@ class GameActivity : AppCompatActivity() {
         )
         view.contentDescription = type.name
         view.layoutParams = FrameLayout.LayoutParams(sizePx, sizePx)
-        view.translationX = Random.nextInt(0, (sky.width - sizePx).coerceAtLeast(1)).toFloat()
+        val startX = Random.nextInt(0, (sky.width - sizePx).coerceAtLeast(1)).toFloat()
+        // Aim somewhere over the bunker roof.
+        val spread = bunker.width * 0.35f
+        val targetX = sky.width / 2f - sizePx / 2f + Random.nextFloat() * 2 * spread - spread
         val hp = Math.max(1, Math.round(type.hp * waveHpScale).toInt())
-        val enemy = Enemy(type, hp, -sizePx.toFloat(), view)
+        val enemy = Enemy(type, hp, -sizePx.toFloat(), startX, targetX, view)
+        view.translationX = startX
         view.translationY = enemy.y
         view.setOnClickListener { hitEnemy(enemy, tapDamage()) }
         sky.addView(view)
@@ -374,7 +394,7 @@ class GameActivity : AppCompatActivity() {
     private fun damageHatch(amount: Int) {
         val s = state ?: return
         s.hatchHp = (s.hatchHp - amount).coerceAtLeast(0)
-        hatch.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hatch_shake))
+        bunker.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hatch_shake))
         if (s.hatchHp == 0) onHatchBreached(s)
         refreshHud()
     }
@@ -416,9 +436,11 @@ class GameActivity : AppCompatActivity() {
         val s = state ?: return
         val isDig = floor === digFloor
         val tools = s.level(if (isDig) UP_DIG_TOOLS else UP_FARM_TOOLS)
-        val workers = survivors.count { it.job == if (isDig) Survivor.JOB_DIG else Survivor.JOB_FARM }
+        val workers = workersIn(floor)
         val fills = floor.addProgress(1 + tools + workers)
-        if (isDig) s.scrap += fills * floor.yieldPerFill else s.food += fills * floor.yieldPerFill
+        val earned = fills * floor.yieldPerFill
+        if (isDig) s.scrap += earned else s.food += earned
+        floor.pendingPopup = earned
         floorAdapter.notifyDataSetChanged()
         refreshHud()
         if (fills > 0) upgradeAdapter.notifyDataSetChanged()
@@ -447,17 +469,46 @@ class GameActivity : AppCompatActivity() {
         refreshAll()
     }
 
-    private fun selectTab(type: String) {
-        currentTab = type
+    /** Opens the upgrade sheet for a tab. Tapping the open tab again (or null) closes it. */
+    private fun selectTab(type: String?) {
+        currentTab = if (type == currentTab) null else type
+        val types = listOf(GameState.TYPE_DEFENSE, GameState.TYPE_SUPPLIES, GameState.TYPE_AUTOMATION)
+        tabButtons.forEachIndexed { i, button -> button.isSelected = types[i] == currentTab }
+        val open = currentTab
+        if (open == null) {
+            upgradeSheet.visibility = View.GONE
+            return
+        }
         val titles = mapOf(
             GameState.TYPE_DEFENSE to R.string.tab_defense,
             GameState.TYPE_SUPPLIES to R.string.tab_supplies,
             GameState.TYPE_AUTOMATION to R.string.tab_automation
         )
-        upgradeTitle.setText(titles[type] ?: R.string.tab_defense)
-        val types = listOf(GameState.TYPE_DEFENSE, GameState.TYPE_SUPPLIES, GameState.TYPE_AUTOMATION)
-        tabButtons.forEachIndexed { i, button -> button.alpha = if (types[i] == type) 1f else 0.45f }
-        upgradeAdapter.show(upgrades.filter { it.type == type })
+        upgradeTitle.setText(titles[open] ?: R.string.tab_defense)
+        upgradeAdapter.show(upgrades.filter { it.type == open })
+        upgradeSheet.visibility = View.VISIBLE
+    }
+
+    /** Survivors working in a room. They are drawn in the room and add +1 per tap each. */
+    private fun workersIn(floor: Floor): Int {
+        val job = if (floor === digFloor) Survivor.JOB_DIG else Survivor.JOB_FARM
+        return survivors.count { it.job == job }
+    }
+
+    /** One guard figure on the bunker roof per survivor with the Roof job, up to 4. */
+    private fun showRoofCrew() {
+        roofCrew.removeAllViews()
+        val density = resources.displayMetrics.density
+        val guards = Math.min(survivors.count { it.job == Survivor.JOB_ROOF }, 4)
+        repeat(guards) {
+            val figure = ImageView(this)
+            figure.setImageResource(R.drawable.ic_survivor_guard)
+            val params = LinearLayout.LayoutParams((18 * density).toInt(), (28 * density).toInt())
+            params.marginStart = (3 * density).toInt()
+            params.marginEnd = (3 * density).toInt()
+            figure.layoutParams = params
+            roofCrew.addView(figure)
+        }
     }
 
     // ---------------- HUD ----------------
@@ -470,13 +521,13 @@ class GameActivity : AppCompatActivity() {
 
     private fun refreshHud() {
         val s = state ?: return
-        hudBunker.text = s.bunkerName
-        hudScrap.text = getString(R.string.scrap_amount, s.scrap)
-        hudFood.text = getString(R.string.food_amount, s.food)
-        hudWave.text = if (s.wave % 10 == 0) getString(R.string.wave_boss, s.wave) else getString(R.string.wave_number, s.wave)
+        hudScrap.text = s.scrap.toString()
+        hudFood.text = s.food.toString()
+        hudWave.text = getString(R.string.wave_number, s.wave)
+        hudBossIcon.visibility = if (s.wave % 10 == 0) View.VISIBLE else View.GONE
         val max = maxHatchHp()
         hatchBar.max = max
         hatchBar.progress = s.hatchHp
-        hatchText.text = getString(R.string.hatch_hp, s.hatchHp, max)
+        hatchText.text = getString(R.string.hatch_hp, s.bunkerName, s.hatchHp, max)
     }
 }

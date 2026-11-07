@@ -17,12 +17,20 @@
 - Settings: sound switch, difficulty spinner, reset save, share.
 - Toasts, notifications, tween animations, placeholder vector art.
 
-## Known gaps in the base
+## Done in the graphics/UI rework (2026-11-07)
+
+- Our bunker drawn on the surface, with roof guards; enemies drift towards it.
+- Underground rooms as a side-on cutaway with a lift shaft, floor plates, room art, working survivors, payout label, "+N" popup, and the Drill Rig machine when automated.
+- Upgrade sheet that opens from the bottom tabs, with upgrade icons and level bars.
+- New icons, emblem/logo, launcher icon, monochrome notification icon, button and panel styles.
+- Title, Survivors and Settings screens restyled; extra text removed.
+
+## Known gaps
 
 - **Sound**: the Sound switch is saved, but the game has no sound effects yet. Whoever adds sounds must check `GameDatabase.SETTING_SOUND`.
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.
-- **Art**: all drawables are simple placeholders.
-- Not yet tested on a real phone or emulator (see `docs/testing.md`).
+- **Art**: all art is code-drawn vectors. It is a consistent style, but a groupmate may replace it with hand-drawn art (keep the file names).
+- Not yet tested on a real phone (see `docs/testing.md`).
 
 ## Next (suggested, not agreed)
 

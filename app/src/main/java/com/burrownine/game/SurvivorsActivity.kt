@@ -1,15 +1,16 @@
 package com.burrownine.game
 
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.burrownine.game.data.GameDatabase
 import com.burrownine.game.model.Survivor
+import com.burrownine.game.ui.SurvivorAdapter
 
 /**
  * Survivor list. Tap a survivor to move them to the next job.
@@ -25,7 +26,7 @@ class SurvivorsActivity : AppCompatActivity() {
 
     private lateinit var db: GameDatabase
     private lateinit var foodText: TextView
-    private lateinit var listView: ListView
+    private lateinit var adapter: SurvivorAdapter
     private var survivors: List<Survivor> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +34,14 @@ class SurvivorsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_survivors)
         db = GameDatabase(this)
 
+        // Extra from GameActivity (Module 7).
         val bunkerName = intent.extras?.getString(EXTRA_BUNKER_NAME) ?: getString(R.string.default_bunker_name)
         findViewById<TextView>(R.id.survivorsTitle).text = getString(R.string.survivors_title, bunkerName)
         foodText = findViewById(R.id.survivorsFood)
-        listView = findViewById(R.id.survivorList)
 
+        adapter = SurvivorAdapter(this, survivors)
+        val listView = findViewById<ListView>(R.id.survivorList)
+        listView.adapter = adapter
         listView.setOnItemClickListener { _, _, position, _ ->
             val survivor = survivors[position]
             val next = Survivor.JOBS[(Survivor.JOBS.indexOf(survivor.job) + 1) % Survivor.JOBS.size]
@@ -63,15 +67,14 @@ class SurvivorsActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.survivorsBack).setOnClickListener { finish() }
+        findViewById<ImageButton>(R.id.survivorsBack).setOnClickListener { finish() }
         refresh()
     }
 
     private fun refresh() {
         survivors = db.getSurvivors()
-        foodText.text = getString(R.string.food_amount, db.getFood())
-        val lines = survivors.map { getString(R.string.survivor_line, it.name, it.job) }
-        listView.adapter = ArrayAdapter(this, R.layout.row_survivor, lines)
+        foodText.text = db.getFood().toString()
+        adapter.update(survivors)
     }
 
     override fun onDestroy() {

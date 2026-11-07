@@ -27,11 +27,12 @@ data class Floor(
     val id: String,
     val name: String,
     val resource: String,
-    val actionLabel: String,
     val maxProgress: Int,
     val yieldPerFill: Int,
     var progress: Int = 0,
-    var automated: Boolean = false
+    var automated: Boolean = false,
+    /** Amount the room just paid out; the adapter shows it as a "+5" popup, then sets it back to 0. */
+    var pendingPopup: Int = 0
 ) {
     /** Adds progress and returns how many times the bar filled up. */
     fun addProgress(amount: Int): Int {
@@ -52,11 +53,16 @@ data class EnemyType(
     val sizeDp: Int
 )
 
-/** A live enemy in the sky. [view] is the ImageView the Handler loop moves down. */
+/**
+ * A live enemy in the sky. [view] is the ImageView the Handler loop moves down.
+ * It drifts from [startX] towards [targetX] (above the bunker) as it falls.
+ */
 data class Enemy(
     val type: EnemyType,
     var hp: Int,
     var y: Float,
+    val startX: Float,
+    val targetX: Float,
     val view: ImageView
 )
 

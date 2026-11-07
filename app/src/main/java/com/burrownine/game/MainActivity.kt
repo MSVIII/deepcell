@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.playButton).setOnClickListener { onPlay() }
         continueButton.setOnClickListener { openGame(newGame = false) }
 
+        // Slow pulse on the emblem (res/anim).
+        findViewById<android.widget.ImageView>(R.id.logo)
+            .startAnimation(android.view.animation.AnimationUtils.loadAnimation(this, R.anim.antenna_blink))
+
         Notifier.createChannel(this)
         askNotificationPermission()
     }
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         saveSummary.text = if (state != null) {
             getString(R.string.save_summary, state.bunkerName, state.wave)
         } else {
-            getString(R.string.no_save)
+            ""
         }
     }
 

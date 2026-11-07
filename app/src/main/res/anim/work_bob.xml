@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Workers hop once when the room is tapped. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="140"
+    android:fromYDelta="0"
+    android:toYDelta="-6dp"
+    android:repeatCount="1"
+    android:repeatMode="reverse" />

@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -76,7 +77,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(send, getString(R.string.share)))
         }
 
-        findViewById<Button>(R.id.settingsBack).setOnClickListener { finish() }
+        findViewById<ImageButton>(R.id.settingsBack).setOnClickListener { finish() }
     }
 
     override fun onDestroy() {

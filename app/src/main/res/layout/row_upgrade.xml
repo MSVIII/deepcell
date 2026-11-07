@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One upgrade in the list. -->
+<!-- One upgrade: icon, name, level bar, effect, price button. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:paddingStart="12dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:id="@+id/upgradeIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icon_slot"
+        android:importantForAccessibility="no"
+        android:padding="8dp" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="10dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -22,15 +34,28 @@
             android:layout_height="wrap_content"
             android:textStyle="bold" />
 
+        <ProgressBar
+            android:id="@+id/upgradeLevel"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:progressDrawable="@drawable/progress_level" />
+
         <TextView
             android:id="@+id/upgradeDescription"
             style="@style/BunkerSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/upgradeBuy"
-        android:layout_width="104dp"
-        android:layout_height="wrap_content" />
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_scrap"
+        android:drawablePadding="2dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp" />
 </LinearLayout>

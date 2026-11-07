@@ -1,67 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One underground floor. FrameLayout stacks the spinning gear over the room icon. -->
+<!--
+    One underground room, drawn as a cutaway: lift shaft with floor number on the left,
+    the room on the right. Tap anywhere in the room to work it.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="71dp"
+    android:layout_height="@dimen/room_height"
     android:descendantFocusability="blocksDescendants"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingStart="12dp"
-    android:paddingEnd="8dp">
+    android:orientation="horizontal">
 
+    <!-- Lift shaft (rails come from the list background). -->
     <FrameLayout
-        android:layout_width="44dp"
-        android:layout_height="44dp">
-
-        <ImageView
-            android:id="@+id/floorIcon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no" />
-
-        <ImageView
-            android:id="@+id/floorGear"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="bottom|end"
-            android:contentDescription="@string/automated"
-            android:src="@drawable/ic_gear"
-            android:visibility="gone" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="@dimen/shaft_width"
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/floorName"
-            style="@style/BunkerText"
+            android:id="@+id/floorNumber"
+            android:layout_width="36dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_plaque"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:textColor="@color/text_on_amber"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- The room. Concrete slab above and below comes from bg_room_frame. -->
+    <FrameLayout
+        android:id="@+id/room"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/bg_room_frame"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp">
+
+        <ImageView
+            android:id="@+id/roomWall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY" />
+
+        <!-- Room prop: scrap heap or mushroom trays. -->
+        <ImageView
+            android:id="@+id/roomProp"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no" />
+
+        <!-- Machine shown once the room is automated (Drill Rig). -->
+        <ImageView
+            android:id="@+id/roomMachine"
+            android:layout_width="48dp"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
+
+        <!-- Survivors working here are added in code. -->
+        <LinearLayout
+            android:id="@+id/roomWorkers"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="bottom"
+            android:orientation="horizontal" />
+
+        <!-- Room name. -->
+        <TextView
+            android:id="@+id/roomName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_label"
+            android:fontFamily="monospace"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp"
             android:textStyle="bold" />
+
+        <!-- Payout per full bar. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_label"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp">
+
+            <ImageView
+                android:id="@+id/roomGear"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@string/automated"
+                android:src="@drawable/ic_gear"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/roomYield"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textColor="@color/text_main"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/roomYieldIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="3dp"
+                android:importantForAccessibility="no" />
+        </LinearLayout>
+
+        <!-- "+5" when the bar fills. -->
+        <TextView
+            android:id="@+id/roomPopup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="monospace"
+            android:shadowColor="#FF000000"
+            android:shadowDy="2"
+            android:shadowRadius="3"
+            android:textColor="@color/amber"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/floorProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="6dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="3dp"
             android:progressDrawable="@drawable/progress_floor" />
-
-        <TextView
-            android:id="@+id/floorStatus"
-            style="@style/BunkerSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/floorButton"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content" />
+    </FrameLayout>
 </LinearLayout>

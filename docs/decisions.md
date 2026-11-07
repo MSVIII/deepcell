@@ -19,3 +19,13 @@ Why the base app is built the way it is. Add a dated entry when the group decide
 - **`POST_NOTIFICATIONS` permission request.** Not a module topic, but on Android 13+ notifications don't show without it. It is one call in `MainActivity`.
 - **Platform `Switch` instead of `SwitchCompat`.** Module 6 teaches `Switch`.
 - **Portrait only.** The layout follows the vertical sketch.
+
+## 2026-11-07: graphics and UI rework
+
+- **Rooms are a cutaway, still in a ListView.** Each row draws one room with a lift shaft on the left, so new floors are just new rows. The list background draws the shaft rails, so the shaft is continuous. A footer view adds earth below the deepest room.
+- **Tap the room, not a button.** The whole room is the manual action, which leaves room for the art. Workers hop and a "+N" popup shows each payout.
+- **Our bunker is on the surface.** Enemies fall towards it, and survivors with the Roof job appear on its deck. Tapping the bunker repairs the hatch.
+- **Upgrades open in a sheet.** The rooms stay visible most of the time. A bottom tab opens its sheet; tapping it again or ✕ closes it.
+- **All art is vector drawables made from code-drawn shapes.** No bitmaps, no Canvas. Some backgrounds are larger than lint's 200×200 vector advice; there are only a few on screen, so this is acceptable.
+- **Less text.** Resource names became icons, labels were cut to names and numbers, and help sentences were removed.
+- **Original style.** The cutaway idea is common in idle games. The bunker, rooms, characters, palette and layout here are our own; don't copy art or layouts from other games.

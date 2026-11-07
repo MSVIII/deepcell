@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark post-apocalyptic palette: soot, rust, sodium-lamp amber, toxic green. -->
+    <!-- Dark post-apocalyptic palette: soot, concrete, rust, sodium-lamp amber, toxic green. -->
     <color name="soot">#FF15130F</color>
-    <color name="bunker_wall">#FF242019</color>
-    <color name="panel">#FF2E2921</color>
+    <color name="bunker_wall">#FF201D18</color>
+    <color name="panel">#FF2B2720</color>
     <color name="panel_line">#FF4A4234</color>
-    <color name="sky_top">#FF3B2A2A</color>
-    <color name="sky_bottom">#FF6B4A32</color>
-    <color name="ground">#FF3A3024</color>
+    <color name="sky_top">#FF231A20</color>
+    <color name="sky_mid">#FF4A3028</color>
+    <color name="sky_bottom">#FF8A5A34</color>
+    <color name="earth">#FF2A2119</color>
+    <color name="shaft">#FF1A1714</color>
+    <color name="slab">#FF4F4A42</color>
     <color name="rust">#FFB0552B</color>
+    <color name="rust_dark">#FF5A2A16</color>
     <color name="amber">#FFE3A23B</color>
+    <color name="amber_dark">#FF9A6A1E</color>
     <color name="toxic_green">#FF8FB34A</color>
     <color name="alarm_red">#FFD23C2F</color>
     <color name="steel">#FF8C8A84</color>
     <color name="steel_dark">#FF5A5852</color>
     <color name="text_main">#FFEDE3D0</color>
     <color name="text_dim">#FFA79C88</color>
+    <color name="text_on_amber">#FF1E1A12</color>
 </resources>

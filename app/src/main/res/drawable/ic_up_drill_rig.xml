@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Drill Rig. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path android:fillColor="#FFE3A23B" android:pathData="M10,2 h12 a2,2 0 0,1 2,2 v6 a2,2 0 0,1 -2,2 h-12 a2,2 0 0,1 -2,-2 v-6 a2,2 0 0,1 2,-2 Z" />
+    <path android:fillColor="#FF15130F" android:pathData="M9,12 L12,8 L14,8 L11,12 Z M13,12 L16,8 L18,8 L15,12 Z M17,12 L20,8 L22,8 L19,12 Z" />
+    <path android:fillColor="#FF8C8A84" android:pathData="M14,12 h4 v6 h-4 Z" />
+    <path android:fillColor="#FFB8B4AA" android:pathData="M10,18 L22,18 L16,31 Z" />
+    <path android:fillColor="#FF5A5852" android:pathData="M12,21 L20,21 L19,23 L13,23 Z M13.5,25 L18.5,25 L17.7,27 L14.3,27 Z" />
+</vector>

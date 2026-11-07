@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape><corners android:radius="3dp" /><solid android:color="@color/steel_dark" /></shape>
+        <shape><corners android:radius="3dp" /><solid android:color="#B315130F" /></shape>
     </item>
     <item android:id="@android:id/progress">
         <clip><shape><corners android:radius="3dp" /><solid android:color="@color/amber" /></shape></clip>

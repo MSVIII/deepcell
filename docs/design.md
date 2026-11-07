@@ -25,12 +25,12 @@ Only automated rooms earn while the app is closed.
 
 Top to bottom:
 
-1. HUD: bunker name, Scrap, Food, wave number, and a gear button for Settings.
-2. Sky: enemies come down from the top.
-3. Surface: the bunker hatch and its health bar.
-4. Underground floors: Scrap Dig and Mushroom Farm. Each has a manual button and a progress bar.
-5. Upgrade panel: the list for the selected tab.
-6. Bottom tabs: Defense, Supplies, Automation, Survivors.
+1. HUD: Scrap and Food counters (icons, no labels), wave badge (skull on boss waves), and a gear button for Settings.
+2. Surface: storm sky with a ruined skyline. Enemies come down from the top and drift towards our bunker, which sits on the ground at the bottom of the surface. Survivors on the Roof job stand guard on the bunker deck. A label in the top-left shows the bunker name and hatch health.
+3. Underground: a side-on cutaway of the bunker. A lift shaft runs down the left side with floor plates (B1, B2). Each room shows its wall, props, the survivors working there, its payout (for example +5 scrap), and a progress bar. Tap the room itself to work it. Automated rooms show their machine and a spinning gear. Earth continues below the deepest room.
+4. Bottom tabs: Defense, Supplies, Automation open an upgrade sheet over the rooms (tap the tab again or ✕ to close). Survivors opens the Survivors screen.
+
+The art style is flat vector: soot, concrete, rust, sodium-lamp amber, toxic green. Interface text is kept to names and numbers.
 
 ## Resources
 
@@ -76,7 +76,7 @@ The numbers live in `assets/waves.json`.
 ## Hatch and losing
 
 - Max hatch health = 100 + 20 per Hatch Plating level. Buying plating also adds 20 to current health.
-- Tap the hatch to repair: 1 scrap for +5 health.
+- Tap the bunker to repair the hatch: 1 scrap for +5 health.
 - **Breach**: when hatch health reaches 0, the bunker loses 25% of its scrap (rounded down), the sky is cleared, the hatch is restored to full, and the same wave starts again. A notification is sent. Nothing else is lost.
 
 ## Floors

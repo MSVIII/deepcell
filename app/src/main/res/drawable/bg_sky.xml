@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Dusty storm-lit sky behind the enemies. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient android:angle="270" android:startColor="@color/sky_top" android:endColor="@color/sky_bottom" />
-</shape>
+<!-- Storm sky: dark at the top, dusty orange near the horizon, with a glow from the solar storm. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:angle="270" android:startColor="@color/sky_top" android:centerColor="@color/sky_mid" android:endColor="@color/sky_bottom" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:type="radial" android:centerX="0.8" android:centerY="0.25" android:gradientRadius="220dp"
+                android:startColor="#40E3A23B" android:endColor="#00E3A23B" />
+        </shape>
+    </item>
+</layer-list>
