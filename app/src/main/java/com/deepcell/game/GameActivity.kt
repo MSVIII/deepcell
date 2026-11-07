@@ -1,4 +1,4 @@
-package com.burrownine.game
+package com.deepcell.game
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,17 +15,17 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.burrownine.game.data.GameDatabase
-import com.burrownine.game.data.JsonLoader
-import com.burrownine.game.model.Enemy
-import com.burrownine.game.model.Floor
-import com.burrownine.game.model.GameState
-import com.burrownine.game.model.Survivor
-import com.burrownine.game.model.Upgrade
-import com.burrownine.game.model.Wave
-import com.burrownine.game.ui.FloorAdapter
-import com.burrownine.game.ui.Notifier
-import com.burrownine.game.ui.UpgradeAdapter
+import com.deepcell.game.data.GameDatabase
+import com.deepcell.game.data.JsonLoader
+import com.deepcell.game.model.Enemy
+import com.deepcell.game.model.Floor
+import com.deepcell.game.model.GameState
+import com.deepcell.game.model.Survivor
+import com.deepcell.game.model.Upgrade
+import com.deepcell.game.model.Wave
+import com.deepcell.game.ui.FloorAdapter
+import com.deepcell.game.ui.Notifier
+import com.deepcell.game.ui.UpgradeAdapter
 import kotlin.random.Random
 
 /**

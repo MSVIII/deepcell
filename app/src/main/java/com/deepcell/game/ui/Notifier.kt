@@ -1,4 +1,4 @@
-package com.burrownine.game.ui
+package com.deepcell.game.ui
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -11,8 +11,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.burrownine.game.GameActivity
-import com.burrownine.game.R
+import com.deepcell.game.GameActivity
+import com.deepcell.game.R
 
 /** Status-bar notifications (Module 8): channel + NotificationCompat.Builder + PendingIntent. */
 object Notifier {

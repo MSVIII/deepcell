@@ -1,4 +1,4 @@
-package com.burrownine.game
+package com.deepcell.game
 
 import android.Manifest
 import android.content.Intent
@@ -12,8 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.burrownine.game.data.GameDatabase
-import com.burrownine.game.ui.Notifier
+import com.deepcell.game.data.GameDatabase
+import com.deepcell.game.ui.Notifier
 
 /** Title screen: bunker name, Play (new game) and Continue (load save). */
 class MainActivity : AppCompatActivity() {

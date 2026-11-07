@@ -1,10 +1,10 @@
-# Burrow Nine: game design
+# Deepcell: game design
 
 Status of each part is in `docs/roadmap.md`. This file is the agreed concept plus the exact rules the base app uses.
 
 ## Premise
 
-Burrow Nine is post-apocalyptic. A solar storm reawakened an old automated air-defense network. Its drones, together with mutated birds called Shrikes, attack anything on the surface. Survivors live in a poor underground bunker called Burrow Nine (the player can rename it).
+Deepcell is post-apocalyptic. A solar storm reawakened an old automated air-defense network. Its drones, together with mutated birds called Shrikes, attack anything on the surface. Survivors live in a poor underground bunker, Bunker Nine by default (the player can rename it).
 
 ## Core theme: automation
 
@@ -111,4 +111,4 @@ When the game screen resumes, the app counts the seconds since it was last pause
 
 ## Originality
 
-Burrow Nine must stay an original game. Don't copy names, art, UI, or level layouts from Fallout Shelter, Idle Miner Tycoon, Grow Castle, or other games.
+Deepcell must stay an original game. Don't copy names, art, UI, or level layouts from Fallout Shelter, Idle Miner Tycoon, Grow Castle, or other games.

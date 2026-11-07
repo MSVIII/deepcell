@@ -1,4 +1,4 @@
-package com.burrownine.game.ui
+package com.deepcell.game.ui
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,8 +11,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.burrownine.game.R
-import com.burrownine.game.model.Floor
+import com.deepcell.game.R
+import com.deepcell.game.model.Floor
 
 /**
  * Shows the underground rooms in a ListView (Module 6). Each row is a cutaway room:

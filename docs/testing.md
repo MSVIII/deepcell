@@ -2,6 +2,12 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: renamed to Deepcell
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL** with package `com.deepcell.game`.
+- Emulator `Medium_Phone` (API 37): the old `com.burrownine.game` build was uninstalled first. The Deepcell launch screen, title (DEEP / CELL, new emblem) and game screen show correctly. A new game starts as "Bunker Nine". No crashes in `logcat -b crash`.
+- Not re-checked after the rename: Survivors, Settings, notifications (no code changed there besides the package name). Not installed on a real phone.
+
 ## 2026-11-07: graphics and UI rework
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors (new warnings: large vector backgrounds, explained in `docs/decisions.md`).

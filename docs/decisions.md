@@ -29,3 +29,10 @@ Why the base app is built the way it is. Add a dated entry when the group decide
 - **All art is vector drawables made from code-drawn shapes.** No bitmaps, no Canvas. Some backgrounds are larger than lint's 200×200 vector advice; there are only a few on screen, so this is acceptable.
 - **Less text.** Resource names became icons, labels were cut to names and numbers, and help sentences were removed.
 - **Original style.** The cutaway idea is common in idle games. The bunker, rooms, characters, palette and layout here are our own; don't copy art or layouts from other games.
+
+## 2026-11-07: name changed to Deepcell
+
+- The game is called **Deepcell** (the user's choice). Package `com.deepcell.game`, project folder `Deepcell`, database file `deepcell.db`.
+- The starting bunker is called **Bunker Nine** in the story, so the painted 9 on the bunker stays. The player can still rename the bunker.
+- The emblem is now a hatch wheel around a hexagonal cell with a downward arrow.
+- Because the package changed, Android treats this as a new app. A build installed under the old name (`com.burrownine.game`) stays on a device until uninstalled, and its save is not carried over.

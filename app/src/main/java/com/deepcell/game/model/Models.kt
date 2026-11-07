@@ -1,4 +1,4 @@
-package com.burrownine.game.model
+package com.deepcell.game.model
 
 import android.widget.ImageView
 

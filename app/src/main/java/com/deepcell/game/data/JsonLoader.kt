@@ -1,9 +1,9 @@
-package com.burrownine.game.data
+package com.deepcell.game.data
 
 import android.content.Context
-import com.burrownine.game.model.EnemyType
-import com.burrownine.game.model.Upgrade
-import com.burrownine.game.model.Wave
+import com.deepcell.game.model.EnemyType
+import com.deepcell.game.model.Upgrade
+import com.deepcell.game.model.Wave
 import org.json.JSONArray
 import org.json.JSONObject
 

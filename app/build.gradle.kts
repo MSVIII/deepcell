@@ -1,11 +1,11 @@
 plugins { id("com.android.application") }
 
 android {
-    namespace = "com.burrownine.game"
+    namespace = "com.deepcell.game"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.burrownine.game"
+        applicationId = "com.deepcell.game"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

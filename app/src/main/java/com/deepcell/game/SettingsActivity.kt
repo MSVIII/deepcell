@@ -1,4 +1,4 @@
-package com.burrownine.game
+package com.deepcell.game
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Switch
-import com.burrownine.game.data.GameDatabase
+import com.deepcell.game.data.GameDatabase
 
 /** Sound switch, difficulty Spinner, reset save, and Share (implicit ACTION_SEND). */
 class SettingsActivity : AppCompatActivity() {

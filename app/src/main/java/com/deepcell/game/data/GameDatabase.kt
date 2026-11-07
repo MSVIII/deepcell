@@ -1,15 +1,15 @@
-package com.burrownine.game.data
+package com.deepcell.game.data
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.burrownine.game.model.GameState
-import com.burrownine.game.model.Survivor
+import com.deepcell.game.model.GameState
+import com.deepcell.game.model.Survivor
 
 /** Contract class: every table and column name in one place (Module 9). */
 object DbContract {
-    const val DB_NAME = "burrownine.db"
+    const val DB_NAME = "deepcell.db"
     const val DB_VERSION = 1
 
     object State {               // always exactly one row, id = 1

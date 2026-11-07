@@ -1,4 +1,4 @@
-# Burrow Nine
+# Deepcell
 
 An Android game for our Mobile Programming group project. A solar storm woke up an old automated air-defense network, and its drones attack anything on the surface. You run a poor underground bunker: shoot drones by tapping, dig scrap and grow food by hand, then build machines that do those jobs for you.
 
@@ -6,7 +6,7 @@ Kotlin + XML layouts. No third-party libraries. See `docs/design.md` for the gam
 
 ## Open in Android Studio
 
-1. Android Studio → **File → Open** → choose this `BurrowNine` folder (the one with `settings.gradle.kts`).
+1. Android Studio → **File → Open** → choose this `Deepcell` folder (the one with `settings.gradle.kts`).
 2. Wait for Gradle sync to finish. Android Studio creates `local.properties` with your SDK path. That file is not committed, because the path is different on each PC.
 3. Pick a phone or an emulator and press **Run**.
 
@@ -32,7 +32,7 @@ The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. If Gradle can
 
 ```
 app/src/main/
-  java/com/burrownine/game/
+  java/com/deepcell/game/
     MainActivity.kt        title screen: bunker name, Play, Continue
     GameActivity.kt        the game screen and the Handler game loop
     SurvivorsActivity.kt   survivor list, jobs, recruiting

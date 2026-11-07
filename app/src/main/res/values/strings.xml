@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Burrow Nine</string>
-    <string name="default_bunker_name">Burrow Nine</string>
+    <string name="app_name">Deepcell</string>
+    <string name="default_bunker_name">Bunker Nine</string>
 
     <!-- Title screen -->
-    <string name="title_line_1">BURROW</string>
-    <string name="title_line_2">NINE</string>
+    <string name="title_line_1">DEEP</string>
+    <string name="title_line_2">CELL</string>
     <string name="bunker_name_hint">Bunker name</string>
     <string name="play">Play</string>
     <string name="continue_game">Continue</string>
@@ -75,5 +75,5 @@
     <string name="reset_save">Reset save</string>
     <string name="save_deleted">Save deleted</string>
     <string name="share">Share</string>
-    <string name="share_text">My bunker %1$s has held out to wave %2$d in Burrow Nine.</string>
+    <string name="share_text">My bunker %1$s has held out to wave %2$d in Deepcell.</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.burrownine.game.ui
+package com.deepcell.game.ui
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.burrownine.game.R
-import com.burrownine.game.model.Survivor
+import com.deepcell.game.R
+import com.deepcell.game.model.Survivor
 
 /** Rows for the Survivors screen: figure dressed for the job, name, and job chip. */
 class SurvivorAdapter(

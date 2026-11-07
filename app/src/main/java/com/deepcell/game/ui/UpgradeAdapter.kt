@@ -1,4 +1,4 @@
-package com.burrownine.game.ui
+package com.deepcell.game.ui
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,9 +9,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.burrownine.game.R
-import com.burrownine.game.model.GameState
-import com.burrownine.game.model.Upgrade
+import com.deepcell.game.R
+import com.deepcell.game.model.GameState
+import com.deepcell.game.model.Upgrade
 
 /**
  * The upgrade list inside the upgrade sheet. [items] is the list for the selected bottom tab

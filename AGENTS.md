@@ -1,4 +1,4 @@
-# Burrow Nine: rules for AI agents
+# Deepcell: rules for AI agents
 
 This is a school group project for a Mobile Programming course. The professor allows only what the course modules covered. Read `docs/design.md` (the game) and `docs/module-map.md` (which module each piece of code uses) before changing anything.
 
