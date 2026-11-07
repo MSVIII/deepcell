@@ -4,7 +4,7 @@ Record each build and test here, newest first. Say plainly what was not tested.
 
 ## 2026-11-07: tutorial, harder waves, Collector job, turret, music
 
-- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator `Medium_Phone` only; **not installed on the phone**.
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Tested on emulator `Medium_Phone`. Installed on the user's Pixel 7 at their request (not run there by the author).
 
 | Check | Result |
 |---|---|
