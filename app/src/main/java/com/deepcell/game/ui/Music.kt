@@ -18,7 +18,7 @@ class Music(private val context: Context) {
 
     companion object {
         /** Music sits under the sound effects. */
-        private const val VOLUME = 0.55f
+        private const val VOLUME = 0.8f
         private const val FADE_MS = 900L
         private const val STEP_MS = 50L
     }

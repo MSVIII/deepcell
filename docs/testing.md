@@ -2,6 +2,24 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: tutorial highlight, harder progression, new upgrades, boss bar, music mix
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator only; **not installed on the phone**. Later tutorial steps and wave 10 were reached by editing the emulator save (`run-as` copy of `deepcell.db`), because the tap bot could not hit moving drones.
+
+| Check | Result |
+|---|---|
+| Glowing frame: sky (step 1), Scrap Dig (2), Survivors tab (3), storage box (5) | Pass (screenshots) |
+| Step cards: "Step N of 6", title, short text | Pass |
+| Wave banner, with the boss warning on wave 10 | Pass (screenshot) |
+| Boss health bar appears and drains (68/68 to 58/68) | Pass (screenshots) |
+| Crew chip "5 workers · +5/s"; "+1" with five roof guards | Pass (screenshot) |
+| HUD chips no longer overlap with 4-digit scrap | Pass |
+| Sprinkler, Repair Arm, Guard Training, Work Shifts listed with icons | Sprinkler seen; others in the JSON, not opened |
+| Wave 10 breached a one-guard bunker and sent it back to wave 9 | Pass |
+| Gameplay music player running on the emulator (`dumpsys audio`: started) | Pass; loudness not judged by ear |
+
+Not checked: the four new upgrades' effects in play, recruit price steps beyond the first, the music on the phone speaker.
+
 ## 2026-11-07: tutorial, harder waves, Collector job, turret, music
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Tested on emulator `Medium_Phone`. Installed on the user's Pixel 7 at their request (not run there by the author).

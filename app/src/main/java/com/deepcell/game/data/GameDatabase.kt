@@ -339,7 +339,7 @@ class GameDatabase(context: Context) :
         const val SETTING_DETAIL = "detail"           // ui.Quality.AUTO / HIGH / LOW
         const val SETTING_MUSIC = "music_on"          // "true" / "false"
         const val SETTING_TUTORIAL = "tutorial_step"  // ui.Tutorial step number, 0 = off or finished
-        /** Enough for the first recruit (SurvivorsActivity.RECRUIT_FOOD_COST). */
+        /** Enough for the first recruit (SurvivorsActivity.recruitCost). */
         const val START_FOOD = 15
     }
 }

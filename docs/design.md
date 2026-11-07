@@ -43,11 +43,11 @@ No other resources.
 
 Each survivor has one job:
 
-- **Roof**: shoots by themselves (guards take turns, one shot per 1.6 s / guards, 1 damage, at drones in the lower 60% of the sky) and +1 damage on every manual tap.
+- **Roof**: shoots by themselves (guards take turns, one shot per 2 s / guards, faster with Guard Training, 1 damage, at drones in the lower 60% of the sky) and +1 damage on every manual tap.
 - **Scrap Dig** or **Mushroom Farm**: fills that room by themselves (1 progress per second each).
 - **Collector**: walks into each room in turn and brings its storage up; more Collectors walk faster. With a Collector, offline output is collected too.
 
-Survivors are never killed. A new game starts with one survivor on the Roof and 15 food. Recruiting costs 15 food; recruits get a generated name and start in Scrap Dig. Tap a survivor in the Survivors screen to open the job picker.
+Survivors are never killed. A new game starts with one survivor on the Roof and 15 food. Recruiting costs 15 food for the first recruit and x1.6 for each survivor already in the bunker; recruits get a generated name and start in Scrap Dig. Rooms show their real crew size and work per second; the roof shows "+N" for guards beyond the four drawn. Tap a survivor in the Survivors screen to open the job picker.
 
 ## Tutorial
 
@@ -57,17 +57,17 @@ Offered after naming a new bunker. Steps: shoot a drone, dig and collect, recrui
 
 | Enemy | HP | Speed (dp/s) | Hatch damage | Scrap reward |
 |---|---|---|---|---|
-| Scout Drone | 2 | 45 | 5 | 2 |
-| Shrike | 1 | 80 | 3 | 2 |
-| Bomber Drone | 6 | 25 | 20 | 6 |
-| Command Drone (boss) | 40 | 12 | 60 | 50 |
+| Scout Drone | 2 | 50 | 7 | 2 |
+| Shrike | 1 | 85 | 4 | 2 |
+| Bomber Drone | 7 | 28 | 25 | 6 |
+| Command Drone (boss) | 50 | 13 | 70 | 50 |
 
 The numbers live in `assets/waves.json`.
 
 ## Waves
 
 - `waves.json` defines a 10-wave cycle. Wave 10 has the boss, so every 10th wave is a boss wave.
-- Wave *n* uses cycle entry (n − 1) mod 10 for its mix of enemies. Waves grow: +8% enemies per wave (`countPerWave`), spawns 2% closer per wave down to 45% (`spawnFasterPerWave`, `minSpawnScale`), and each full cycle adds 50% HP and 8% speed (`hpScalePerCycle`, `speedPerCycle`) and one more boss every second cycle.
+- Wave *n* uses cycle entry (n − 1) mod 10 for its mix of enemies. Waves grow: +12% enemies and +4% HP per wave (`countPerWave`, `hpPerWave`), spawns 2.5% closer per wave down to 40% (`spawnFasterPerWave`, `minSpawnScale`), and each full cycle adds 60% HP and 10% speed (`hpScalePerCycle`, `speedPerCycle`) and one more boss every second cycle. A banner announces each wave; a boss health bar shows while a boss is up.
 - Difficulty multiplies enemy HP: Easy ×0.75, Normal ×1, Hard ×1.5.
 - Enemies spawn one at a time, every `spawnMs`. There is a 2-second break before each wave.
 - A wave is cleared when every enemy has spawned and none are left. Clearing a boss wave sends a notification.
@@ -90,7 +90,7 @@ The numbers live in `assets/waves.json`.
 | Floor | Full bar | Pays | Manual tap adds | Machine |
 |---|---|---|---|---|
 | Scrap Dig | 10 | 5 scrap | 1 + Better Shovels level + diggers | Drill Rig: +level progress per second |
-| Mushroom Farm | 10 | 3 food | 1 + Spore Trays level + farmers | none yet |
+| Mushroom Farm | 10 | 3 food | 1 + Spore Trays level + farmers | Sprinkler: +level progress per second |
 
 ## Upgrades
 
@@ -98,12 +98,17 @@ From `assets/upgrades.json`. Price of the next level = baseCost × costGrowth^le
 
 | Tab | Upgrade | Effect | Base cost | Growth | Max |
 |---|---|---|---|---|---|
-| Defense | Sharpened Rounds | +1 tap damage | 10 | 1.6 | 10 |
-| Defense | Hatch Plating | +20 max hatch health | 15 | 1.7 | 10 |
-| Supplies | Better Shovels | +1 dig progress per tap | 8 | 1.5 | 10 |
-| Supplies | Spore Trays | +1 farm progress per tap | 8 | 1.5 | 10 |
-| Automation | Auto-Turret | auto shot each second, damage = level | 40 | 2.0 | 5 |
-| Automation | Drill Rig | fills Scrap Dig, speed = level, works offline | 50 | 2.0 | 5 |
+| Defense | Sharpened Rounds | +1 tap damage | 10 | 1.75 | 10 |
+| Defense | Hatch Plating | +20 max hatch health | 15 | 1.8 | 10 |
+| Defense | Guard Training | guards shoot 15% faster | 30 | 1.9 | 6 |
+| Supplies | Better Shovels | +1 dig progress per tap | 8 | 1.65 | 10 |
+| Supplies | Spore Trays | +1 farm progress per tap | 8 | 1.65 | 10 |
+| Supplies | Storage Racks | +25 storage per room | 20 | 1.9 | 8 |
+| Supplies | Work Shifts | each worker +1 work per second | 60 | 2.4 | 4 |
+| Automation | Auto-Turret | auto shot each second, damage = level | 40 | 2.2 | 5 |
+| Automation | Drill Rig | fills Scrap Dig, speed = level, works offline | 50 | 2.2 | 5 |
+| Automation | Sprinkler | fills Mushroom Farm, speed = level, works offline | 50 | 2.2 | 5 |
+| Automation | Repair Arm | +level hatch health per second | 70 | 2.3 | 5 |
 
 ## Offline earnings
 

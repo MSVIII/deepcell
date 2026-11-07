@@ -10,6 +10,14 @@
     android:clipChildren="false"
     android:visibility="gone">
 
+    <!-- Glowing border, moved and sized around the target. -->
+    <View
+        android:id="@+id/tutorialGlow"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_tutorial_glow"
+        android:importantForAccessibility="no" />
+
     <ImageView
         android:id="@+id/tutorialArrow"
         android:layout_width="40dp"
@@ -27,10 +35,25 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tutorialStep"
+            style="@style/BunkerSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/amber" />
+
+        <TextView
+            android:id="@+id/tutorialTitle"
+            style="@style/BunkerHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp" />
+
+        <TextView
             android:id="@+id/tutorialText"
             style="@style/BunkerText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:textSize="16sp" />
 
         <LinearLayout

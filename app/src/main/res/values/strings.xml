@@ -19,6 +19,8 @@
     <string name="food">Food</string>
     <string name="wave_number">Wave %1$d</string>
     <string name="boss_wave">Boss wave</string>
+    <string name="boss_incoming">Command Drone incoming</string>
+    <string name="boss_hp">%1$s  %2$d/%3$d</string>
     <string name="hatch_hp">%1$s  %2$d/%3$d</string>
     <string name="settings">Settings</string>
     <string name="bunker">Bunker. Tap to repair</string>
@@ -92,12 +94,19 @@
     <string name="tutorial_no">Skip</string>
     <string name="tutorial_skip">Skip tutorial</string>
     <string name="tutorial_next">Got it</string>
-    <string name="tutorial_shoot">Drones are diving at your hatch. Tap them to shoot. Your guard on the roof fires by themselves too.</string>
-    <string name="tutorial_dig">Tap Scrap Dig to dig by hand. Each full bar puts scrap into the room\'s storage; tap the room again to collect it.</string>
-    <string name="tutorial_recruit">Recruit a worker in Survivors. It costs food.</string>
-    <string name="tutorial_jobs">Tap a survivor to change their job. Workers in Scrap Dig and Mushroom Farm work by themselves, Roof guards shoot, Collectors carry storage up.</string>
-    <string name="tutorial_storage">Workers fill their room\'s storage by themselves. Work stops when it is full: tap the room to collect, or give a survivor the Collector job.</string>
-    <string name="tutorial_upgrades">Spend scrap on upgrades in Defense, Supplies and Machines. Tap the bunker to repair the hatch for 1 scrap. Waves get bigger as you go.</string>
+    <string name="tutorial_step">Step %1$d of %2$d</string>
+    <string name="tutorial_shoot_title">Shoot the drones</string>
+    <string name="tutorial_shoot">Tap a drone in the sky to shoot it.</string>
+    <string name="tutorial_dig_title">Dig for scrap</string>
+    <string name="tutorial_dig">Tap Scrap Dig again and again. When the bar fills up, you get scrap.</string>
+    <string name="tutorial_recruit_title">Get a worker</string>
+    <string name="tutorial_recruit">Open Survivors and tap Recruit. Your first worker costs 15 food.</string>
+    <string name="tutorial_jobs_title">Give them a job</string>
+    <string name="tutorial_jobs">Tap your new worker to pick a job. Diggers make scrap, farmers make food.</string>
+    <string name="tutorial_storage_title">Collect their work</string>
+    <string name="tutorial_storage">Workers fill this box by themselves. Tap the room to collect it. When the box is full, they stop.</string>
+    <string name="tutorial_upgrades_title">Get stronger</string>
+    <string name="tutorial_upgrades">Spend scrap on upgrades here. If the hatch gets hurt, tap the bunker to fix it.</string>
 
     <!-- Jobs (Survivors screen) -->
     <string name="survivors_hint">Tap a survivor to change their job</string>
@@ -111,6 +120,13 @@
     <!-- Rooms without workers -->
     <string name="no_workers_dig">No workers: tap to dig by hand. Assign one in Survivors.</string>
     <string name="no_workers_farm">No workers: tap to farm by hand. Assign one in Survivors.</string>
+
+    <plurals name="room_workers">
+        <item quantity="one">%1$d worker</item>
+        <item quantity="other">%1$d workers</item>
+    </plurals>
+    <string name="room_crew">%1$s · +%2$d/s</string>
+    <string name="more_guards">+%1$d</string>
 
     <!-- Music -->
     <string name="music">Music</string>

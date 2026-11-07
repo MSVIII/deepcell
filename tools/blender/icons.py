@@ -135,3 +135,43 @@ cyl("Nut", 0.16, 0.08, (-0.12, 0.05, 0.28), "DC_Steel", verts=6, bevel=0.02, out
 cyl("NutHole", 0.06, 0.1, (-0.12, 0.05, 0.28), "DC_Dark", verts=12)
 ball("Shroom", 0.13, (0.2, -0.1, 0.3), "DC_MushroomCap", scale=(1, 1, 0.6), outline=True)
 out("up_storage")
+
+# ---- Guard Training: a rifle with two brass rank chevrons
+setup("up_guard_training", 1.5, tilt=78, yaw=-10)
+box("Rifle", (1.15, 0.1, 0.12), (0.0, 0, 0.05), "DC_Dark", rot=(0, -30, 0), bevel=0.02, outline=0.035)
+box("Stock", (0.32, 0.12, 0.2), (-0.5, 0, -0.24), "DC_Wood", rot=(0, -30, 0), bevel=0.03, outline=0.035)
+for k, z in enumerate((-0.18, -0.42)):
+    for s in (-1, 1):
+        box(f"Chev{k}{s}", (0.36, 0.1, 0.1), (0.2 + s * 0.13, -0.15, z + 0.08), "DC_Brass",
+            rot=(0, s * 35, 0), bevel=0.02, outline=0.03)
+out("up_guard_training")
+
+# ---- Work Shifts: a brass alarm clock
+setup("up_work_shifts", 1.5, tilt=82)
+cyl("Face", 0.42, 0.18, (0, 0, 0), "DC_Mushroom", rot=(90, 0, 0), verts=32, outline=0.04)
+torus("Rim", 0.43, 0.06, (0, 0, 0), "DC_Brass", rot=(90, 0, 0), segs=32)
+box("HandH", (0.06, 0.04, 0.24), (0, -0.11, 0.1), "DC_Dark")
+box("HandM", (0.05, 0.04, 0.32), (0.11, -0.11, 0.02), "DC_Dark", rot=(0, 70, 0))
+for x in (-0.3, 0.3):
+    ball(f"Bell{x}", 0.14, (x, 0, 0.45), "DC_Brass", scale=(1, 1, 0.7), outline=0.03)
+    cyl(f"Leg{x}", 0.04, 0.2, (x * 0.9, 0, -0.45), "DC_Brass", rot=(0, x * 60, 0))
+out("up_work_shifts")
+
+# ---- Sprinkler: a pipe head spraying glowing drops over a mushroom
+setup("up_sprinkler", 1.55, tilt=62)
+cyl("Pipe", 0.07, 0.7, (-0.25, 0, 0.05), "DC_Steel", verts=12, outline=0.03)
+cyl("Head", 0.15, 0.12, (-0.25, 0, 0.42), "DC_Steel", verts=16, bevel=0.02, outline=0.03)
+for k, (x, z) in enumerate([(0.0, 0.55), (0.18, 0.45), (0.32, 0.3), (0.42, 0.12)]):
+    ball(f"Drop{k}", 0.05, (x, -0.05, z), "DC_Screen")
+cyl("Stem", 0.09, 0.25, (0.3, 0, -0.35), "DC_Mushroom", verts=12, outline=0.03)
+ball("Cap", 0.24, (0.3, 0, -0.18), "DC_MushroomCap", scale=(1, 1, 0.55), outline=0.035)
+out("up_sprinkler")
+
+# ---- Repair Arm: a wrench across a hazard-striped plate
+setup("up_repair_arm", 1.5, tilt=78, yaw=15)
+box("Plate", (0.8, 0.1, 0.8), (0, 0.1, 0), "DC_Steel", bevel=0.06, outline=0.04)
+box("Stripe", (0.82, 0.12, 0.12), (0, 0.08, -0.25), "DC_Hazard")
+box("Shaft", (0.14, 0.1, 0.95), (0, -0.08, 0), "DC_Brass", rot=(0, 40, 0), bevel=0.03, outline=0.035)
+torus("Jaw", 0.15, 0.06, (0.33, -0.08, 0.38), "DC_Brass", rot=(90, 0, 0), segs=20)
+torus("Ring", 0.12, 0.05, (-0.33, -0.08, -0.38), "DC_Brass", rot=(90, 0, 0), segs=20)
+out("up_repair_arm")

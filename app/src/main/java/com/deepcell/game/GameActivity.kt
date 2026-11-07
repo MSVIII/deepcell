@@ -69,7 +69,14 @@ class GameActivity : AppCompatActivity() {
         private const val UP_FARM_TOOLS = "farm_tools"
         private const val AUTO_TURRET = "auto_turret"
         private const val DRILL_RIG = "drill_rig"
+        private const val SPRINKLER = "sprinkler"
+        private const val REPAIR_ARM = "repair_arm"
         private const val STORAGE = "storage"
+        private const val GUARD_TRAINING = "guard_training"
+        private const val WORK_SHIFTS = "work_shifts"
+        /** Each Guard Training level multiplies the guards' time between shots by this. */
+        private const val GUARD_TRAINING_FACTOR = 0.85
+        private const val BANNER_MS = 1600L
 
         // Rooms: each worker adds this much progress per second by themselves; storage holds
         // ten full bars, plus STORAGE_PER_LEVEL per Storage Racks level.
@@ -90,7 +97,7 @@ class GameActivity : AppCompatActivity() {
         private const val GUARD_FIRE_MS = 230L
         // Roof guards also shoot by themselves: together they fire once every
         // GUARD_AUTO_MS / guards, each shot doing GUARD_DAMAGE to the enemy nearest the hatch.
-        private const val GUARD_AUTO_MS = 1600L
+        private const val GUARD_AUTO_MS = 2000L
         private const val GUARD_DAMAGE = 1
         /** Guards only shoot at drones that have come this far down the sky (0 top, 1 hatch). */
         private const val GUARD_RANGE = 0.4f
@@ -203,7 +210,8 @@ class GameActivity : AppCompatActivity() {
 
         digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", 10, 5)
         farmFloor = Floor("farm", getString(R.string.floor_farm), "food", 10, 3)
-        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) }, { openSurvivors() }) {
+        floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) },
+            { f -> state?.let { productionPerSecond(f, it) } ?: 0 }, { openSurvivors() }) {
             onFloorTapped(it)
         }
         floorList = findViewById(R.id.floorList)
@@ -253,7 +261,7 @@ class GameActivity : AppCompatActivity() {
                 // The storage of the room the new worker went to.
                 Tutorial.STORAGE -> roomRow(if (workersIn(farmFloor) > workersIn(digFloor)) 1 else 0)
                     ?.findViewById(R.id.roomStorage)
-                Tutorial.UPGRADES -> defense
+                Tutorial.UPGRADES -> defense.parent.parent as? View    // the whole tab bar
                 else -> null
             }
         }
@@ -293,7 +301,7 @@ class GameActivity : AppCompatActivity() {
         farmFloor.stock = loaded.farmStock
         updateCapacity(loaded)
         digFloor.automated = loaded.level(DRILL_RIG) > 0
-        farmFloor.automated = false     // Sprinkler / Auto-Harvester is on the roadmap
+        farmFloor.automated = loaded.level(SPRINKLER) > 0
 
         addOfflineEarnings(loaded)
 
@@ -366,10 +374,13 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    /** Progress per second a room makes by itself: its workers, plus the Drill Rig in Scrap Dig. */
+    /**
+     * Progress per second a room makes by itself: each worker (more with Work Shifts), plus its
+     * machine (Drill Rig in Scrap Dig, Sprinkler in Mushroom Farm).
+     */
     private fun productionPerSecond(floor: Floor, s: GameState): Int {
-        val machine = if (floor === digFloor) s.level(DRILL_RIG) else 0
-        return workersIn(floor) * WORKER_RATE + machine
+        val machine = s.level(if (floor === digFloor) DRILL_RIG else SPRINKLER)
+        return workersIn(floor) * (WORKER_RATE + s.level(WORK_SHIFTS)) + machine
     }
 
     /** Storage: ten full bars per room, more with Storage Racks. */
@@ -447,7 +458,13 @@ class GameActivity : AppCompatActivity() {
                 hitEnemy(nearest, turret)
             }
         }
-        // Rooms work by themselves (workers, Drill Rig); the output goes into their storage.
+        // Repair Arm: patches the hatch a little every second.
+        val arm = s.level(REPAIR_ARM)
+        if (arm > 0 && s.hatchHp < maxHatchHp()) {
+            s.hatchHp = Math.min(maxHatchHp(), s.hatchHp + arm)
+            refreshHud()
+        }
+        // Rooms work by themselves (workers, machines); the output goes into their storage.
         var changed = false
         for (floor in listOf(digFloor, farmFloor)) {
             val rate = productionPerSecond(floor, s)
@@ -555,12 +572,34 @@ class GameActivity : AppCompatActivity() {
         val spawnScale = Math.max(waveData.minSpawnScale, 1.0 - n * waveData.spawnFasterPerWave)
         currentWave = Wave((template.spawnMs * spawnScale).toLong(), ids)
         waveGeneration++
-        waveHpScale = (1.0 + cycle * waveData.hpScalePerCycle) * difficultyHp
+        waveHpScale = (1.0 + cycle * waveData.hpScalePerCycle + n * waveData.hpPerWave) * difficultyHp
         waveSpeedScale = (1.0 + cycle * waveData.speedPerCycle).toFloat()
         spawnQueue.clear()
         spawnQueue.addAll(ids)
         spawnTimerMs = -WAVE_BREAK_MS
         updateMusic()
+        showWaveBanner(s.wave, bosses > 0)
+    }
+
+    /** "Wave 7" eases in over the sky, holds, and fades; boss waves add a warning line. */
+    private fun showWaveBanner(wave: Int, boss: Boolean) {
+        val banner = findViewById<View>(R.id.waveBanner)
+        findViewById<TextView>(R.id.waveBannerTitle).text = getString(R.string.wave_number, wave)
+        val sub = findViewById<TextView>(R.id.waveBannerSub)
+        sub.visibility = if (boss) View.VISIBLE else View.GONE
+        banner.animate().cancel()
+        banner.visibility = View.VISIBLE
+        banner.alpha = 0f
+        banner.scaleX = 0.8f
+        banner.scaleY = 0.8f
+        banner.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(320)
+            .setInterpolator(android.view.animation.OvershootInterpolator())
+            .withEndAction {
+                banner.animate().alpha(0f).setStartDelay(BANNER_MS).setDuration(400)
+                    .setInterpolator(android.view.animation.AccelerateInterpolator())
+                    .withEndAction { banner.visibility = View.INVISIBLE; banner.animate().setStartDelay(0) }
+                    .start()
+            }.start()
     }
 
     /** Boss waves get their own music. */
@@ -602,6 +641,7 @@ class GameActivity : AppCompatActivity() {
         sky.addView(view)
         view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enemy_in))
         enemies.add(enemy)
+        if (type.id == BOSS) updateBossBar()
     }
 
     /** Manual shot: 1 + Sharpened Rounds level + one per survivor on the roof. */
@@ -615,6 +655,7 @@ class GameActivity : AppCompatActivity() {
         val s = state ?: return false
         if (!enemies.contains(enemy)) return false
         enemy.hp -= damage
+        if (enemy.type.id == BOSS) updateBossBar()
         enemy.view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hit_flash))
         val cx = enemy.view.translationX + enemy.view.width / 2f
         val cy = enemy.view.translationY + enemy.view.height / 2f
@@ -636,6 +677,24 @@ class GameActivity : AppCompatActivity() {
         enemy.view.clearAnimation()
         sky.removeView(enemy.view)
         enemies.remove(enemy)
+        if (enemy.type.id == BOSS) updateBossBar()
+    }
+
+    /** Boss health bar: the bosses in the sky, added up. Hidden when none is left. */
+    private fun updateBossBar() {
+        val panel = findViewById<View>(R.id.bossPanel)
+        val bosses = enemies.filter { it.type.id == BOSS }
+        if (bosses.isEmpty()) {
+            panel.visibility = View.GONE
+            return
+        }
+        val hp = bosses.sumOf { Math.max(0, it.hp) }
+        val max = bosses.sumOf { it.maxHp }
+        val bar = findViewById<ProgressBar>(R.id.bossBar)
+        bar.max = max
+        bar.progress = hp
+        findViewById<TextView>(R.id.bossName).text = getString(R.string.boss_hp, bosses[0].type.name, hp, max)
+        panel.visibility = View.VISIBLE
     }
 
     private fun clearSky() {
@@ -654,8 +713,7 @@ class GameActivity : AppCompatActivity() {
             )
         }
         sfx.play(Sfx.Sound.WAVE)
-        Toast.makeText(this, getString(R.string.wave_cleared, cleared), Toast.LENGTH_SHORT).show()
-        startWave()
+        startWave()        // the banner for the next wave replaces the old "cleared" toast
         saveNow()
         refreshHud()
     }
@@ -747,6 +805,7 @@ class GameActivity : AppCompatActivity() {
         when (upgrade.id) {
             UP_HATCH_PLATING -> s.hatchHp += HATCH_HP_PER_PLATING
             DRILL_RIG -> digFloor.automated = true
+            SPRINKLER -> farmFloor.automated = true
             AUTO_TURRET -> showRoofCrew()
             STORAGE -> updateCapacity(s)
         }
@@ -800,7 +859,8 @@ class GameActivity : AppCompatActivity() {
         val size = (GUARD_DP * resources.displayMetrics.density).toInt()
         val bunkerW = resources.getDimensionPixelSize(R.dimen.bunker_width)
         val bunkerH = resources.getDimensionPixelSize(R.dimen.bunker_height)
-        val guards = Math.min(survivors.count { it.job == Survivor.JOB_ROOF }, GUARD_SLOTS.size)
+        val roof = survivors.count { it.job == Survivor.JOB_ROOF }
+        val guards = Math.min(roof, GUARD_SLOTS.size)
         repeat(guards) {
             val slot = GUARD_SLOTS[it]
             val figure = ImageView(this)
@@ -812,6 +872,17 @@ class GameActivity : AppCompatActivity() {
             roofCrew.addView(figure)
             guardViews.add(figure)
             Fx.loop(figure, R.drawable.anim_guard_idle, it * 300L)
+        }
+        // More guards than spots on the deck: they all shoot, and a "+2" says how many aren't drawn.
+        if (roof > guards) {
+            val more = TextView(this)
+            more.text = getString(R.string.more_guards, roof - guards)
+            more.setTextAppearance(R.style.SceneLabel)
+            more.setBackgroundResource(R.drawable.np_label)
+            more.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+            more.translationX = bunkerW * 0.14f
+            more.translationY = bunkerH * DECK_Y - size * 1.1f
+            roofCrew.addView(more)
         }
         // The Auto-Turret sits on the hatch dome once bought: a fixed base, and a gun
         // that turns towards each target (both frames share one centre, the gun's axis).
@@ -838,7 +909,8 @@ class GameActivity : AppCompatActivity() {
     private fun guardsAutoFire() {
         if (guardViews.isEmpty()) return
         guardTimerMs += frameMs
-        if (guardTimerMs < GUARD_AUTO_MS / guardViews.size) return
+        val interval = GUARD_AUTO_MS * Math.pow(GUARD_TRAINING_FACTOR, (state?.level(GUARD_TRAINING) ?: 0).toDouble())
+        if (guardTimerMs < interval / guardViews.size) return
         val target = enemies.filter { it.y > sky.height * GUARD_RANGE }.maxByOrNull { it.y } ?: return
         guardTimerMs = 0
         nextGuard = (nextGuard + 1) % guardViews.size

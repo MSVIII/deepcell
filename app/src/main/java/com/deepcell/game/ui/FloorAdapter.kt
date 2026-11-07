@@ -25,13 +25,16 @@ import com.deepcell.game.model.Floor
  * place instead of re-binding the whole list. [lowDetail] drops the purely decorative
  * animations (lamp flicker, storage pulse, dust/spore bursts) on weak phones.
  *
- * [workersIn] returns how many survivors work in a room, so the row can draw them. A room
- * with nobody in it shows a hint chip; tapping the chip calls [onAssign] (opens Survivors).
+ * [workersIn] returns how many survivors work in a room, so the row can draw them (up to four
+ * figures); [rateOf] is the room's work per second. A crew chip shows the real numbers
+ * ("6 workers · +6/s"), or a hint when nobody works there; tapping it calls [onAssign]
+ * (opens Survivors).
  */
 class FloorAdapter(
     private val context: Context,
     private val floors: List<Floor>,
     private val workersIn: (Floor) -> Int,
+    private val rateOf: (Floor) -> Int,
     private val onAssign: () -> Unit,
     private val onAction: (Floor) -> Unit
 ) : BaseAdapter() {
@@ -107,7 +110,6 @@ class FloorAdapter(
                 if (!lowDetail) showWorkEffect(h, isScrap)
                 onAction(floor)
             }
-            h.hint.setText(if (isScrap) R.string.no_workers_dig else R.string.no_workers_farm)
             h.hint.setOnClickListener { onAssign() }
         }
         val art = when {
@@ -131,8 +133,16 @@ class FloorAdapter(
 
         // Workers: one figure per survivor in this room, each looping its work animation
         // (pickaxe swing or picking mushrooms), started a little apart so they don't swing in step.
-        val count = Math.min(workersIn(floor), MAX_WORKERS_SHOWN)
-        h.hint.visibility = if (count == 0) View.VISIBLE else View.GONE
+        val crew = workersIn(floor)
+        val count = Math.min(crew, MAX_WORKERS_SHOWN)
+        h.hint.text = if (crew == 0) {
+            context.getString(if (isScrap) R.string.no_workers_dig else R.string.no_workers_farm)
+        } else {
+            context.getString(
+                R.string.room_crew,
+                context.resources.getQuantityString(R.plurals.room_workers, crew, crew), rateOf(floor)
+            )
+        }
         if (h.workers.childCount != count) {
             h.workers.removeAllViews()
             placeInWorkZone(h.workers, count, isScrap)

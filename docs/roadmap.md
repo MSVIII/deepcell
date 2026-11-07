@@ -65,6 +65,13 @@
 - Visible Auto-Turret on the hatch dome (turns, flash, tracer).
 - Explosion sound quieter; menu, gameplay and boss music with a Music switch.
 
+## Done in the tutorial highlight and progression pass (2026-11-07)
+
+- Glowing frame around each tutorial target; clearer step cards.
+- Recruit cost grows; rooms show real crew numbers; "+N" for extra guards.
+- Harder enemies and waves, pricier upgrades; Guard Training, Work Shifts, Sprinkler, Repair Arm.
+- Wave banner; boss health bar; louder music that phone speakers carry.
+
 ## Known gaps
 
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.

@@ -91,3 +91,14 @@ Why the base app is built the way it is. Add a dated entry when the group decide
 - **Auto-Turret is visible**: Blender-rendered base and twin-barrel gun on the hatch dome; the gun turns to each target, plays a flash and recoil, and draws a tracer.
 - **Explosion sound** plays at 40% (impact 60%): it stacks up when many drones die.
 - **Music** composed in code (`tools/audio/gen_music.py`): menu "Down Below" (A minor, 70 BPM), gameplay "Hold the Hatch" (D minor, 112 BPM), boss "Command Drone" (E minor, 140 BPM, plays on every 10th wave). Seamless loops played by `ui/Music.kt` (MediaPlayer, crossfade), under the effects. A Music switch is in Settings.
+
+## 2026-11-07: tutorial highlight, harder progression, new upgrades, boss bar
+
+- **Tutorial targets glow**: a pulsing amber frame around the thing each step is about, plus the arrow. Cards show "Step 2 of 6", a short title and one plain sentence or two (the user found the first wording hard to follow).
+- **Recruiting gets dearer**: 15 food for the first recruit, then x1.6 for every survivor already in the bunker (15, 24, 38, 61, 98, ...).
+- **Real numbers in the rooms**: rooms draw at most four workers and the roof four guards, so each room shows a crew chip ("5 workers · +5/s") and the roof shows "+N" for guards not drawn. All of them count.
+- **Harder**: enemies hit harder (scout 7, shrike 4, bomber 25, boss 70) and a little faster; waves +12% enemies and +4% HP every wave, +60% HP and +10% speed every cycle; guards shoot every 2 s (shared) until Guard Training; upgrade prices grow faster (x1.65 to x2.4 per level).
+- **New upgrades**: Guard Training (guards shoot 15% faster per level), Work Shifts (each worker +1 work per second per level), Sprinkler (fills Mushroom Farm, works offline), Repair Arm (+level hatch health per second). Icons rendered in `tools/blender/icons.py`.
+- **Wave banner** (Wave 7, plus "Command Drone incoming" on boss waves) replaces only the "Wave cleared" toast, which popped up every few seconds. Toasts stay for purchases, not enough scrap or food, recruiting, job changes, breaches, offline earnings and a full hatch, so the Toast lesson is still covered.
+- **Boss health bar** across the top of the sky while a Command Drone is up.
+- **Music was too quiet on phone speakers**: the game and boss mixes were mostly kick and bass, which phone speakers can't reproduce, and sat about 10 dB under the effects. The master now cuts the sub-bass, normalises to -15 dBFS, the melody and arpeggio are louder, the gameplay melody starts after the 4-bar intro, and the player volume is 0.8.

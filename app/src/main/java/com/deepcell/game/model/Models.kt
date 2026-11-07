@@ -92,7 +92,9 @@ data class Enemy(
     /** Start point of the flight sway, so enemies don't bob in step. */
     val phase: Float = 0f,
     /** Falling speed; later waves fly faster than the type's base speed. */
-    val speedDp: Float = type.speedDp
+    val speedDp: Float = type.speedDp,
+    /** HP when it spawned, for the boss health bar. */
+    val maxHp: Int = hp
 )
 
 /** One wave from assets/waves.json, already expanded to a spawn queue of type ids. */

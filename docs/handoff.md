@@ -1,6 +1,6 @@
 # Handoff
 
-Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (tutorial, harder waves, Collector job, turret and music pass). Read with `AGENTS.md`, `docs/design.md` and `docs/roadmap.md`.
+Where Deepcell stands and what the next person (or agent) needs to know. Last updated 2026-11-07 (tutorial highlight, harder progression, new upgrades, boss bar). Read with `AGENTS.md`, `docs/design.md` and `docs/roadmap.md`.
 
 ## State
 
@@ -49,6 +49,7 @@ Look rules that came from the user's feedback:
 - The Blender MCP addon was one protocol version behind (works; update with `uvx mcp-for-blender install-addon`). The asset libraries and 3D generators are off; all models are code-built.
 - Windows / Git Bash: run adb with `-s emulator-5554` (the user's Pixel 7 is also connected over wireless debugging). Use `MSYS_NO_PATHCONV=1` for `adb shell` paths. Long heredocs in Bash sometimes fail; write a script file and run it instead.
 - Emulator AVD: `Medium_Phone` (API 37). `svc power stayon true` keeps it awake for screenshots. It is started with `-no-snapshot-save`, so a restart throws away app data (the save) made since the snapshot. Don't fire many adb commands in parallel or screenshot in a tight loop: it stalled System UI and killed the adb server once.
+- To test later game states on the emulator, copy the save out with `adb exec-out run-as com.deepcell.game cat databases/deepcell.db`, edit it with Python's sqlite3, and pipe it back with `run-as ... sh -c 'cat > databases/deepcell.db'` while the app is stopped. Tapping moving drones from a script does not work reliably.
 - Turret frames share one centre (the gun's axis) so the gun ImageView rotates about its middle; `TURRET_X`, `DOME_Y` place it on the hatch dome.
 
 ## User preferences

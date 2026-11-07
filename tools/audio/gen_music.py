@@ -27,7 +27,10 @@ DST = os.path.join(HERE, "..", "..", "app", "src", "main", "res", "raw")
 rng = np.random.default_rng(7)
 
 # Music sits under the sound effects (gen_sfx.py normalises those to -13 dBFS RMS).
-TARGET_DBFS = -19.0
+TARGET_DBFS = -15.0
+# Phone speakers play almost nothing below ~150 Hz, so the mixes keep the melody, arpeggio and
+# the upper harmonics of the bass up front, and the master cuts the sub-bass.
+SUB_CUT_HZ = 70
 
 
 def hz(m):
@@ -198,7 +201,7 @@ class Track:
 
 
 def master(x):
-    x = x - x.mean(axis=1, keepdims=True)
+    x = hp(x, SUB_CUT_HZ)
     rms = np.sqrt(np.mean(x ** 2))
     x = x * (10 ** (TARGET_DBFS / 20) / rms)
     return np.tanh(x * 1.1) / 1.1 * 0.95
@@ -279,7 +282,8 @@ def game():
         pattern = [r, r, r + 12, r, r, r + 7, r + 12, r + 7]
         if not brk:
             for k, m in enumerate(pattern):
-                tr.add(bar + k * 0.5, bass(m, 0.45 * tr.spb), gain=0.42 if k % 2 == 0 else 0.32)
+                tr.add(bar + k * 0.5, bass(m, 0.45 * tr.spb, cutoff=1100, drive=1.6),
+                       gain=0.34 if k % 2 == 0 else 0.26)
         else:
             tr.add(bar, bass(r, 3.8 * tr.spb, cutoff=380), gain=0.4)
         tr.add(bar, pad(ch[0], 4 * tr.spb), gain=0.07, pan=-0.3, send=0.5)
@@ -288,12 +292,12 @@ def game():
             seq = [0, 1, 2, 1] * 4
             for k in range(16):
                 m = ch[seq[k]] + (12 if k % 8 >= 4 else 0)
-                tr.add(bar + k * 0.25, pluck(m, 0.22 * tr.spb, 2200), gain=0.09,
+                tr.add(bar + k * 0.25, pluck(m, 0.22 * tr.spb, 2600), gain=0.15,
                        pan=0.35 if k % 2 else -0.35, send=0.3)
         # Drums
         for beat in range(4):
             if not brk or beat == 0:
-                tr.add(bar + beat, kick(), gain=0.55 if beat in (0, 2) else 0.0)
+                tr.add(bar + beat, kick(), gain=0.4 if beat in (0, 2) else 0.0)
             if not intro and not brk and beat in (1, 3):
                 tr.add(bar + beat, snare(), gain=0.32, send=0.15)
             if intro and beat == 3:
@@ -316,8 +320,8 @@ def game():
                 (28, 2, 76), (30, 1, 73), (31, 1, 69)]
     # The B melody fits Gm Bb Dm A; start it on bar 12, repeat it an octave down on bar 16.
     shifted = [(b, l, m) for b, l, m in melody_b]
-    tr.notes(shifted, lead, offset=12 * 4, gain=0.17, send=0.35)
-    tr.notes(shifted, lead, offset=16 * 4, gain=0.12, transpose=-12, send=0.35, pan=-0.2)
+    tr.notes(shifted, lead, offset=12 * 4, gain=0.25, send=0.35)
+    tr.notes(shifted, lead, offset=16 * 4, gain=0.18, transpose=-12, send=0.35, pan=-0.2)
     melody_a = [(0, 1, 69), (1, 1, 74), (2, 1.5, 77), (3.5, 0.5, 76),
                 (4, 3, 74), (7, 0.5, 72), (7.5, 0.5, 70),
                 (8, 1, 69), (9, 1, 72), (10, 1, 77), (11, 1, 81),
@@ -326,7 +330,9 @@ def game():
                 (20, 2, 70), (22, 2, 74),
                 (24, 1, 72), (25, 1, 77), (26, 1, 81), (27, 1, 79),
                 (28, 3, 76), (31, 1, 72)]
-    tr.notes(melody_a, lead, offset=20 * 4, gain=0.17, send=0.35, pan=0.15)
+    # The A melody also plays in the first section, so the tune starts after the 4-bar intro.
+    tr.notes(melody_a, lead, offset=4 * 4, gain=0.2, send=0.35, pan=-0.1, transpose=-12)
+    tr.notes(melody_a, lead, offset=20 * 4, gain=0.25, send=0.35, pan=0.15)
     return tr.render(room=1.6)
 
 
@@ -346,16 +352,16 @@ def boss():
         # Sixteenth bass with octave jumps, driven hard.
         for k in range(16):
             m = r + (12 if k in (3, 6, 11, 14) else 0)
-            tr.add(bar + k * 0.25, bass(m, 0.22 * tr.spb, cutoff=900, drive=2.2),
+            tr.add(bar + k * 0.25, bass(m, 0.22 * tr.spb, cutoff=1500, drive=2.2),
                    gain=0.34 if k % 4 == 0 else 0.25)
         if not intro:                     # power-chord stabs on the off-beats
             for beat in (0.5, 1.5, 2.75, 3.5):
                 for m in (ch[0] - 12, ch[0] - 5):
                     tr.add(bar + beat, lead(m, 0.2 * tr.spb, bright=3200, detune=0.006),
-                           gain=0.08, pan=-0.3 if m == ch[0] - 12 else 0.3, send=0.2)
+                           gain=0.13, pan=-0.3 if m == ch[0] - 12 else 0.3, send=0.2)
         tr.add(bar, pad(ch[1] - 12, 4 * tr.spb), gain=0.07, send=0.5)
         for beat in range(4):
-            tr.add(bar + beat, kick(1.2), gain=0.6)
+            tr.add(bar + beat, kick(1.2), gain=0.45)
             if not intro and beat in (1, 3):
                 tr.add(bar + beat, snare(), gain=0.36, send=0.15)
             for s in range(4 if not intro else 2):
@@ -374,9 +380,9 @@ def boss():
              (20, 1, 86), (21, 1, 84), (22, 2, 81),
              (24, 2, 83), (26, 1, 79), (27, 1, 76),
              (28, 4, 77)]
-    tr.notes(siren, lead, offset=8 * 4, gain=0.16, send=0.3)
-    tr.notes(siren, lead, offset=8 * 4, gain=0.07, transpose=-12, send=0.3, pan=-0.3)
-    tr.notes(siren, lead, offset=24 * 4, gain=0.16, send=0.3, pan=0.15)
+    tr.notes(siren, lead, offset=8 * 4, gain=0.23, send=0.3)
+    tr.notes(siren, lead, offset=8 * 4, gain=0.1, transpose=-12, send=0.3, pan=-0.3)
+    tr.notes(siren, lead, offset=24 * 4, gain=0.23, send=0.3, pan=0.15)
     return tr.render(room=1.3)
 
 

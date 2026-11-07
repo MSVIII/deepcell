@@ -29,6 +29,8 @@ These are small, needed by Android itself, and explained in `docs/decisions.md`:
 - `Dialog` with a custom layout for New Game (`dialog_new_game.xml`), the tutorial question (`dialog_tutorial.xml`) and the job picker (`dialog_job.xml`).
 - `MediaPlayer` for looping background music (`ui/Music.kt`), faded with a `Handler`.
 - `<include>` to reuse the tutorial overlay layout in two screens.
+- Plurals resource (`room_workers`) for "1 worker" / "5 workers".
+- Toast is still used for purchases, errors, recruiting, job changes, breaches and offline earnings; only the per-wave "cleared" toast became the wave banner.
 - ViewHolder pattern in `FloorAdapter` (row views found once, stored in the row's tag).
 - `ActivityManager` (`isLowRamDevice`, `memoryClass`) to pick the detail level (`ui/Quality.kt`).
 - Density-specific resource folders (`drawable-xxhdpi/xhdpi/hdpi`) so each phone decodes images at its own size.

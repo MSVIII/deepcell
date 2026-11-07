@@ -22,14 +22,19 @@ import com.deepcell.game.ui.Tutorial
 
 /**
  * Survivor list. Tap a survivor to open the job picker (Roof, Scrap Dig, Mushroom Farm,
- * Collector, each with what it does). Recruiting costs food; the recruit gets a generated
- * name and starts in Scrap Dig.
+ * Collector, each with what it does). Recruiting costs food, more for every survivor already
+ * in the bunker; the recruit gets a generated name and starts in Scrap Dig.
  */
 class SurvivorsActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_BUNKER_NAME = "bunker_name"
-        const val RECRUIT_FOOD_COST = 15
+        /** Food for the next recruit: 15 for the first, then x1.6 for every survivor after that. */
+        private const val RECRUIT_BASE = 15
+        private const val RECRUIT_GROWTH = 1.6
+
+        fun recruitCost(survivorCount: Int): Int =
+            Math.round(RECRUIT_BASE * Math.pow(RECRUIT_GROWTH, (survivorCount - 1).coerceAtLeast(0).toDouble())).toInt()
     }
 
     private lateinit var db: GameDatabase
@@ -37,6 +42,7 @@ class SurvivorsActivity : AppCompatActivity() {
     private lateinit var adapter: SurvivorAdapter
     private lateinit var listView: ListView
     private lateinit var tutorial: Tutorial
+    private lateinit var recruitButton: Button
     private var survivors: List<Survivor> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,8 +60,7 @@ class SurvivorsActivity : AppCompatActivity() {
         listView.adapter = adapter
         listView.setOnItemClickListener { _, _, position, _ -> pickJob(survivors[position]) }
 
-        val recruitButton = findViewById<Button>(R.id.recruitButton)
-        recruitButton.text = getString(R.string.recruit_cost, RECRUIT_FOOD_COST)
+        recruitButton = findViewById(R.id.recruitButton)
 
         // Tutorial steps on this screen point at the recruit button, then at the newest survivor.
         tutorial = Tutorial(this, db) { step ->
@@ -68,12 +73,13 @@ class SurvivorsActivity : AppCompatActivity() {
 
         recruitButton.setOnClickListener {
             val food = db.getFood()
-            if (food < RECRUIT_FOOD_COST) {
+            val cost = recruitCost(survivors.size)
+            if (food < cost) {
                 Toast.makeText(this, R.string.not_enough_food, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val name = Survivor.randomName(survivors.map { it.name })
-            db.recruitSurvivor(name, Survivor.JOB_DIG, food - RECRUIT_FOOD_COST)
+            db.recruitSurvivor(name, Survivor.JOB_DIG, food - cost)
             Toast.makeText(this, getString(R.string.recruited, name), Toast.LENGTH_SHORT).show()
             tutorial.complete(Tutorial.RECRUIT)
             refresh()
@@ -119,6 +125,7 @@ class SurvivorsActivity : AppCompatActivity() {
         survivors = db.getSurvivors()
         foodText.text = db.getFood().toString()
         adapter.update(survivors)
+        recruitButton.text = getString(R.string.recruit_cost, recruitCost(survivors.size))
         listView.post { tutorial.show() }
     }
 

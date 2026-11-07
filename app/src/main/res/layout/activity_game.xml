@@ -49,6 +49,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/hudFoodGroup"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
             android:layout_centerVertical="true"
@@ -73,10 +74,14 @@
                 android:layout_marginStart="4dp" />
         </LinearLayout>
 
+        <!-- Wave chip follows the food chip, so long numbers push it right instead of overlapping. -->
         <LinearLayout
+            android:id="@+id/hudWaveGroup"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/hudFoodGroup"
             android:background="@drawable/np_pill"
             android:gravity="center"
             android:minWidth="96dp"
@@ -168,6 +173,73 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="84dp" />
+
+        <!-- Boss health: shown while a Command Drone is in the sky. -->
+        <LinearLayout
+            android:id="@+id/bossPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/np_label"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/bossName"
+                style="@style/SceneLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_skull"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textSize="13sp" />
+
+            <ProgressBar
+                android:id="@+id/bossBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="9dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="2dp"
+                android:progressDrawable="@drawable/progress_boss" />
+        </LinearLayout>
+
+        <!-- Wave banner: "Wave 7" (and a boss warning) eases in when a wave starts. -->
+        <LinearLayout
+            android:id="@+id/waveBanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="74dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/waveBannerTitle"
+                style="@style/BunkerHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="#FF000000"
+                android:shadowDy="3"
+                android:shadowRadius="8"
+                android:textSize="34sp" />
+
+            <TextView
+                android:id="@+id/waveBannerSub"
+                style="@style/BunkerHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="#FF000000"
+                android:shadowDy="2"
+                android:shadowRadius="6"
+                android:text="@string/boss_incoming"
+                android:textColor="@color/alarm_red"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <!-- Explosions and sparks play here, above the enemies and the bunker. -->
         <FrameLayout

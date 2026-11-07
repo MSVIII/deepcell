@@ -1,14 +1,15 @@
 {
-  "hpScalePerCycle": 0.5,
-  "countPerWave": 0.08,
-  "spawnFasterPerWave": 0.02,
-  "minSpawnScale": 0.45,
-  "speedPerCycle": 0.08,
+  "hpScalePerCycle": 0.6,
+  "hpPerWave": 0.04,
+  "countPerWave": 0.12,
+  "spawnFasterPerWave": 0.025,
+  "minSpawnScale": 0.4,
+  "speedPerCycle": 0.1,
   "enemyTypes": [
-    { "id": "scout",  "name": "Scout Drone",  "hp": 2,  "speedDp": 45, "damage": 5,  "reward": 2,  "sizeDp": 40 },
-    { "id": "shrike", "name": "Shrike",       "hp": 1,  "speedDp": 80, "damage": 3,  "reward": 2,  "sizeDp": 36 },
-    { "id": "bomber", "name": "Bomber Drone", "hp": 6,  "speedDp": 25, "damage": 20, "reward": 6,  "sizeDp": 48 },
-    { "id": "boss",   "name": "Command Drone","hp": 40, "speedDp": 12, "damage": 60, "reward": 50, "sizeDp": 80 }
+    { "id": "scout",  "name": "Scout Drone",  "hp": 2,  "speedDp": 50, "damage": 7,  "reward": 2,  "sizeDp": 40 },
+    { "id": "shrike", "name": "Shrike",       "hp": 1,  "speedDp": 85, "damage": 4,  "reward": 2,  "sizeDp": 36 },
+    { "id": "bomber", "name": "Bomber Drone", "hp": 7,  "speedDp": 28, "damage": 25, "reward": 6,  "sizeDp": 48 },
+    { "id": "boss",   "name": "Command Drone","hp": 50, "speedDp": 13, "damage": 70, "reward": 50, "sizeDp": 80 }
   ],
   "waves": [
     { "spawnMs": 1800, "enemies": [ { "type": "scout", "count": 4 } ] },

@@ -148,7 +148,7 @@
                 android:importantForAccessibility="no" />
         </LinearLayout>
 
-        <!-- Nobody works here: says so, and opens Survivors when tapped. -->
+        <!-- Crew chip: "6 workers · +6/s", or a hint when nobody works here. Opens Survivors. -->
         <TextView
             android:id="@+id/roomHint"
             style="@style/BunkerSmall"
@@ -163,8 +163,7 @@
             android:gravity="center_vertical"
             android:maxWidth="190dp"
             android:textColor="@color/text_main"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textSize="12sp" />
 
         <!-- "+5" when the bar fills. -->
         <TextView

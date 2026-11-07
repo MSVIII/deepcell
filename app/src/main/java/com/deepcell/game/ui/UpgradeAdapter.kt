@@ -42,8 +42,11 @@ class UpgradeAdapter(
         "farm_tools" -> R.drawable.icon_up_farm_tools
         "auto_turret" -> R.drawable.icon_up_auto_turret
         "drill_rig" -> R.drawable.icon_up_drill_rig
-        "collector" -> R.drawable.icon_up_collector
         "storage" -> R.drawable.icon_up_storage
+        "guard_training" -> R.drawable.icon_up_guard_training
+        "work_shifts" -> R.drawable.icon_up_work_shifts
+        "sprinkler" -> R.drawable.icon_up_sprinkler
+        "repair_arm" -> R.drawable.icon_up_repair_arm
         else -> R.drawable.ic_scrap
     }
 
