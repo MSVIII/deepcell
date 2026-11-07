@@ -13,7 +13,7 @@ Where Deepcell stands and what the next person (or agent) needs to know. Last up
 - Music: `tools/audio/gen_music.py` writes `res/raw/music_*.ogg`; `ui/Music.kt` plays them (menu in MainActivity, game/boss in GameActivity.updateMusic).
 - Performance: images in `drawable-xxhdpi/xhdpi/hdpi` (not nodpi), `FloorAdapter` ViewHolder + `refresh()`, Detail setting (`ui/Quality.kt`). Measure with `adb shell dumpsys gfxinfo com.deepcell.game` (reset, play 20 s, read percentiles) and `dumpsys meminfo`.
 - Title screen: `ui/TitleSlideshow.kt` + `ui/TitleAmbience.kt` (dust, drones) pans three camera shots and dips through pre-blurred copies between them. First try; the user was unsure about the idea and hasn't judged it yet.
-- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`) → animation, effects, sound, easing (`d85c019`) → storage, Collector, main menu, performance (`6185994`). No remote.
+- Commits so far: base app → graphics rework → rename to Deepcell → art scripts → Blender rework (`d7d12dd`) → lighting/frames/icons/logo/title pass (`c4319f0`) → animation, effects, sound, easing (`d85c019`) → storage, Collector, main menu, performance (`6185994`) → tutorial, difficulty, turret, music → progression, boss bar → economy → README and fork guide. Public on GitHub: https://github.com/Yauren/deepcell (branch `master`; tag `fork-base` is the starting point for groupmates' forks; `FORKING.md` has their setup prompt; combining the forks is described in `docs/merging.md`).
 
 ## Art pipeline
 
