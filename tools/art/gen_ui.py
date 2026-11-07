@@ -96,6 +96,42 @@ ninepatch("np_field", 40, 40, bordered(40, 40, (8, 0, 8, 0), 1.5, "#998FA3B0", "
           (10, 10, 10, 10), (14, 10, 14, 10))
 
 
+def frame_patch(name, size_dp=48, border=3.0, shadow=14.0):
+    """Cell frame laid over each room and shaft segment: a solid black border and a soft inner
+    shadow, so every cell reads as its own box. Transparent in the middle."""
+    W = size_dp * DENSITY
+    img = Image.new("RGBA", (W, W), (0, 0, 0, 0))
+    px = img.load()
+    b = border * DENSITY
+    sh = shadow * DENSITY
+    for y in range(W):
+        for x in range(W):
+            d = min(x, y, W - 1 - x, W - 1 - y)
+            if d < b:
+                a = 255
+            elif d < b + sh:
+                t = 1 - (d - b) / sh
+                a = int(170 * t * t)
+            else:
+                a = 0
+            px[x, y] = (0, 0, 0, a)
+    out = Image.new("RGBA", (W + 2, W + 2), (0, 0, 0, 0))
+    out.paste(img, (1, 1))
+    o = out.load()
+    edge = int((border + shadow + 2) * DENSITY)
+    for i in range(1 + edge, 1 + W - edge):
+        o[i, 0] = (0, 0, 0, 255)
+        o[0, i] = (0, 0, 0, 255)
+    for i in range(1, W + 1):          # content area: everything (no padding)
+        o[i, W + 1] = (0, 0, 0, 255)
+        o[W + 1, i] = (0, 0, 0, 255)
+    p = os.path.join(R, "res", "drawable-xxhdpi", name + ".9.png")
+    out.save(p)
+
+
+frame_patch("np_cell_frame")
+
+
 def chip(name, top, bottom, light, shade, pressed=False):
     """Key-chip button: dark outline, raised face with a light top lip and a shaded lower lip."""
     W, H = 48, 44
@@ -189,6 +225,12 @@ w("res/drawable/bg_room_shade.xml", f'''<?xml version="1.0" encoding="utf-8"?>
 </shape>''')
 
 
+w("res/drawable/bg_title_shade.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Title screen: dark at the top behind the logo, fading out. -->
+<shape {NS}>
+    <gradient android:angle="270" android:startColor="#D9000000" android:centerColor="#80000000" android:endColor="#00000000" />
+</shape>''')
+
 w("res/drawable/bg_lamp_glow.xml", f'''<?xml version="1.0" encoding="utf-8"?>
 <!-- Warm lamp light over a room. Its alpha breathes (anim/lamp_flicker). -->
 <shape {NS}>
@@ -228,14 +270,6 @@ w("res/anim/float_up.xml", f'''<?xml version="1.0" encoding="utf-8"?>
     <translate android:duration="700" android:fromYDelta="0" android:toYDelta="-36dp" />
     <alpha android:duration="700" android:startOffset="250" android:fromAlpha="1.0" android:toAlpha="0.0" />
 </set>''')
-w("res/anim/antenna_blink.xml", f'''<?xml version="1.0" encoding="utf-8"?>
-<!-- Slow pulse for the title-screen emblem. -->
-<alpha {NS}
-    android:duration="1600"
-    android:fromAlpha="1.0"
-    android:toAlpha="0.75"
-    android:repeatCount="infinite"
-    android:repeatMode="reverse" />''')
 w("res/anim/lamp_flicker.xml", f'''<?xml version="1.0" encoding="utf-8"?>
 <!-- Lamp glow over a room: a slow uneven breathe. -->
 <alpha {NS}

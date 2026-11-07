@@ -4,8 +4,6 @@
     <string name="default_bunker_name">Bunker Nine</string>
 
     <!-- Title screen -->
-    <string name="title_line_1">DEEP</string>
-    <string name="title_line_2">CELL</string>
     <string name="bunker_name_hint">Bunker name</string>
     <string name="play">Play</string>
     <string name="continue_game">Continue</string>

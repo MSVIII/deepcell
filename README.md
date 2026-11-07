@@ -52,6 +52,10 @@ tools/blender/             Blender scripts that build and render the scenes, cha
 AGENTS.md                  rules for AI coding assistants
 ```
 
+## Licences
+
+The font Barlow Condensed is used under the SIL Open Font License 1.1 (`docs/licenses/BarlowCondensed-OFL.txt`). All art is our own, made with the scripts in `tools/`.
+
 ## Working as a group
 
 - Read `AGENTS.md`; the same rules apply to people.

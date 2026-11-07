@@ -35,9 +35,9 @@ class SurvivorAdapter(
             else -> R.drawable.survivor_digger
         }
         val jobIcon = when (survivor.job) {
-            Survivor.JOB_ROOF -> R.drawable.ic_tab_defense
-            Survivor.JOB_FARM -> R.drawable.ic_food
-            else -> R.drawable.ic_scrap
+            Survivor.JOB_ROOF -> R.drawable.icon_tab_defense
+            Survivor.JOB_FARM -> R.drawable.icon_food
+            else -> R.drawable.icon_scrap
         }
         row.findViewById<ImageView>(R.id.survivorFigure).setImageResource(figure)
         row.findViewById<TextView>(R.id.survivorName).text = survivor.name

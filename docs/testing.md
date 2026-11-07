@@ -2,6 +2,23 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: lighting, framing, icons, logo and title screen
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 44 warnings (new: 9 `UnusedAttribute` for the `android:font*` attributes in `res/font/barlow.xml` on API < 26; the `app:` attributes cover those versions).
+- Emulator `Medium_Phone` (API 37) only; **not installed on the phone** (the user is using it).
+
+| Check | Result |
+|---|---|
+| Title: logo, panel, shots pan, blurred transition between shots (three screenshots over 9 s) | Pass |
+| Continue opens the game | Pass |
+| Game: dark focused rooms with black cell frames, worker with contact shadow, side-view dusk bunker with roof guard, rendered HUD and tab icons, Barlow font | Pass (screenshot) |
+| Defense sheet: rendered upgrade icons, price chips | Pass (screenshot) |
+| Survivors: figures, job chips with rendered icons, recruit row | Pass (screenshot) |
+| Enemies (shrike, scout, bomber) on the surface | Seen in a screenshot |
+| No app crashes in `logcat -b crash` (only the emulator's Bluetooth service) | Pass |
+
+Not checked: Settings screen, the Drill Rig room image in play, the boss sprite, the launcher icon on the home screen, older Android versions (font fallback below API 26).
+
 ## 2026-11-07: Blender art rework
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 33 warnings (none new from the art).

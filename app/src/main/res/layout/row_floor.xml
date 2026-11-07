@@ -21,13 +21,18 @@
             android:scaleType="fitXY"
             android:src="@drawable/shaft" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/np_cell_frame" />
+
         <TextView
             android:id="@+id/floorNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/np_plaque"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="@font/barlow"
             android:gravity="center"
             android:textColor="@color/text_on_amber"
             android:textSize="13sp"
@@ -62,14 +67,20 @@
             android:layout_height="40dp"
             android:background="@drawable/bg_room_shade" />
 
+        <!-- Black cell frame with an inner shadow: each room reads as its own box. -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/np_cell_frame" />
+
         <!-- Survivors working here are added in code. -->
         <LinearLayout
             android:id="@+id/roomWorkers"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="11dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginBottom="12dp"
             android:gravity="bottom"
             android:orientation="horizontal" />
 
@@ -80,16 +91,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="10dp" />
 
         <!-- Payout per full bar. -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/np_label"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -100,7 +111,7 @@
                 android:layout_height="15dp"
                 android:layout_marginEnd="5dp"
                 android:contentDescription="@string/automated"
-                android:src="@drawable/ic_gear"
+                android:src="@drawable/icon_gear"
                 android:visibility="gone" />
 
             <TextView
@@ -124,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="@font/barlow"
             android:shadowColor="#FF000000"
             android:shadowDy="2"
             android:shadowRadius="4"
@@ -139,9 +150,9 @@
             android:layout_width="match_parent"
             android:layout_height="6dp"
             android:layout_gravity="bottom"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="6dp"
             android:progressDrawable="@drawable/progress_floor" />
     </FrameLayout>
 </LinearLayout>

@@ -3,12 +3,12 @@
 exec(open(BL_DIR + "/common.py").read())
 exec(open(BL_DIR + "/room_shell.py").read())
 
-sc = new_scene("RoomFarm", haze=0.07)
+sc = new_scene("RoomFarm", haze=0.14)
 base_materials()
 emit("DC_GlowCap", (0.30, 0.95, 0.80), 2.5)
 random.seed(4)
 GROW = (0.80, 1.0, 0.60)
-room_shell(lamp_x=(-2.4, 0.9, 3.6), lamp_color=(1.0, 0.72, 0.42))
+room_shell(lamp_x=(-3.2, 0.2, 3.3), lamp_color=(1.0, 0.72, 0.42))
 D = ROOM_D
 
 # ---- left: water tank, sacks, shelf with jars
@@ -65,7 +65,7 @@ for i in range(10):
 for i, (x, y, z) in enumerate([(0.1, 1.5, 2.25), (3.25, 1.5, 2.25)]):
     box(f"GrowTube{i}", (1.6, 0.12, 0.06), (x, y, z), "DC_GrowLight")
     box(f"GrowHood{i}", (1.7, 0.2, 0.06), (x, y, z + 0.06), "DC_Dark", outline=True)
-    area(f"Grow{i}", (x, y, z - 0.08), 120, GROW, size=1.5, rot=(0, 0, 0))
+    area(f"Grow{i}", (x, y, z - 0.08), 45, GROW, size=1.5, rot=(0, 0, 0))
 
 # right corner: crates of harvest
 for i, (x, z) in enumerate([(4.5, 0.25), (4.5, 0.72)]):

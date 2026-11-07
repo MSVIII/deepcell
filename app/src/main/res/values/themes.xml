@@ -11,6 +11,8 @@
         <item name="android:textColorSecondary">@color/text_dim</item>
         <item name="android:statusBarColor">#FF0B0D10</item>
         <item name="buttonStyle">@style/BunkerButton</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
     </style>
 
     <!-- Buttons (Module 4: styles). Amber is the main action; Dark and Danger are variants. -->
@@ -18,7 +20,7 @@
         <item name="android:background">@drawable/bg_button</item>
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.08</item>
@@ -39,16 +41,6 @@
     </style>
 
     <!-- Text styles. -->
-    <style name="BunkerTitle">
-        <item name="android:textColor">@color/text_main</item>
-        <item name="android:textSize">44sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:letterSpacing">0.18</item>
-        <item name="android:shadowColor">#CC000000</item>
-        <item name="android:shadowDy">4</item>
-        <item name="android:shadowRadius">2</item>
-    </style>
 
     <style name="BunkerHeading">
         <item name="android:textColor">@color/text_main</item>
@@ -56,26 +48,26 @@
         <item name="android:letterSpacing">0.08</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
     </style>
 
     <style name="BunkerText">
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
     </style>
 
     <style name="BunkerSmall">
         <item name="android:textColor">@color/text_dim</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
     </style>
 
     <style name="HudNumber">
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
         <item name="android:shadowColor">#FF000000</item>
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">2</item>
@@ -86,7 +78,7 @@
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@font/barlow</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.1</item>
         <item name="android:shadowColor">#FF000000</item>
@@ -102,7 +94,7 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="android:background">@drawable/bg_tab</item>
-        <item name="android:padding">12dp</item>
+        <item name="android:padding">7dp</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
 </resources>

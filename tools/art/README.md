@@ -4,8 +4,8 @@ The vector icons and interface drawables are written by these two scripts. Scene
 
 | Script | Writes |
 |---|---|
-| `gen_art.py` | `res/drawable/`: icons, logo, launcher and notification icons, earth footer |
-| `gen_ui.py` | `res/drawable-xxhdpi/` 9-patch panels and key-chip buttons, `res/drawable/` selectors and shapes (buttons, tabs, progress bars, overlays), `res/anim/` (`work_bob`, `float_up`, `antenna_blink`, `lamp_flicker`, `idle_sway`), `res/values/dimens.xml` |
+| `gen_art.py` | `res/drawable/`: small inline icons (scrap, food, back, close, skull), launcher (legacy vector, plus an adaptive foreground that insets the rendered emblem), notification icon, earth footer |
+| `gen_ui.py` | `res/drawable-xxhdpi/` 9-patch panels, cell frame and key-chip buttons, `res/drawable/` selectors and shapes (buttons, tabs, progress bars, overlays), `res/anim/` (`work_bob`, `float_up`, `lamp_flicker`, `idle_sway`), `res/values/dimens.xml` |
 
 ## Use
 

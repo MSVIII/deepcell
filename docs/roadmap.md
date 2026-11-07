@@ -32,6 +32,13 @@
 - Interface restyled: slate 9-patch panels with cut corners, olive key-chip buttons, round tab slots with a green ring, condensed bold text.
 - Lamp light over each room breathes; roof guards sway.
 
+## Done in the lighting and title pass (2026-11-07)
+
+- Focused lamp lighting with shadows in the rooms; black cell frames; contact shadows under survivors.
+- Eye-level bunker and surface; bunker relit for dusk.
+- Rendered icons for tabs, upgrades and settings; new rendered logo and launcher emblem; Barlow Condensed font.
+- Animated title screen: panning camera shots with blurred transitions.
+
 ## Known gaps
 
 - **Sound**: the Sound switch is saved, but the game has no sound effects yet. Whoever adds sounds must check `GameDatabase.SETTING_SOUND`.

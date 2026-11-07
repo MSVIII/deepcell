@@ -31,9 +31,10 @@ def room_shell(lamp_x=(-2.2, 2.0), lamp_color=(1.0, 0.66, 0.35), wall="DC_Concre
         cyl(f"Cable{i}", 0.012, 0.6, (x, 0.9, H - 0.3), "DC_Dark")
         cyl(f"Shade{i}", 0.28, 0.16, (x, 0.9, H - 0.68), "DC_Olive", verts=20, bevel=0.03, outline=True)
         cyl(f"Bulb{i}", 0.11, 0.12, (x, 0.9, H - 0.8), "DC_Bulb", verts=12)
-        spot(f"Lamp{i}", (x, 0.9, H - 0.95), 900, lamp_color, rot=(-12, 0, 0))
-        point(f"LampGlow{i}", (x, 1.6, 3.0), 140, lamp_color)
-    area("Fill", (0, -4, 1.8), 35)
+        # One strong cone per lamp: a pool of light on the floor, dark between lamps.
+        spot(f"Lamp{i}", (x, 0.9, H - 0.95), 1700, lamp_color, angle=78, blend=0.35, rot=(14, 0, 0))
+        point(f"LampGlow{i}", (x, 1.2, H - 0.45), 18, lamp_color)
+    area("Fill", (0, -4, 1.8), 16)
 
 
 def room_camera():

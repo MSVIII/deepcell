@@ -1,11 +1,11 @@
 # Our bunker on the surface. Renders bunker.png with a transparent background (2:1).
-# The flat roof deck is where the Roof guards stand (roofCrew in activity_game.xml).
+# Seen from the front at eye level. The roof deck is where the Roof guards stand (roofCrew in activity_game.xml).
 exec(open(BL_DIR + "/common.py").read())
 
 sc = new_scene("Bunker")
 base_materials(bands=BANDS_NEUTRAL, rim=0.5)
 WARM = (1.0, 0.55, 0.28)
-toon("DC_BunkerConcrete", (0.27, 0.27, 0.25), (0.34, 0.33, 0.30), scale=3, grime=0.8,
+toon("DC_BunkerConcrete", (0.20, 0.19, 0.18), (0.25, 0.24, 0.22), scale=3, grime=0.8,
      bands=BANDS_NEUTRAL, rim=0.3, rim_col=WARM, grime_height=1.2)
 toon("DC_Sandbag", (0.42, 0.37, 0.26), (0.50, 0.44, 0.31), scale=12, grime=0.4, bands=BANDS_NEUTRAL,
      rim=0.35, rim_col=WARM, grime_height=0.6)
@@ -15,6 +15,8 @@ random.seed(3)
 
 # earth mound the bunker is dug into
 ball("Mound", 1.0, (0, 0.4, -0.35), "DC_Mound", scale=(4.4, 2.2, 0.7), segs=32, rings=16)
+for k, x in enumerate((-4.0, -2.6, 2.6, 4.0)):
+    ball(f"Berm{k}", 1.0, (x, -1.6, -0.35), "DC_Mound", scale=(1.6, 0.9, 0.6), segs=16, rings=8)
 # main blockhouse
 box("Block", (5.6, 3.0, 1.9), (0, 0, 0.95), "DC_BunkerConcrete", bevel=0.22, segs=3, outline=0.04)
 box("Deck", (5.2, 2.6, 0.12), (0, 0, 1.96), "DC_Plate", bevel=0.03)
@@ -29,16 +31,16 @@ torus("DoorWheel", 0.16, 0.035, (0.0, -1.66, 0.75), "DC_Red", rot=(90, 0, 0))
 for sx in (-1.0, 1.0):
     box(f"Slit{sx}", (1.2, 0.08, 0.16), (sx * 1.8, -1.52, 1.25), "DC_Dark", bevel=0.02)
     box(f"SlitGlow{sx}", (1.05, 0.06, 0.07), (sx * 1.8, -1.53, 1.25), "DC_Slit")
-    point(f"SlitLight{sx}", (sx * 1.8, -1.9, 1.25), 20, WARM)
+    point(f"SlitLight{sx}", (sx * 1.8, -1.9, 1.25), 35, WARM)
 # deck railing
 for i in range(7):
     cyl(f"RailPost{i}", 0.035, 0.55, (-2.4 + i * 0.8, -1.2, 2.3), "DC_Steel")
 cyl("Rail", 0.03, 4.9, (0, -1.2, 2.55), "DC_Steel", rot=(0, 90, 0), outline=0.015)
 # hatch at the back of the deck (enemies dive at it)
-cyl("HatchRing", 0.75, 0.22, (0, 0.6, 2.1), "DC_Steel", verts=28, bevel=0.04, outline=0.03)
-cyl("Hatch", 0.62, 0.12, (0, 0.6, 2.25), "DC_Olive", verts=28, bevel=0.04)
-torus("HatchWheel", 0.25, 0.04, (0, 0.6, 2.36), "DC_Red", rot=(0, 0, 0))
-box("HatchStripe", (1.3, 0.1, 0.02), (0, 0.6, 2.32), "DC_Hazard")
+cyl("HatchRing", 0.75, 0.42, (0, 0.6, 2.2), "DC_Steel", verts=28, bevel=0.04, outline=0.03)
+cyl("Hatch", 0.62, 0.12, (0, 0.6, 2.45), "DC_Olive", verts=28, bevel=0.04)
+torus("HatchWheel", 0.25, 0.04, (0, 0.6, 2.56), "DC_Red", rot=(0, 0, 0))
+box("HatchStripe", (1.52, 0.02, 0.1), (0, -0.16, 2.2), "DC_Hazard")
 # antenna and vent
 cyl("Mast", 0.05, 1.9, (2.2, 0.9, 2.95), "DC_Steel", outline=0.015)
 for z in (3.0, 3.5):
@@ -62,7 +64,13 @@ for side in (-1, 1):
 box("Crate", (0.6, 0.6, 0.6), (-2.2, -1.75, 0.3), "DC_Wood", bevel=0.03, outline=0.02, rot=(0, 0, 12))
 cyl("Barrel", 0.26, 0.8, (2.0, -1.8, 0.4), "DC_Rust", verts=20, bevel=0.03, outline=0.02)
 
-sun("SunBack", (70, 0, 200), 3.0, WARM)
-sun("SunFront", (50, 0, 25), 2.2, (0.85, 0.85, 1.0))
-camera((0, -19.56, 5.96), (78, 0, 0), ortho=9.6)
+sun("SunBack", (78, 0, 195), 4.0, WARM)          # dusk sun behind: warm rim
+sun("SunFront", (60, 0, 25), 0.35, (0.55, 0.62, 0.85))  # faint cold sky light on the front
+# the bunker's own lights carry the front: lamp over the door, slit glow, floodlight
+spot("DoorLamp", (0, -2.2, 1.75), 260, WARM, angle=95, blend=0.5, rot=(-25, 0, 0), size=0.1)
+box("DoorLampHood", (0.4, 0.2, 0.1), (0, -1.6, 1.6), "DC_Dark", outline=0.02)
+box("DoorLampBulb", (0.25, 0.06, 0.05), (0, -1.68, 1.54), "DC_Bulb")
+spot("FloodBeam", (-2.6, -1.2, 2.3), 150, (1.0, 0.85, 0.6), angle=40, blend=0.4, rot=(70, 0, -35))
+# Near eye level, matching the rooms and the surface (a hint of the roof shows).
+camera((0, -20, 3.3), (86, 0, 0), ortho=9.6)
 render("bunker.png", 1400, 700, transparent=True)

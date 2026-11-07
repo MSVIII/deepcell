@@ -36,12 +36,12 @@ class UpgradeAdapter(
 
     /** Icon for each upgrade id in assets/upgrades.json. Add a line when you add an upgrade. */
     private fun iconFor(id: String): Int = when (id) {
-        "tap_power" -> R.drawable.ic_up_tap_power
-        "hatch_plating" -> R.drawable.ic_up_hatch_plating
-        "dig_tools" -> R.drawable.ic_up_dig_tools
-        "farm_tools" -> R.drawable.ic_up_farm_tools
-        "auto_turret" -> R.drawable.ic_up_auto_turret
-        "drill_rig" -> R.drawable.ic_up_drill_rig
+        "tap_power" -> R.drawable.icon_up_tap_power
+        "hatch_plating" -> R.drawable.icon_up_hatch_plating
+        "dig_tools" -> R.drawable.icon_up_dig_tools
+        "farm_tools" -> R.drawable.icon_up_farm_tools
+        "auto_turret" -> R.drawable.icon_up_auto_turret
+        "drill_rig" -> R.drawable.icon_up_drill_rig
         else -> R.drawable.ic_scrap
     }
 

@@ -4,10 +4,10 @@
 exec(open(BL_DIR + "/common.py").read())
 exec(open(BL_DIR + "/room_shell.py").read())
 
-sc = new_scene("RoomDig", haze=0.06)
+sc = new_scene("RoomDig", haze=0.14)
 base_materials()
 random.seed(9)
-room_shell(lamp_x=(-2.4, 2.2))
+room_shell(lamp_x=(-2.6, 0.4, 3.3))
 
 D = ROOM_D
 # ---- left: lockers and pegboard against the wall (behind the workers)

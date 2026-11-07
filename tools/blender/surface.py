@@ -90,14 +90,28 @@ box("CraneJib", (9, 0.3, 0.4), (9.5, 22, 13.2), "DC_Far", rot=(0, -4, 0))
 box("Ground", (80, 44, 1.0), (0, 0, -1.0), "DC_Earth")
 toon("DC_Debris", (0.14, 0.11, 0.09), (0.19, 0.14, 0.11), scale=6, grime=0.3, bands=BANDS_NEUTRAL,
      rim=0.45, rim_col=WARM)
-for i in range(90):
-    x = random.uniform(-14, 14)
-    y = random.uniform(0.5, 12)
-    s = random.uniform(0.2, 0.9) * (1 + y / 10)
-    if abs(x) < 3.8 and y < 4:
-        continue                          # keep the bunker spot clear
-    box(f"Rubble{i}", (s, s * 0.8, s * 0.5), (x, y, -0.5 + s * 0.2), "DC_Debris",
+# rubble lies along the ground behind the bunker, not scattered at the camera
+for i in range(70):
+    x = random.uniform(-16, 16)
+    y = random.uniform(5, 13)
+    s = random.uniform(0.3, 1.1)
+    box(f"Rubble{i}", (s, s * 0.8, s * 0.55), (x, y, -0.5 + s * 0.25), "DC_Debris",
         rot=(random.uniform(-20, 20), random.uniform(-20, 20), random.uniform(0, 90)), bevel=0.05)
+# a few low stones on the open ground
+for i in range(40):
+    x = random.uniform(-12, 12)
+    y = random.uniform(-6, 5)
+    if abs(x) < 3.0 and y < 2:
+        continue
+    st = random.uniform(0.08, 0.25)
+    box(f"Stone{i}", (st * 1.5, st, st * 0.6), (x, y, -0.5 + st * 0.2), "DC_Debris", rot=(0, 0, random.uniform(0, 90)))
+# dark foreground silhouettes at the bottom corners (out of focus, frame the scene)
+toon("DC_Fore", (0.03, 0.025, 0.025), (0.04, 0.035, 0.03), scale=2, bands=BANDS_NEUTRAL)
+for side in (-1, 1):
+    for k in range(5):
+        s = random.uniform(0.35, 0.8)
+        box(f"Fore{side}{k}", (s * 1.4, s, s), (side * random.uniform(2.2, 3.6), random.uniform(-11.6, -10.6), -0.6 + s * 0.3),
+            "DC_Fore", rot=(random.uniform(-25, 25), random.uniform(-25, 25), random.uniform(0, 90)), bevel=0.1)
 for i in range(7):
     x = random.choice([-1, 1]) * random.uniform(4.5, 11)
     cyl(f"FencePost{i}", 0.06, 1.4, (x, random.uniform(2, 5), 0.1), "DC_Dark",
@@ -109,5 +123,5 @@ box("CarCabin", (1.4, 1.1, 0.55), (-7.7, 3.5, 0.5), "DC_Rust", rot=(0, 6, 15), b
 # light: low warm sun behind the city (rims) + soft front fill
 sun("SunBack", (70, 0, 190), 3.0, WARM)
 sun("SunFront", (55, 0, 20), 1.6, (0.75, 0.75, 0.95))
-camera((0, -14, 2.2), (93, 0, 0), lens=30)
+camera((0, -14, 1.6), (92, 0, 0), lens=30)
 render("surface.png", 1400, 1100)

@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/np_label"
         android:drawablePadding="6dp"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="@font/barlow"
         android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingTop="4dp"

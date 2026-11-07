@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,14 +15,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.deepcell.game.data.GameDatabase
 import com.deepcell.game.ui.Notifier
+import com.deepcell.game.ui.TitleSlideshow
 
-/** Title screen: bunker name, Play (new game) and Continue (load save). */
+/** Title screen: animated camera shots, bunker name, Play (new game) and Continue (load save). */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: GameDatabase
     private lateinit var nameInput: EditText
     private lateinit var continueButton: Button
     private lateinit var saveSummary: TextView
+    private lateinit var slideshow: TitleSlideshow
 
     /** Play replaces an existing save only after a second tap. */
     private var replaceConfirmed = false
@@ -38,9 +41,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.playButton).setOnClickListener { onPlay() }
         continueButton.setOnClickListener { openGame(newGame = false) }
 
-        // Slow pulse on the emblem (res/anim).
-        findViewById<android.widget.ImageView>(R.id.logo)
-            .startAnimation(android.view.animation.AnimationUtils.loadAnimation(this, R.anim.antenna_blink))
+        slideshow = TitleSlideshow(
+            findViewById(R.id.titleStage),
+            findViewById<ImageView>(R.id.titleShot),
+            findViewById<ImageView>(R.id.titleShotBlur),
+            findViewById(R.id.titleVeil)
+        )
 
         Notifier.createChannel(this)
         askNotificationPermission()
@@ -50,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Refresh every time: the save may have been reset in Settings.
         replaceConfirmed = false
+        slideshow.start()
         val state = db.loadState()
         continueButton.isEnabled = state != null
         saveSummary.text = if (state != null) {
@@ -57,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             ""
         }
+    }
+
+    override fun onPause() {
+        // Lifecycle (Module 5): no animation work while the screen is hidden.
+        slideshow.stop()
+        super.onPause()
     }
 
     private fun onPlay() {

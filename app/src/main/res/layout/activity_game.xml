@@ -99,9 +99,9 @@
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/settings"
-            android:padding="11dp"
+            android:padding="7dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_settings" />
+            android:src="@drawable/icon_settings" />
     </RelativeLayout>
 
     <!-- Surface: rendered sky and ruins, our bunker on the ground. -->
@@ -144,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="21dp"
                 android:gravity="bottom"
                 android:orientation="horizontal" />
         </FrameLayout>
@@ -258,24 +258,24 @@
             android:id="@+id/tabDefense"
             style="@style/TabButton"
             android:contentDescription="@string/tab_defense"
-            android:src="@drawable/ic_tab_defense" />
+            android:src="@drawable/icon_tab_defense" />
 
         <ImageButton
             android:id="@+id/tabSupplies"
             style="@style/TabButton"
             android:contentDescription="@string/tab_supplies"
-            android:src="@drawable/ic_tab_supplies" />
+            android:src="@drawable/icon_tab_supplies" />
 
         <ImageButton
             android:id="@+id/tabAutomation"
             style="@style/TabButton"
             android:contentDescription="@string/tab_automation"
-            android:src="@drawable/ic_tab_automation" />
+            android:src="@drawable/icon_tab_automation" />
 
         <ImageButton
             android:id="@+id/tabSurvivors"
             style="@style/TabButton"
             android:contentDescription="@string/tab_survivors"
-            android:src="@drawable/ic_tab_survivors" />
+            android:src="@drawable/icon_tab_survivors" />
     </LinearLayout>
 </LinearLayout>

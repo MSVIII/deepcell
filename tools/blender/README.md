@@ -1,6 +1,6 @@
 # Blender scenes
 
-The rooms, lift shaft, surface, bunker, survivors, enemies and resource icons are rendered in Blender. Every scene is built from code here: no imported models and no image textures. Nothing in this folder goes into the APK; only the exported WebP files do.
+The rooms, lift shaft, surface, bunker, survivors, enemies, icons, logo and title shots are rendered in Blender. Every scene is built from code here: no imported models and no image textures. Nothing in this folder goes into the APK; only the exported WebP files do.
 
 | Script | Renders |
 |---|---|
@@ -12,8 +12,11 @@ The rooms, lift shaft, surface, bunker, survivors, enemies and resource icons ar
 | `surface.py` | `surface.png` (sky, ruins, rubble) |
 | `bunker.py` | `bunker.png` (transparent) |
 | `sprites.py` | survivors, enemies, `icon_scrap`, `icon_food` (transparent) |
+| `icons.py` | tab, upgrade, settings and gear icons (transparent) |
+| `logo.py` | `logo.png` (emblem + DEEPCELL wordmark) and `emblem.png` (launcher icon); uses `fonts/BarlowCondensed-ExtraBold.ttf` (SIL OFL) |
+| `title_shots.py` | `title_surface/dig/farm.png`, portrait shots for the title slideshow |
 | `render_all.py` | Runs all of the above |
-| `export_to_app.py` | Resizes `out/*.png` and writes `app/src/main/res/drawable-nodpi/*.webp` |
+| `export_to_app.py` | Resizes `out/*.png` and writes `app/src/main/res/drawable-nodpi/*.webp`; adds contact shadows under survivors, lays the bunker over the surface title shot and makes the blurred title copies |
 
 ## Use
 
