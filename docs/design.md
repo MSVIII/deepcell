@@ -107,7 +107,11 @@ When the game screen resumes, the app counts the seconds since it was last pause
 
 - Toasts: purchases, "Not enough scrap", wave cleared, breach, offline earnings.
 - Notifications: boss wave cleared, hatch breached.
-- Animations: enemy flash on hit, hatch shake on damage, spinning gear on automated rooms.
+- Animations: workers loop their work at the room's work zone (diggers at the scrap heap, farmers at the grow tables); roof guards scan the sky and fire when the player shoots; drones spin rotors, the shrike flaps. Enemy flash on hit, hatch shake on damage, spinning gear on automated rooms.
+- Effects: explosion when an enemy dies or hits the hatch, sparks when a bullet hits or the hatch is repaired, dust or spores when a room is worked.
+- Sound: dig, harvest, rifle, turret, bullet hit, explosion, hatch impact, repair, upgrade bought, wave cleared, breach alarm, tab click. The Sound switch mutes them.
+- Easing: movement uses ease-in/ease-out, not constant speed. Enemies drift towards the roof on a smoothstep curve with a sine sway that dies out near the hatch; the upgrade sheet eases in (decelerate) and out (accelerate); payout text pops with overshoot, rises with ease-out and fades with ease-in; tabs squash and spring back; HUD numbers pop when they go up; the title camera eases in and out of each pan. Continuous spins (gear, rotors) stay linear.
+- Resources still come from tapping a room: there is no collector yet, so workers add to each tap but the player collects.
 
 ## Originality
 

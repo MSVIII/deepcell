@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Upgrade sheet drops away: starts slow, speeds up (ease-in). Shorter than coming in. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="180"
+    android:fromYDelta="0"
+    android:toYDelta="100%"
+    android:interpolator="@android:anim/accelerate_interpolator" />

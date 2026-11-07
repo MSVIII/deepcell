@@ -73,5 +73,6 @@
     <string name="reset_save">Reset save</string>
     <string name="save_deleted">Save deleted</string>
     <string name="share">Share</string>
+    <string name="main_menu">Main menu</string>
     <string name="share_text">My bunker %1$s has held out to wave %2$d in Deepcell.</string>
 </resources>

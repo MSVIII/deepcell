@@ -39,11 +39,18 @@
 - Rendered icons for tabs, upgrades and settings; new rendered logo and launcher emblem; Barlow Condensed font.
 - Animated title screen: panning camera shots with blurred transitions.
 
+## Done in the animation and sound pass (2026-11-07)
+
+- Rendered animations: diggers swing at the scrap heap, farmers pick at the grow tables, roof guards scan and fire, drones spin their rotors, the shrike flaps.
+- Rendered effects: explosions, dig dust, spores, bullet sparks.
+- Sound effects for every action, muted by the Sound switch.
+- Roof guards stand on the bunker deck; eased movement (enemy flight, sheet, popups, buttons, HUD); health label drawn over the enemies.
+- Settings has a Main menu button.
+
 ## Known gaps
 
-- **Sound**: the Sound switch is saved, but the game has no sound effects yet. Whoever adds sounds must check `GameDatabase.SETTING_SOUND`.
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.
-- **Art**: scenes, characters and enemies are Blender renders built from code (`tools/blender/`); icons are still code-drawn vectors. Characters are simple and not animated beyond tweens.
+- **Art**: scenes, characters and enemies are Blender renders built from code (`tools/blender/`); icons are still code-drawn vectors. Characters and enemies have short rendered loops (`tools/blender/anim_sprites.py`); there is no walking yet.
 - Only briefly run on a real phone (see `docs/testing.md`).
 
 ## Next (suggested, not agreed)
@@ -54,7 +61,8 @@
 4. More floors, unlocked with scrap.
 5. Different boss per 10-wave cycle.
 6. Core Restored: the end goal once every machine is built.
-7. Sound effects that respect the Sound switch.
-8. Final art.
+7. Collector NPC: carries finished resources so rooms don't need tapping (until then the player taps to collect).
+8. Music.
+9. Final art.
 
 Add a line to `docs/decisions.md` when the group agrees on any of these.

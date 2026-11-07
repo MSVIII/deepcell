@@ -6,7 +6,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import android.view.animation.LinearInterpolator
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
 import android.widget.ImageView
@@ -84,7 +84,7 @@ class TitleSlideshow(
             Animation.RELATIVE_TO_SELF, p[2], Animation.RELATIVE_TO_SELF, p[3],
             Animation.RELATIVE_TO_SELF, p[4], Animation.RELATIVE_TO_SELF, p[5]))
         set.duration = SHOT_MS + BLUR_MS
-        set.interpolator = LinearInterpolator()
+        set.interpolator = AccelerateDecelerateInterpolator()   // camera eases in and out of each pan
         set.fillAfter = true
         return set
     }

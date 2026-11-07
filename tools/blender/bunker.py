@@ -71,6 +71,6 @@ spot("DoorLamp", (0, -2.2, 1.75), 260, WARM, angle=95, blend=0.5, rot=(-25, 0, 0
 box("DoorLampHood", (0.4, 0.2, 0.1), (0, -1.6, 1.6), "DC_Dark", outline=0.02)
 box("DoorLampBulb", (0.25, 0.06, 0.05), (0, -1.68, 1.54), "DC_Bulb")
 spot("FloodBeam", (-2.6, -1.2, 2.3), 150, (1.0, 0.85, 0.6), angle=40, blend=0.4, rot=(70, 0, -35))
-# Near eye level, matching the rooms and the surface (a hint of the roof shows).
-camera((0, -20, 3.3), (86, 0, 0), ortho=9.6)
+# Slightly above eye level (12 degrees down) so the roof deck reads as a floor for the guards.
+camera((0, -20, 6.15), (78, 0, 0), ortho=9.6)
 render("bunker.png", 1400, 700, transparent=True)

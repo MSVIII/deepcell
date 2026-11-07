@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Switch
 import com.deepcell.game.data.GameDatabase
 
-/** Sound switch, difficulty Spinner, reset save, and Share (implicit ACTION_SEND). */
+/** Sound switch, difficulty Spinner, reset save, Share (implicit ACTION_SEND) and Main menu. */
 class SettingsActivity : AppCompatActivity() {
 
     companion object {
@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         db = GameDatabase(this)
 
-        // Sound: saved now; the base game has no sound effects yet (see docs/roadmap.md).
+        // Sound: GameActivity reads this on resume and mutes its sound effects (ui/Sfx).
         val soundSwitch = findViewById<Switch>(R.id.soundSwitch)
         soundSwitch.isChecked = db.getSetting(GameDatabase.SETTING_SOUND, "true") == "true"
         soundSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -75,6 +75,15 @@ class SettingsActivity : AppCompatActivity() {
             send.type = "text/plain"
             send.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, bunkerName, wave))
             startActivity(Intent.createChooser(send, getString(R.string.share)))
+        }
+
+        // Main menu: back to the title screen. The game already saved in its onPause when this
+        // screen opened; CLEAR_TOP closes the game screen underneath (explicit Intent, Module 7).
+        findViewById<Button>(R.id.mainMenuButton).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
         }
 
         findViewById<ImageButton>(R.id.settingsBack).setOnClickListener { finish() }

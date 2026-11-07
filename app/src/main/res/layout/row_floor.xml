@@ -73,16 +73,25 @@
             android:layout_height="match_parent"
             android:background="@drawable/np_cell_frame" />
 
-        <!-- Survivors working here are added in code. -->
+        <!--
+            Survivors working here are added in code, each playing its work animation.
+            The frames are wider than the figure (room for the swing), so they overlap.
+        -->
         <LinearLayout
             android:id="@+id/roomWorkers"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="18dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="10dp"
             android:gravity="bottom"
             android:orientation="horizontal" />
+
+        <!-- Dust and spores from the work play here. -->
+        <FrameLayout
+            android:id="@+id/roomFx"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <!-- Room name. -->
         <TextView

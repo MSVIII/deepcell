@@ -1,6 +1,7 @@
 package com.deepcell.game
 
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +25,9 @@ import com.deepcell.game.model.Survivor
 import com.deepcell.game.model.Upgrade
 import com.deepcell.game.model.Wave
 import com.deepcell.game.ui.FloorAdapter
+import com.deepcell.game.ui.Fx
 import com.deepcell.game.ui.Notifier
+import com.deepcell.game.ui.Sfx
 import com.deepcell.game.ui.UpgradeAdapter
 import kotlin.random.Random
 
@@ -63,6 +66,20 @@ class GameActivity : AppCompatActivity() {
         private const val AUTO_TURRET = "auto_turret"
         private const val DRILL_RIG = "drill_rig"
 
+        // Roof guards: spots on the deck as fractions of the bunker image (left of the hatch,
+        // right of it, then closer in), the deck height, and the guard frame size.
+        private val GUARD_SLOTS = floatArrayOf(0.34f, 0.66f, 0.43f, 0.57f)
+        private const val DECK_Y = 0.49f
+        private const val GUARD_DP = 47
+        private const val FEET_Y = 0.93f          // feet in the guard frame
+        private const val GUARD_FIRE_MS = 230L
+        private const val HATCH_Y = 0.30f         // hatch on the bunker image, for sparks
+        // Enemy flight: side-to-side sway and up-down bob (sine waves, so they ease in and out
+        // at each end of the swing).
+        private const val SWAY_DP = 10f
+        private const val BOB_DP = 3f
+        private const val SWAY_SPEED = 2.2f
+
         /** Enemy HP multiplier for each entry of R.array.difficulty_names. */
         private val DIFFICULTY_HP = doubleArrayOf(0.75, 1.0, 1.5)
     }
@@ -70,7 +87,8 @@ class GameActivity : AppCompatActivity() {
     // ---- views ----
     private lateinit var sky: FrameLayout
     private lateinit var bunker: FrameLayout
-    private lateinit var roofCrew: LinearLayout
+    private lateinit var roofCrew: FrameLayout
+    private lateinit var fxLayer: FrameLayout
     private lateinit var hatchBar: ProgressBar
     private lateinit var hatchText: TextView
     private lateinit var hudScrap: TextView
@@ -83,6 +101,8 @@ class GameActivity : AppCompatActivity() {
 
     // ---- data ----
     private lateinit var db: GameDatabase
+    private lateinit var sfx: Sfx
+    private val guardViews = ArrayList<ImageView>()
     private lateinit var upgrades: List<Upgrade>
     private lateinit var waveData: JsonLoader.WaveData
     private lateinit var floorAdapter: FloorAdapter
@@ -127,6 +147,8 @@ class GameActivity : AppCompatActivity() {
         sky = findViewById(R.id.sky)
         bunker = findViewById(R.id.bunker)
         roofCrew = findViewById(R.id.roofCrew)
+        fxLayer = findViewById(R.id.fxLayer)
+        sfx = Sfx(this)
         hatchBar = findViewById(R.id.hatchBar)
         hatchText = findViewById(R.id.hatchText)
         hudScrap = findViewById(R.id.hudScrap)
@@ -154,10 +176,11 @@ class GameActivity : AppCompatActivity() {
         val supplies = findViewById<ImageButton>(R.id.tabSupplies)
         val automation = findViewById<ImageButton>(R.id.tabAutomation)
         tabButtons = listOf(defense, supplies, automation)
-        defense.setOnClickListener { selectTab(GameState.TYPE_DEFENSE) }
-        supplies.setOnClickListener { selectTab(GameState.TYPE_SUPPLIES) }
-        automation.setOnClickListener { selectTab(GameState.TYPE_AUTOMATION) }
+        defense.setOnClickListener { pop(it); selectTab(GameState.TYPE_DEFENSE) }
+        supplies.setOnClickListener { pop(it); selectTab(GameState.TYPE_SUPPLIES) }
+        automation.setOnClickListener { pop(it); selectTab(GameState.TYPE_AUTOMATION) }
         findViewById<ImageButton>(R.id.tabSurvivors).setOnClickListener {
+            pop(it)
             val intent = Intent(this, SurvivorsActivity::class.java)
             intent.putExtra(SurvivorsActivity.EXTRA_BUNKER_NAME, state?.bunkerName)
             startActivity(intent)
@@ -189,6 +212,7 @@ class GameActivity : AppCompatActivity() {
         }
         state = loaded
         survivors = db.getSurvivors()
+        sfx.enabled = db.getSetting(GameDatabase.SETTING_SOUND, "true") == "true"
         showRoofCrew()
         difficultyHp = DIFFICULTY_HP[db.getSetting(GameDatabase.SETTING_DIFFICULTY, "1").toInt()]
 
@@ -212,6 +236,7 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         handler.removeCallbacks(gameLoop)
+        sfx.release()
         db.close()
         super.onDestroy()
     }
@@ -256,14 +281,28 @@ class GameActivity : AppCompatActivity() {
         }
 
         // Move enemies down. Anything that reaches the bottom of the sky hits the hatch.
+        // enemy.y is the real position (it decides when the hatch is hit); the view adds a
+        // flight sway on top, which never changes the timing.
         val pxPerDp = resources.displayMetrics.density
+        val now = System.currentTimeMillis() / 1000f
         for (enemy in ArrayList(enemies)) {
             enemy.y += enemy.type.speedDp * pxPerDp * FRAME_MS / 1000f
-            enemy.view.translationY = enemy.y
-            // Drift towards the bunker while falling.
             val fallen = (enemy.y / sky.height).coerceIn(0f, 1f)
-            enemy.view.translationX = enemy.startX + (enemy.targetX - enemy.startX) * fallen
+            // Drift towards the bunker with ease-in-out (smoothstep): it turns slowly at the
+            // start, crosses fastest in the middle, and lines up gently over the roof.
+            val eased = fallen * fallen * (3f - 2f * fallen)
+            val sway = Math.sin((now * SWAY_SPEED + enemy.phase).toDouble()).toFloat()
+            val bob = Math.sin((now * SWAY_SPEED * 2f + enemy.phase).toDouble()).toFloat()
+            // Sway fades out near the hatch so the hit point stays where the drift aims.
+            val calm = 1f - eased
+            enemy.view.translationX = enemy.startX + (enemy.targetX - enemy.startX) * eased +
+                sway * SWAY_DP * pxPerDp * calm
+            enemy.view.translationY = enemy.y + bob * BOB_DP * pxPerDp * calm
             if (enemy.y + enemy.view.height >= sky.height) {
+                val blast = Math.max(enemy.view.width * 3 / 2, (64 * pxPerDp).toInt())
+                Fx.burst(fxLayer, R.drawable.fx_explode, enemy.view.translationX + enemy.view.width / 2f,
+                    sky.height.toFloat(), blast)
+                sfx.play(Sfx.Sound.IMPACT)
                 removeEnemy(enemy)
                 damageHatch(enemy.type.damage)
                 if (waveGeneration != generation) return   // a breach restarted the wave
@@ -285,7 +324,10 @@ class GameActivity : AppCompatActivity() {
         val turret = s.level(AUTO_TURRET)
         if (turret > 0) {
             val nearest = enemies.maxByOrNull { it.y }
-            if (nearest != null) hitEnemy(nearest, turret)
+            if (nearest != null) {
+                sfx.play(Sfx.Sound.TURRET)
+                hitEnemy(nearest, turret)
+            }
         }
         // Drill Rig: fills Scrap Dig by itself. Progress per second = its level.
         val drill = s.level(DRILL_RIG)
@@ -318,12 +360,13 @@ class GameActivity : AppCompatActivity() {
         val type = waveData.enemyTypes[typeId] ?: return
         val sizePx = (type.sizeDp * resources.displayMetrics.density).toInt()
         val view = ImageView(this)
-        view.setImageResource(
-            when (type.id) {
-                "shrike" -> R.drawable.enemy_shrike
-                "bomber" -> R.drawable.enemy_bomber
-                "boss" -> R.drawable.enemy_boss
-                else -> R.drawable.enemy_scout
+        // Rotors spin / wings flap: rendered frames in an AnimationDrawable.
+        Fx.loop(
+            view, when (type.id) {
+                "shrike" -> R.drawable.anim_shrike
+                "bomber" -> R.drawable.anim_bomber
+                "boss" -> R.drawable.anim_boss
+                else -> R.drawable.anim_scout
             }
         )
         view.contentDescription = type.name
@@ -333,11 +376,16 @@ class GameActivity : AppCompatActivity() {
         val spread = bunker.width * 0.35f
         val targetX = sky.width / 2f - sizePx / 2f + Random.nextFloat() * 2 * spread - spread
         val hp = Math.max(1, Math.round(type.hp * waveHpScale).toInt())
-        val enemy = Enemy(type, hp, -sizePx.toFloat(), startX, targetX, view)
+        val enemy = Enemy(type, hp, -sizePx.toFloat(), startX, targetX, view, Random.nextFloat() * 6.28f)
         view.translationX = startX
         view.translationY = enemy.y
-        view.setOnClickListener { hitEnemy(enemy, tapDamage()) }
+        view.setOnClickListener {
+            guardsFire()
+            sfx.play(Sfx.Sound.SHOT)
+            hitEnemy(enemy, tapDamage())
+        }
         sky.addView(view)
+        view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enemy_in))
         enemies.add(enemy)
     }
 
@@ -352,11 +400,18 @@ class GameActivity : AppCompatActivity() {
         if (!enemies.contains(enemy)) return
         enemy.hp -= damage
         enemy.view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hit_flash))
+        val cx = enemy.view.translationX + enemy.view.width / 2f
+        val cy = enemy.view.translationY + enemy.view.height / 2f
         if (enemy.hp <= 0) {
+            Fx.burst(fxLayer, R.drawable.fx_explode, cx, cy, enemy.view.width * 2)
+            sfx.play(Sfx.Sound.EXPLODE)
             removeEnemy(enemy)
             s.scrap += enemy.type.reward
             refreshHud()
             upgradeAdapter.notifyDataSetChanged()
+        } else {
+            Fx.burst(fxLayer, R.drawable.fx_sparks, cx, cy, enemy.view.width)
+            sfx.play(Sfx.Sound.HIT)
         }
     }
 
@@ -381,6 +436,7 @@ class GameActivity : AppCompatActivity() {
                 getString(R.string.notif_boss_title), getString(R.string.notif_boss_text, cleared)
             )
         }
+        sfx.play(Sfx.Sound.WAVE)
         Toast.makeText(this, getString(R.string.wave_cleared, cleared), Toast.LENGTH_SHORT).show()
         startWave()
         saveNow()
@@ -401,6 +457,7 @@ class GameActivity : AppCompatActivity() {
 
     /** Breach rule: lose 25% of scrap, the hatch is patched, and the same wave repeats. */
     private fun onHatchBreached(s: GameState) {
+        sfx.play(Sfx.Sound.ALARM)
         val lost = s.scrap / 4
         s.scrap -= lost
         s.hatchHp = maxHatchHp()
@@ -424,6 +481,9 @@ class GameActivity : AppCompatActivity() {
             else -> {
                 s.scrap -= REPAIR_SCRAP_COST
                 s.hatchHp = (s.hatchHp + REPAIR_AMOUNT).coerceAtMost(maxHatchHp())
+                sfx.play(Sfx.Sound.REPAIR)
+                Fx.burst(fxLayer, R.drawable.fx_sparks, bunker.left + bunker.width / 2f,
+                    bunker.top + bunker.height * HATCH_Y, (48 * resources.displayMetrics.density).toInt())
                 refreshHud()
             }
         }
@@ -437,6 +497,7 @@ class GameActivity : AppCompatActivity() {
         val isDig = floor === digFloor
         val tools = s.level(if (isDig) UP_DIG_TOOLS else UP_FARM_TOOLS)
         val workers = workersIn(floor)
+        sfx.play(if (isDig) Sfx.Sound.DIG else Sfx.Sound.HARVEST, 0.92f + Random.nextFloat() * 0.16f)
         val fills = floor.addProgress(1 + tools + workers)
         val earned = fills * floor.yieldPerFill
         if (isDig) s.scrap += earned else s.food += earned
@@ -460,6 +521,7 @@ class GameActivity : AppCompatActivity() {
         }
         s.scrap -= cost
         s.setLevel(upgrade, level + 1)
+        sfx.play(Sfx.Sound.BUY)
         when (upgrade.id) {
             UP_HATCH_PLATING -> s.hatchHp += HATCH_HP_PER_PLATING
             DRILL_RIG -> digFloor.automated = true
@@ -471,14 +533,21 @@ class GameActivity : AppCompatActivity() {
 
     /** Opens the upgrade sheet for a tab. Tapping the open tab again (or null) closes it. */
     private fun selectTab(type: String?) {
+        if (::sfx.isInitialized && type != null) sfx.play(Sfx.Sound.TAP)
         currentTab = if (type == currentTab) null else type
         val types = listOf(GameState.TYPE_DEFENSE, GameState.TYPE_SUPPLIES, GameState.TYPE_AUTOMATION)
         tabButtons.forEachIndexed { i, button -> button.isSelected = types[i] == currentTab }
         val open = currentTab
         if (open == null) {
+            if (upgradeSheet.visibility == View.VISIBLE) {
+                // Ease out of view, then hide.
+                val out = AnimationUtils.loadAnimation(this, R.anim.sheet_out)
+                upgradeSheet.startAnimation(out)
+            }
             upgradeSheet.visibility = View.GONE
             return
         }
+        val wasOpen = upgradeSheet.visibility == View.VISIBLE
         val titles = mapOf(
             GameState.TYPE_DEFENSE to R.string.tab_defense,
             GameState.TYPE_SUPPLIES to R.string.tab_supplies,
@@ -487,6 +556,7 @@ class GameActivity : AppCompatActivity() {
         upgradeTitle.setText(titles[open] ?: R.string.tab_defense)
         upgradeAdapter.show(upgrades.filter { it.type == open })
         upgradeSheet.visibility = View.VISIBLE
+        if (!wasOpen) upgradeSheet.startAnimation(AnimationUtils.loadAnimation(this, R.anim.sheet_in))
     }
 
     /** Survivors working in a room. They are drawn in the room and add +1 per tap each. */
@@ -495,22 +565,41 @@ class GameActivity : AppCompatActivity() {
         return survivors.count { it.job == job }
     }
 
-    /** One guard figure on the bunker roof per survivor with the Roof job, up to 4. */
+    /**
+     * One guard on the bunker roof per survivor with the Roof job, up to 4. They stand on the
+     * deck either side of the hatch, feet on the deck, aiming outwards (the frames aim right,
+     * so guards left of the hatch are mirrored).
+     */
     private fun showRoofCrew() {
         roofCrew.removeAllViews()
-        val density = resources.displayMetrics.density
-        val guards = Math.min(survivors.count { it.job == Survivor.JOB_ROOF }, 4)
+        guardViews.clear()
+        val size = (GUARD_DP * resources.displayMetrics.density).toInt()
+        val bunkerW = resources.getDimensionPixelSize(R.dimen.bunker_width)
+        val bunkerH = resources.getDimensionPixelSize(R.dimen.bunker_height)
+        val guards = Math.min(survivors.count { it.job == Survivor.JOB_ROOF }, GUARD_SLOTS.size)
         repeat(guards) {
+            val slot = GUARD_SLOTS[it]
             val figure = ImageView(this)
-            figure.setImageResource(R.drawable.survivor_guard)
-            val params = LinearLayout.LayoutParams((24 * density).toInt(), (36 * density).toInt())
-            params.marginStart = (3 * density).toInt()
-            params.marginEnd = (3 * density).toInt()
-            figure.layoutParams = params
-            val sway = AnimationUtils.loadAnimation(this, R.anim.idle_sway)
-            sway.startOffset = it * 300L
-            figure.startAnimation(sway)
+            figure.layoutParams = FrameLayout.LayoutParams(size, size)
+            figure.translationX = bunkerW * slot - size / 2f
+            figure.translationY = bunkerH * DECK_Y - size * FEET_Y
+            if (slot < 0.5f) figure.scaleX = -1f
+            figure.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             roofCrew.addView(figure)
+            guardViews.add(figure)
+            Fx.loop(figure, R.drawable.anim_guard_idle, it * 300L)
+        }
+    }
+
+    /** Every roof guard plays one shot (muzzle flash in the frames), then goes back to idle. */
+    private fun guardsFire() {
+        for (guard in guardViews) {
+            (guard.tag as? Runnable)?.let { guard.removeCallbacks(it) }
+            guard.setImageResource(R.drawable.anim_guard_fire)
+            (guard.drawable as? AnimationDrawable)?.start()
+            val back = Runnable { Fx.loop(guard, R.drawable.anim_guard_idle) }
+            guard.tag = back
+            guard.postDelayed(back, GUARD_FIRE_MS)
         }
     }
 
@@ -522,10 +611,22 @@ class GameActivity : AppCompatActivity() {
         upgradeAdapter.notifyDataSetChanged()
     }
 
+    /** Pressed buttons squash and spring back. */
+    private fun pop(view: View) {
+        view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.press_pop))
+    }
+
+    /** Sets a HUD number; when it goes up, it pops so the gain is noticed. */
+    private fun setCount(view: TextView, value: Int) {
+        val old = view.text.toString().toIntOrNull()
+        view.text = value.toString()
+        if (old != null && value > old) view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hud_pop))
+    }
+
     private fun refreshHud() {
         val s = state ?: return
-        hudScrap.text = s.scrap.toString()
-        hudFood.text = s.food.toString()
+        setCount(hudScrap, s.scrap)
+        setCount(hudFood, s.food)
         hudWave.text = getString(R.string.wave_number, s.wave)
         hudBossIcon.visibility = if (s.wave % 10 == 0) View.VISIBLE else View.GONE
         val max = maxHatchHp()

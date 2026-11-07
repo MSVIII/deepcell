@@ -56,3 +56,13 @@ Why the base app is built the way it is. Add a dated entry when the group decide
 - **Font: Barlow Condensed** (the user's choice), bundled in `res/font` under the SIL Open Font License. The logo wordmark is the ExtraBold weight, extruded in Blender.
 - **New logo**: a steel hex badge with an amber hatch wheel around a glowing cell, above the DEEPCELL wordmark. The launcher icon uses the same rendered emblem.
 - **The title screen is a slideshow of camera shots** (surface with the bunker, Scrap Dig, Mushroom Farm). Each shot pans slowly; between shots the screen dips into a blurred copy and back. The blurred copies are pre-rendered, so this works on every Android version without blur APIs. It is a first try; the user was unsure it would work and should judge it.
+
+## 2026-11-07: animation, effects and sound
+
+- **Animations are rendered frames played with `AnimationDrawable`** (Module 4 drawables), not tweens on a still image. `tools/blender/anim_sprites.py` poses the same models frame by frame (empties as joints at the hips, shoulders and head) and `export_to_app.py` writes the frames and the `animation-list` XML. No Canvas or game engine.
+- **Workers stand in the room's work zone** (the user's call): diggers left of the scrap heap with the pickaxe landing in it, farmers along the grow tables. With no collector NPC yet, the player still taps the room to collect; each worker adds to the tap as before. Balance is unchanged.
+- **Effects are rendered flipbooks too** (`tools/blender/vfx.py`): explosion, dust, spores, sparks. The muzzle flash is baked into the guard's fire frames so it always lines up with the barrel.
+- **Roof guards stand on the deck.** The bunker camera now looks down 12 degrees (was 4), so the roof reads as a floor; guards are placed at fixed spots either side of the hatch, aiming outwards (left ones mirrored).
+- **Sound effects are synthesised in code** (`tools/audio/gen_sfx.py`, numpy + ffmpeg to OGG). Blender has no sound synthesis, so it was not used for audio. Played with `SoundPool`; the Sound switch in Settings mutes them.
+- **Movement is eased**: smoothstep drift and fading sine sway for enemies (purely visual: the timing of hits is unchanged), decelerate/accelerate for the upgrade sheet, overshoot for button presses and payout text. Constant spins stay linear.
+- **Settings has a Main menu button** (the user asked for a way back). It returns to the title with `FLAG_ACTIVITY_CLEAR_TOP`; the game saved when Settings opened.

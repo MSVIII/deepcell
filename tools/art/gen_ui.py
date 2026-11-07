@@ -255,20 +255,63 @@ bar("progress_hatch", "@color/alarm_red", "#E60B0D10")
 bar("progress_floor", "@color/amber", "#CC0B0D10")
 bar("progress_level", "@color/ring_on", "#FF0B0D10")
 
-# animations
-w("res/anim/work_bob.xml", f'''<?xml version="1.0" encoding="utf-8"?>
-<!-- Workers hop once when the room is tapped. -->
-<translate {NS}
-    android:duration="140"
-    android:fromYDelta="0"
-    android:toYDelta="-6dp"
-    android:repeatCount="1"
-    android:repeatMode="reverse" />''')
+# tween animations (survivors, enemies and effects use rendered frames instead)
 w("res/anim/float_up.xml", f'''<?xml version="1.0" encoding="utf-8"?>
-<!-- "+5" payout text rises and fades. -->
+<!--
+    "+5" payout text: pops in with a small overshoot, rises fast then slows (ease-out),
+    and fades away faster and faster (ease-in).
+-->
 <set {NS} android:fillAfter="true">
-    <translate android:duration="700" android:fromYDelta="0" android:toYDelta="-36dp" />
-    <alpha android:duration="700" android:startOffset="250" android:fromAlpha="1.0" android:toAlpha="0.0" />
+    <scale android:duration="220" android:fromXScale="0.6" android:toXScale="1.0"
+        android:fromYScale="0.6" android:toYScale="1.0" android:pivotX="50%" android:pivotY="50%"
+        android:interpolator="@android:anim/overshoot_interpolator" />
+    <translate android:duration="800" android:fromYDelta="0" android:toYDelta="-40dp"
+        android:interpolator="@android:anim/decelerate_interpolator" />
+    <alpha android:duration="450" android:startOffset="400" android:fromAlpha="1.0" android:toAlpha="0.0"
+        android:interpolator="@android:anim/accelerate_interpolator" />
+</set>''')
+w("res/anim/sheet_in.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Upgrade sheet slides up: starts fast, settles gently (ease-out). -->
+<translate {NS}
+    android:duration="260"
+    android:fromYDelta="100%"
+    android:toYDelta="0"
+    android:interpolator="@android:anim/decelerate_interpolator" />''')
+w("res/anim/sheet_out.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Upgrade sheet drops away: starts slow, speeds up (ease-in). Shorter than coming in. -->
+<translate {NS}
+    android:duration="180"
+    android:fromYDelta="0"
+    android:toYDelta="100%"
+    android:interpolator="@android:anim/accelerate_interpolator" />''')
+w("res/anim/press_pop.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Button pressed: squashes a little and springs back past its size (overshoot). -->
+<scale {NS}
+    android:duration="260"
+    android:fromXScale="0.85"
+    android:toXScale="1.0"
+    android:fromYScale="0.85"
+    android:toYScale="1.0"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:interpolator="@android:anim/overshoot_interpolator" />''')
+w("res/anim/hud_pop.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- HUD number changed: grows quickly and eases back (ease-out). -->
+<scale {NS}
+    android:duration="240"
+    android:fromXScale="1.3"
+    android:toXScale="1.0"
+    android:fromYScale="1.3"
+    android:toYScale="1.0"
+    android:pivotX="0%"
+    android:pivotY="50%"
+    android:interpolator="@android:anim/decelerate_interpolator" />''')
+w("res/anim/enemy_in.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Enemy appears: fades in and grows into place (ease-out). -->
+<set {NS} android:interpolator="@android:anim/decelerate_interpolator">
+    <alpha android:duration="300" android:fromAlpha="0.0" android:toAlpha="1.0" />
+    <scale android:duration="300" android:fromXScale="0.6" android:toXScale="1.0"
+        android:fromYScale="0.6" android:toYScale="1.0" android:pivotX="50%" android:pivotY="50%" />
 </set>''')
 w("res/anim/lamp_flicker.xml", f'''<?xml version="1.0" encoding="utf-8"?>
 <!-- Lamp glow over a room: a slow uneven breathe. -->
@@ -278,15 +321,6 @@ w("res/anim/lamp_flicker.xml", f'''<?xml version="1.0" encoding="utf-8"?>
     android:toAlpha="0.55"
     android:interpolator="@android:anim/cycle_interpolator"
     android:repeatCount="infinite" />''')
-w("res/anim/idle_sway.xml", f'''<?xml version="1.0" encoding="utf-8"?>
-<!-- Roof guards shift their weight. -->
-<translate {NS}
-    android:duration="900"
-    android:fromYDelta="0"
-    android:toYDelta="-3dp"
-    android:repeatCount="infinite"
-    android:repeatMode="reverse" />''')
-
 w("res/values/dimens.xml", '''<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="shaft_width">56dp</dimen>

@@ -138,18 +138,34 @@
                 android:importantForAccessibility="no"
                 android:src="@drawable/bunker" />
 
-            <!-- Survivors on roof guard duty stand on the deck; added in code. -->
-            <LinearLayout
+            <!--
+                Survivors on roof guard duty, standing on the deck. GameActivity places them at
+                fixed spots either side of the hatch (fractions of the bunker image).
+            -->
+            <FrameLayout
                 android:id="@+id/roofCrew"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="21dp"
-                android:gravity="bottom"
-                android:orientation="horizontal" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false" />
         </FrameLayout>
 
-        <!-- Bunker name and hatch health, top-left of the surface. -->
+        <!--
+            Enemy layer. Enemy ImageViews are added here and moved by the Handler loop.
+            The bottom margin puts its bottom edge at the bunker hatch, where enemies hit.
+        -->
+        <FrameLayout
+            android:id="@+id/sky"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="84dp" />
+
+        <!-- Explosions and sparks play here, above the enemies and the bunker. -->
+        <FrameLayout
+            android:id="@+id/fxLayer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Bunker name and hatch health, top-left; last so enemies fly behind it. -->
         <LinearLayout
             android:layout_width="156dp"
             android:layout_height="wrap_content"
@@ -174,16 +190,6 @@
                 android:layout_marginBottom="2dp"
                 android:progressDrawable="@drawable/progress_hatch" />
         </LinearLayout>
-
-        <!--
-            Enemy layer. Enemy ImageViews are added here and moved by the Handler loop.
-            The bottom margin puts its bottom edge at the bunker hatch, where enemies hit.
-        -->
-        <FrameLayout
-            android:id="@+id/sky"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="80dp" />
     </FrameLayout>
 
     <!-- Underground: rooms in a ListView, with the upgrade sheet on top. -->

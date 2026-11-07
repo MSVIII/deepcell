@@ -63,7 +63,9 @@ data class Enemy(
     var y: Float,
     val startX: Float,
     val targetX: Float,
-    val view: ImageView
+    val view: ImageView,
+    /** Start point of the flight sway, so enemies don't bob in step. */
+    val phase: Float = 0f
 )
 
 /** One wave from assets/waves.json, already expanded to a spawn queue of type ids. */

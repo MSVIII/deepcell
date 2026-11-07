@@ -2,6 +2,26 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: animation, effects, sound, roof guards, easing, main menu
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 45 warnings (new: `IconDuplicates` for `anim_guard_idle_0` / `_4`, which are the same pose on purpose so the loop closes).
+- Emulator `Medium_Phone` (API 37) only; **not installed on the phone**. Effects are too short for screenshots, so they were checked with `adb shell screenrecord` and frames pulled with ffmpeg.
+
+| Check | Result |
+|---|---|
+| Digger loops the pickaxe swing at the scrap heap; dust where the pickaxe lands when the room is tapped | Pass (recording) |
+| Farmer (newly recruited, set to Mushroom Farm) reaches into the first grow table; spores on tap | Pass (recording) |
+| Roof guard stands on the bunker deck, left of the hatch, mirrored to aim outwards; idle loop | Pass (screenshot) |
+| Tapping an enemy: guard fires with muzzle flash, sparks on the drone | Pass (recording) |
+| Enemy killed: explosion with debris and smoke | Pass (recording) |
+| Enemy reaches the hatch: explosion at the roof, hatch HP drops | Pass (recording) |
+| Drones spin rotors, shrikes flap, all sway as they fall | Seen in recordings |
+| Hatch health label is drawn above enemies and effects | Pass (recording) |
+| Settings: Main menu returns to the title; only the title activity is left; Continue shows the saved wave | Pass |
+| No app crashes in `logcat -b crash` | Pass |
+
+Not checked: how the sounds actually sound (they play through SoundPool, but nobody has listened to them on a device yet), the Sound switch muting them, the upgrade sheet slide and button pop (not recorded), the boss explosion size, the Drill Rig room with workers, more than one guard or four workers at once.
+
 ## 2026-11-07: lighting, framing, icons, logo and title screen
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 44 warnings (new: 9 `UnusedAttribute` for the `android:font*` attributes in `res/font/barlow.xml` on API < 26; the `app:` attributes cover those versions).

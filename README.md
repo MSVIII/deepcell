@@ -36,7 +36,7 @@ app/src/main/
     MainActivity.kt        title screen: bunker name, Play, Continue
     GameActivity.kt        the game screen and the Handler game loop
     SurvivorsActivity.kt   survivor list, jobs, recruiting
-    SettingsActivity.kt    sound, difficulty, reset save, share
+    SettingsActivity.kt    sound, difficulty, reset save, share, main menu
     model/Models.kt        data classes: Upgrade, Floor, Enemy, EnemyType, Wave, Survivor, GameState
     data/GameDatabase.kt   SQLiteOpenHelper: the save file
     data/JsonLoader.kt     reads assets/upgrades.json and assets/waves.json
@@ -44,8 +44,11 @@ app/src/main/
     ui/UpgradeAdapter.kt   ListView rows for upgrades
     ui/SurvivorAdapter.kt  ListView rows for survivors
     ui/Notifier.kt         notification channel + NotificationCompat
+    ui/Fx.kt               plays rendered frame animations and effects
+    ui/Sfx.kt              sound effects (SoundPool)
+    ui/TitleSlideshow.kt   title screen camera shots
   assets/                  upgrades.json, waves.json (game balance)
-  res/                     layouts, strings, colors, themes, drawables, anim
+  res/                     layouts, strings, colors, themes, drawables, anim, raw (sounds)
 docs/                      design, module map, roadmap, decisions, testing
 tools/art/                 Python scripts for the vector icons and interface drawables (see its README)
 tools/blender/             Blender scripts that build and render the scenes, characters and enemies
@@ -54,7 +57,7 @@ AGENTS.md                  rules for AI coding assistants
 
 ## Licences
 
-The font Barlow Condensed is used under the SIL Open Font License 1.1 (`docs/licenses/BarlowCondensed-OFL.txt`). All art is our own, made with the scripts in `tools/`.
+The font Barlow Condensed is used under the SIL Open Font License 1.1 (`docs/licenses/BarlowCondensed-OFL.txt`). All art and sound is our own, made with the scripts in `tools/` (sounds: `tools/audio/gen_sfx.py`).
 
 ## Working as a group
 

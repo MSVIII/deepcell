@@ -96,8 +96,8 @@ def scout():
 
 
 def shrike():
-    setup("shrike", 2.0, cam_z=0.0, tilt=70)
-    toon("DC_Feather", (0.20, 0.17, 0.20), (0.27, 0.22, 0.26), scale=10, bands=BANDS_NEUTRAL, rim=0.8, rim_col=WARM)
+    setup("shrike", 2.7, cam_z=0.0, tilt=42, rim=0.3)
+    toon("DC_Feather", (0.20, 0.17, 0.20), (0.27, 0.22, 0.26), scale=10, bands=BANDS_NEUTRAL, rim=0.3, rim_col=WARM)
     toon("DC_Beak", (0.70, 0.60, 0.35), (0.78, 0.66, 0.40), scale=6, bands=BANDS_NEUTRAL, rim=0.4)
     ball("Body", 0.3, (0, 0, 0), "DC_Feather", scale=(0.8, 1.4, 0.8), outline=0.025)
     ball("Head", 0.2, (0, -0.42, 0.12), "DC_Feather", outline=0.02)
@@ -172,12 +172,18 @@ YELLOW = ((0.80, 0.62, 0.15), (0.86, 0.68, 0.20))
 GREEN = ((0.28, 0.40, 0.22), (0.33, 0.46, 0.26))
 BROWN = ((0.40, 0.30, 0.18), (0.46, 0.35, 0.21))
 OLIVE = ((0.30, 0.33, 0.20), (0.36, 0.39, 0.24))
-survivor("digger", ORANGE, YELLOW, lambda: (hard_hat(), pickaxe()))
-survivor("farmer", GREEN, BROWN, lambda: (cap(), basket()))
-survivor("guard", OLIVE, OLIVE, lambda: (combat_helmet(), rifle()))
-scout()
-shrike()
-bomber()
-boss()
-icon_scrap()
-icon_food()
+def build_static():
+    survivor("digger", ORANGE, YELLOW, lambda: (hard_hat(), pickaxe()))
+    survivor("farmer", GREEN, BROWN, lambda: (cap(), basket()))
+    survivor("guard", OLIVE, OLIVE, lambda: (combat_helmet(), rifle()))
+    scout()
+    shrike()
+    bomber()
+    boss()
+    icon_scrap()
+    icon_food()
+
+
+# anim_sprites.py runs this file with SPRITES_DEFS_ONLY = True to reuse the builders.
+if not globals().get("SPRITES_DEFS_ONLY"):
+    build_static()

@@ -4,6 +4,6 @@
 #     exec(open(BL_DIR + "/render_all.py").read())
 # Then run `python tools/blender/export_to_app.py` to copy the images into the app.
 for script in ("room_dig.py", "room_farm.py", "shaft.py", "surface.py", "bunker.py", "sprites.py",
-               "icons.py", "logo.py", "title_shots.py"):
+               "anim_sprites.py", "vfx.py", "icons.py", "logo.py", "title_shots.py"):
     print("==", script)
     exec(open(BL_DIR + "/" + script).read())
