@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Scrap Dig room. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF8C8A84" android:pathData="M6,34 L16,18 L26,30 L34,14 L44,34 Z" />
+    <path android:fillColor="#FFB0552B" android:pathData="M14,34 h6 v-6 h-6 Z M30,34 h8 v-4 h-8 Z" />
+    <path android:fillColor="#FF5A5852" android:pathData="M4,34 h40 v6 h-40 Z" />
+</vector>

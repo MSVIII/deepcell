@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Bomber drone. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF5A5852" android:pathData="M8,16 h32 v14 h-32 Z" />
+    <path android:fillColor="#FF8C8A84" android:pathData="M2,18 h6 v4 h-6 Z M40,18 h6 v4 h-6 Z" />
+    <path android:fillColor="#FFB0552B" android:pathData="M20,30 h8 v8 h-8 Z" />
+    <path android:fillColor="#FFD23C2F" android:pathData="M14,20 h4 v4 h-4 Z M30,20 h4 v4 h-4 Z" />
+</vector>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Row for the survivor ArrayAdapter. Must be a single TextView. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/BunkerText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:textSize="16sp" />

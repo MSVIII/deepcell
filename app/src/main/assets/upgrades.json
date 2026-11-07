@@ -1,0 +1,16 @@
+{
+  "upgrades": [
+    { "id": "tap_power", "type": "defense", "name": "Sharpened Rounds",
+      "description": "+1 damage per tap on an enemy", "baseCost": 10, "costGrowth": 1.6, "maxLevel": 10 },
+    { "id": "hatch_plating", "type": "defense", "name": "Hatch Plating",
+      "description": "+20 max hatch health", "baseCost": 15, "costGrowth": 1.7, "maxLevel": 10 },
+    { "id": "dig_tools", "type": "supplies", "name": "Better Shovels",
+      "description": "+1 Scrap Dig progress per tap", "baseCost": 8, "costGrowth": 1.5, "maxLevel": 10 },
+    { "id": "farm_tools", "type": "supplies", "name": "Spore Trays",
+      "description": "+1 Mushroom Farm progress per tap", "baseCost": 8, "costGrowth": 1.5, "maxLevel": 10 },
+    { "id": "auto_turret", "type": "automation", "name": "Auto-Turret",
+      "description": "Shoots the enemy nearest the hatch every second. Damage = level", "baseCost": 40, "costGrowth": 2.0, "maxLevel": 5 },
+    { "id": "drill_rig", "type": "automation", "name": "Drill Rig",
+      "description": "Fills Scrap Dig by itself, also while the app is closed. Speed = level", "baseCost": 50, "costGrowth": 2.0, "maxLevel": 5 }
+  ]
+}

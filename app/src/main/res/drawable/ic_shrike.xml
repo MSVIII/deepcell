@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Shrike, a mutated bird. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF6B4A32" android:pathData="M24,30 L4,14 L18,20 L24,12 L30,20 L44,14 Z" />
+    <path android:fillColor="#FFE3A23B" android:pathData="M22,30 L26,30 L24,38 Z" />
+    <path android:fillColor="#FF8FB34A" android:pathData="M21,18 h2 v2 h-2 Z M25,18 h2 v2 h-2 Z" />
+</vector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Defense tab. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FFB0552B" android:pathData="M24,4 L40,10 V24 C40,34 32,40 24,44 C16,40 8,34 8,24 V10 Z" />
+    <path android:fillColor="#FF15130F" android:pathData="M22,14 h4 v20 h-4 Z M16,22 h16 v4 h-16 Z" />
+</vector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Adaptive icon foreground. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF5A5852" android:pathData="M12,30 A12,8 0 0,1 36,30 L36,34 L12,34 Z" />
+    <path android:fillColor="#FFE3A23B" android:pathData="M22,22 h4 v8 h-4 Z M17,28 h14 v2 h-14 Z" />
+</vector>

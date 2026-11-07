@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Gear: settings button, Automation tab, automated-room marker. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FFE3A23B" android:pathData="M21,4 h6 l1,6 l5,2 l5,-4 l4,4 l-4,5 l2,5 l6,1 v6 l-6,1 l-2,5 l4,5 l-4,4 l-5,-4 l-5,2 l-1,6 h-6 l-1,-6 l-5,-2 l-5,4 l-4,-4 l4,-5 l-2,-5 l-6,-1 v-6 l6,-1 l2,-5 l-4,-5 l4,-4 l5,4 l5,-2 Z" />
+    <path android:fillColor="#FF15130F" android:pathData="M24,17 a7,7 0 1,0 0.01,0 Z" />
+</vector>

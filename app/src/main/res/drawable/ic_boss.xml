@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Boss: the old air-defense command drone. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF3A3024" android:pathData="M24,4 L44,18 L38,40 L10,40 L4,18 Z" />
+    <path android:fillColor="#FF8C8A84" android:pathData="M12,20 h24 v12 h-24 Z" />
+    <path android:fillColor="#FFD23C2F" android:pathData="M16,23 h6 v6 h-6 Z M26,23 h6 v6 h-6 Z" />
+    <path android:fillColor="#FFE3A23B" android:pathData="M22,40 h4 v6 h-4 Z" />
+</vector>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Burrow Nine</string>
+    <string name="default_bunker_name">Burrow Nine</string>
+
+    <!-- Title screen -->
+    <string name="bunker_name_hint">Bunker name</string>
+    <string name="play">Play</string>
+    <string name="continue_game">Continue</string>
+    <string name="no_save">No saved bunker</string>
+    <string name="save_summary">Saved: %1$s, wave %2$d</string>
+    <string name="tap_again_to_replace">A bunker is already saved. Tap Play again to replace it.</string>
+    <string name="welcome">Welcome to %1$s</string>
+
+    <!-- HUD -->
+    <string name="scrap">scrap</string>
+    <string name="food">food</string>
+    <string name="scrap_amount">Scrap %1$d</string>
+    <string name="food_amount">Food %1$d</string>
+    <string name="wave_number">Wave %1$d</string>
+    <string name="wave_boss">Wave %1$d (boss)</string>
+    <string name="hatch_hp">Hatch %1$d/%2$d. Tap to repair</string>
+    <string name="settings">Settings</string>
+    <string name="hatch">Bunker hatch</string>
+
+    <!-- Floors -->
+    <string name="floor_dig">Scrap Dig</string>
+    <string name="floor_farm">Mushroom Farm</string>
+    <string name="action_dig">Dig</string>
+    <string name="action_harvest">Harvest</string>
+    <string name="floor_status">%1$d/%2$d, full bar gives %3$d %4$s</string>
+    <string name="automated">Automated</string>
+
+    <!-- Upgrades and tabs -->
+    <string name="tab_defense">Defense</string>
+    <string name="tab_supplies">Supplies</string>
+    <string name="tab_automation">Automation</string>
+    <string name="tab_survivors">Survivors</string>
+    <string name="upgrade_name_level">%1$s (%2$d/%3$d)</string>
+    <string name="buy_cost">%1$d scrap</string>
+    <string name="maxed">Max</string>
+    <string name="already_maxed">Already at max level</string>
+    <string name="bought">Bought %1$s, level %2$d</string>
+    <string name="not_enough_scrap">Not enough scrap</string>
+
+    <!-- Waves -->
+    <string name="wave_cleared">Wave %1$d cleared</string>
+    <string name="breach_toast">The hatch broke. Lost %1$d scrap. The wave starts again.</string>
+    <string name="hatch_full">The hatch is already at full health</string>
+    <string name="offline_earned">While you were away, the Drill Rig dug %1$d scrap</string>
+
+    <!-- Notifications -->
+    <string name="channel_name">Bunker alerts</string>
+    <string name="channel_description">Boss waves cleared and hatch breaches</string>
+    <string name="notif_boss_title">Boss wave cleared</string>
+    <string name="notif_boss_text">You cleared boss wave %1$d.</string>
+    <string name="notif_breach_title">Hatch breached</string>
+    <string name="notif_breach_text">Wave %1$d broke through and took %2$d scrap.</string>
+
+    <!-- Survivors -->
+    <string name="survivors_title">Survivors of %1$s</string>
+    <string name="survivors_help">Tap a survivor to change their job. Roof: +1 shot damage. Rooms: +1 per tap.</string>
+    <string name="survivor_line">%1$s: %2$s</string>
+    <string name="recruit_name_hint">New survivor name</string>
+    <string name="recruit_cost">Recruit (%1$d food)</string>
+    <string name="enter_a_name">Enter a name first</string>
+    <string name="not_enough_food">Not enough food</string>
+    <string name="recruited">%1$s joined the bunker</string>
+    <string name="back">Back</string>
+
+    <!-- Settings -->
+    <string name="sound">Sound</string>
+    <string name="difficulty">Difficulty</string>
+    <string-array name="difficulty_names">
+        <item>Easy</item>
+        <item>Normal</item>
+        <item>Hard</item>
+    </string-array>
+    <string name="reset_confirm">I understand this deletes my bunker</string>
+    <string name="reset_save">Reset save</string>
+    <string name="save_deleted">Save deleted</string>
+    <string name="share">Share</string>
+    <string name="share_text">My bunker %1$s has held out to wave %2$d in Burrow Nine.</string>
+</resources>

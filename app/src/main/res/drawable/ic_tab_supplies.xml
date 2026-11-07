@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Supplies tab (crate). Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF8C8A84" android:pathData="M6,16 h36 v24 h-36 Z" />
+    <path android:fillColor="#FF5A5852" android:pathData="M6,16 L12,8 h24 L42,16 Z" />
+    <path android:fillColor="#FFE3A23B" android:pathData="M20,22 h8 v6 h-8 Z" />
+</vector>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Game screen, top to bottom (matches the group sketch):
+    HUD, sky (FrameLayout, enemies are added here in code), hatch + health,
+    underground floors (ListView), upgrade list (ListView), bottom tabs.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <!-- HUD: RelativeLayout so the gear sits on the right edge. -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/soot"
+        android:paddingStart="12dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/hudBunker"
+            style="@style/BunkerHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:maxWidth="120dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/settingsButton"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hudScrap"
+                style="@style/BunkerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/steel" />
+
+            <TextView
+                android:id="@+id/hudFood"
+                style="@style/BunkerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/toxic_green" />
+
+            <TextView
+                android:id="@+id/hudWave"
+                style="@style/BunkerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/amber" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/settings"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_gear" />
+    </RelativeLayout>
+
+    <!-- Sky: enemy ImageViews are added here and moved by the Handler loop. -->
+    <FrameLayout
+        android:id="@+id/sky"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@drawable/bg_sky"
+        android:clipChildren="true" />
+
+    <!-- Surface: the hatch and its health bar. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="4dp">
+
+        <ImageView
+            android:id="@+id/hatch"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/hatch"
+            android:src="@drawable/ic_hatch" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/hatchText"
+                style="@style/BunkerSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:id="@+id/hatchBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:progressDrawable="@drawable/progress_hatch" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Underground floors. Two rows, so a fixed height. -->
+    <ListView
+        android:id="@+id/floorList"
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:background="@color/soot"
+        android:divider="@color/panel_line"
+        android:dividerHeight="1dp" />
+
+    <TextView
+        android:id="@+id/upgradeTitle"
+        style="@style/BunkerHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/panel"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp" />
+
+    <ListView
+        android:id="@+id/upgradeList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="@color/panel"
+        android:divider="@color/panel_line"
+        android:dividerHeight="1dp" />
+
+    <!-- Bottom bar: 4 ImageButtons. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/soot"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/tabDefense"
+            style="@style/TabButton"
+            android:contentDescription="@string/tab_defense"
+            android:src="@drawable/ic_tab_defense" />
+
+        <ImageButton
+            android:id="@+id/tabSupplies"
+            style="@style/TabButton"
+            android:contentDescription="@string/tab_supplies"
+            android:src="@drawable/ic_tab_supplies" />
+
+        <ImageButton
+            android:id="@+id/tabAutomation"
+            style="@style/TabButton"
+            android:contentDescription="@string/tab_automation"
+            android:src="@drawable/ic_gear" />
+
+        <ImageButton
+            android:id="@+id/tabSurvivors"
+            style="@style/TabButton"
+            android:contentDescription="@string/tab_survivors"
+            android:src="@drawable/ic_tab_survivors" />
+    </LinearLayout>
+</LinearLayout>

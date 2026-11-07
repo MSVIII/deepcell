@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder art. Bunker hatch. Replace with final art later; keep the file name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF5A5852" android:pathData="M4,30 A20,14 0 0,1 44,30 L44,36 L4,36 Z" />
+    <path android:fillColor="#FF8C8A84" android:pathData="M8,30 A16,10 0 0,1 40,30 Z" />
+    <path android:fillColor="#FFB0552B" android:pathData="M22,20 h4 v10 h-4 Z M14,28 h20 v2 h-20 Z" />
+</vector>

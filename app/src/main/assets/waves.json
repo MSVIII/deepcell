@@ -1,0 +1,21 @@
+{
+  "hpScalePerCycle": 0.5,
+  "enemyTypes": [
+    { "id": "scout",  "name": "Scout Drone",  "hp": 2,  "speedDp": 45, "damage": 5,  "reward": 2,  "sizeDp": 40 },
+    { "id": "shrike", "name": "Shrike",       "hp": 1,  "speedDp": 80, "damage": 3,  "reward": 2,  "sizeDp": 36 },
+    { "id": "bomber", "name": "Bomber Drone", "hp": 6,  "speedDp": 25, "damage": 20, "reward": 6,  "sizeDp": 48 },
+    { "id": "boss",   "name": "Command Drone","hp": 40, "speedDp": 12, "damage": 60, "reward": 50, "sizeDp": 80 }
+  ],
+  "waves": [
+    { "spawnMs": 1800, "enemies": [ { "type": "scout", "count": 4 } ] },
+    { "spawnMs": 1600, "enemies": [ { "type": "scout", "count": 5 } ] },
+    { "spawnMs": 1500, "enemies": [ { "type": "scout", "count": 4 }, { "type": "shrike", "count": 2 } ] },
+    { "spawnMs": 1400, "enemies": [ { "type": "shrike", "count": 6 } ] },
+    { "spawnMs": 1500, "enemies": [ { "type": "scout", "count": 4 }, { "type": "bomber", "count": 1 } ] },
+    { "spawnMs": 1300, "enemies": [ { "type": "scout", "count": 5 }, { "type": "shrike", "count": 4 } ] },
+    { "spawnMs": 1400, "enemies": [ { "type": "bomber", "count": 2 }, { "type": "shrike", "count": 4 } ] },
+    { "spawnMs": 1200, "enemies": [ { "type": "scout", "count": 8 }, { "type": "bomber", "count": 1 } ] },
+    { "spawnMs": 1100, "enemies": [ { "type": "shrike", "count": 6 }, { "type": "bomber", "count": 3 } ] },
+    { "spawnMs": 1500, "enemies": [ { "type": "scout", "count": 3 }, { "type": "boss", "count": 1 }, { "type": "shrike", "count": 3 } ] }
+  ]
+}
