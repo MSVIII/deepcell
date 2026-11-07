@@ -4,7 +4,7 @@ Record each build and test here, newest first. Say plainly what was not tested.
 
 ## 2026-11-07: tutorial highlight, harder progression, new upgrades, boss bar, music mix
 
-- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Emulator only; **not installed on the phone**. Later tutorial steps and wave 10 were reached by editing the emulator save (`run-as` copy of `deepcell.db`), because the tap bot could not hit moving drones.
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. Tested on the emulator; installed on the user's Pixel 7 at their request (not run there by the author). Later tutorial steps and wave 10 were reached by editing the emulator save (`run-as` copy of `deepcell.db`), because the tap bot could not hit moving drones.
 
 | Check | Result |
 |---|---|
