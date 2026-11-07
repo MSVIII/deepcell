@@ -86,13 +86,31 @@
         <item name="android:shadowRadius">3</item>
     </style>
 
+    <!-- One bottom tab: round icon button with its name under it. -->
+    <style name="TabCell">
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="TabLabel">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textColor">@color/text_dim</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
     <style name="TabButton">
         <item name="android:layout_width">52dp</item>
         <item name="android:layout_height">52dp</item>
-        <item name="android:layout_marginStart">14dp</item>
-        <item name="android:layout_marginEnd">14dp</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
         <item name="android:background">@drawable/bg_tab</item>
         <item name="android:padding">7dp</item>
         <item name="android:scaleType">fitCenter</item>

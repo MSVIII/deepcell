@@ -13,13 +13,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Switch
 import com.deepcell.game.data.GameDatabase
+import com.deepcell.game.ui.Quality
 
-/** Sound switch, difficulty Spinner, reset save, Share (implicit ACTION_SEND) and Main menu. */
+/** Sound switch, difficulty and detail Spinners, reset save, Share (implicit ACTION_SEND) and Main menu. */
 class SettingsActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_BUNKER_NAME = "bunker_name"
         const val EXTRA_WAVE = "wave"
+        /** Opened from the title screen: no "Main menu" button (that is where we came from). */
+        const val EXTRA_FROM_MENU = "from_menu"
     }
 
     private lateinit var db: GameDatabase
@@ -47,6 +50,21 @@ class SettingsActivity : AppCompatActivity() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 db.setSetting(GameDatabase.SETTING_DIFFICULTY, position.toString())
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Detail: Auto / High / Low (ui/Quality). Read by the game and the title screen on resume.
+        val detail = findViewById<Spinner>(R.id.detailSpinner)
+        val detailAdapter = ArrayAdapter.createFromResource(
+            this, R.array.detail_names, android.R.layout.simple_spinner_item
+        )
+        detailAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        detail.adapter = detailAdapter
+        detail.setSelection(Quality.VALUES.indexOf(db.getSetting(GameDatabase.SETTING_DETAIL, Quality.AUTO)).coerceAtLeast(0))
+        detail.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                db.setSetting(GameDatabase.SETTING_DETAIL, Quality.VALUES[position])
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -79,7 +97,9 @@ class SettingsActivity : AppCompatActivity() {
 
         // Main menu: back to the title screen. The game already saved in its onPause when this
         // screen opened; CLEAR_TOP closes the game screen underneath (explicit Intent, Module 7).
-        findViewById<Button>(R.id.mainMenuButton).setOnClickListener {
+        val mainMenu = findViewById<Button>(R.id.mainMenuButton)
+        if (intent.getBooleanExtra(EXTRA_FROM_MENU, false)) mainMenu.visibility = View.GONE
+        mainMenu.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)

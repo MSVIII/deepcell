@@ -10,7 +10,7 @@ import com.deepcell.game.model.Survivor
 /** Contract class: every table and column name in one place (Module 9). */
 object DbContract {
     const val DB_NAME = "deepcell.db"
-    const val DB_VERSION = 1
+    const val DB_VERSION = 2   // 2: room storage (dig_stock, farm_stock)
 
     object State {               // always exactly one row, id = 1
         const val TABLE = "game_state"
@@ -22,6 +22,8 @@ object DbContract {
         const val HATCH_HP = "hatch_hp"
         const val DIG_PROGRESS = "dig_progress"
         const val FARM_PROGRESS = "farm_progress"
+        const val DIG_STOCK = "dig_stock"        // finished scrap waiting in Scrap Dig (v2)
+        const val FARM_STOCK = "farm_stock"      // finished food waiting in Mushroom Farm (v2)
         const val LAST_PLAYED = "last_played"
     }
 
@@ -67,7 +69,8 @@ class GameDatabase(context: Context) :
             "CREATE TABLE ${s.TABLE} (${s.ID} INTEGER PRIMARY KEY, ${s.BUNKER_NAME} TEXT NOT NULL, " +
                 "${s.SCRAP} INTEGER NOT NULL, ${s.FOOD} INTEGER NOT NULL, ${s.WAVE} INTEGER NOT NULL, " +
                 "${s.HATCH_HP} INTEGER NOT NULL, ${s.DIG_PROGRESS} INTEGER NOT NULL, " +
-                "${s.FARM_PROGRESS} INTEGER NOT NULL, ${s.LAST_PLAYED} INTEGER NOT NULL)"
+                "${s.FARM_PROGRESS} INTEGER NOT NULL, ${s.LAST_PLAYED} INTEGER NOT NULL, " +
+                "${s.DIG_STOCK} INTEGER NOT NULL DEFAULT 0, ${s.FARM_STOCK} INTEGER NOT NULL DEFAULT 0)"
         )
         val u = DbContract.Upgrades
         db.execSQL("CREATE TABLE ${u.TABLE} (${u.ID} TEXT PRIMARY KEY, ${u.LEVEL} INTEGER NOT NULL)")
@@ -86,8 +89,12 @@ class GameDatabase(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Add one non-destructive step per version, for example:
-        // if (oldVersion < 2) db.execSQL("ALTER TABLE game_state ADD COLUMN power INTEGER NOT NULL DEFAULT 0")
+        // One non-destructive step per version: saves from older versions keep everything.
+        val s = DbContract.State
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE ${s.TABLE} ADD COLUMN ${s.DIG_STOCK} INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE ${s.TABLE} ADD COLUMN ${s.FARM_STOCK} INTEGER NOT NULL DEFAULT 0")
+        }
     }
 
     // ---------- game state ----------
@@ -114,6 +121,8 @@ class GameDatabase(context: Context) :
                 put(DbContract.State.HATCH_HP, startHatchHp)
                 put(DbContract.State.DIG_PROGRESS, 0)
                 put(DbContract.State.FARM_PROGRESS, 0)
+                put(DbContract.State.DIG_STOCK, 0)
+                put(DbContract.State.FARM_STOCK, 0)
                 put(DbContract.State.LAST_PLAYED, System.currentTimeMillis())
             }
             db.insert(DbContract.State.TABLE, null, v)
@@ -160,6 +169,8 @@ class GameDatabase(context: Context) :
             hatchHp = c.getInt(c.getColumnIndexOrThrow(DbContract.State.HATCH_HP)),
             digProgress = c.getInt(c.getColumnIndexOrThrow(DbContract.State.DIG_PROGRESS)),
             farmProgress = c.getInt(c.getColumnIndexOrThrow(DbContract.State.FARM_PROGRESS)),
+            digStock = c.getInt(c.getColumnIndexOrThrow(DbContract.State.DIG_STOCK)),
+            farmStock = c.getInt(c.getColumnIndexOrThrow(DbContract.State.FARM_STOCK)),
             lastPlayed = c.getLong(c.getColumnIndexOrThrow(DbContract.State.LAST_PLAYED))
         )
         c.close()
@@ -193,6 +204,8 @@ class GameDatabase(context: Context) :
                 put(DbContract.State.HATCH_HP, state.hatchHp)
                 put(DbContract.State.DIG_PROGRESS, state.digProgress)
                 put(DbContract.State.FARM_PROGRESS, state.farmProgress)
+                put(DbContract.State.DIG_STOCK, state.digStock)
+                put(DbContract.State.FARM_STOCK, state.farmStock)
                 put(DbContract.State.LAST_PLAYED, state.lastPlayed)
             }
             db.update(DbContract.State.TABLE, v, "${DbContract.State.ID} = 1", null)
@@ -216,6 +229,14 @@ class GameDatabase(context: Context) :
         } finally {
             db.endTransaction()
         }
+    }
+
+    /** Survivor count, for the title screen's save summary. */
+    fun survivorCount(): Int {
+        val c = readableDatabase.rawQuery("SELECT COUNT(*) FROM ${DbContract.Survivors.TABLE}", null)
+        val n = if (c.moveToFirst()) c.getInt(0) else 0
+        c.close()
+        return n
     }
 
     fun getFood(): Int {
@@ -300,5 +321,6 @@ class GameDatabase(context: Context) :
     companion object {
         const val SETTING_SOUND = "sound_on"          // "true" / "false"
         const val SETTING_DIFFICULTY = "difficulty"   // index into R.array.difficulty_names
+        const val SETTING_DETAIL = "detail"           // ui.Quality.AUTO / HIGH / LOW
     }
 }

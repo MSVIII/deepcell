@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A soft dust mote for the title screen: bright centre fading to nothing (tinted in code). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:centerColor="#88FFFFFF"
+        android:startColor="#FFFFFFFF"
+        android:endColor="#00FFFFFF" />
+</shape>

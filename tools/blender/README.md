@@ -16,9 +16,9 @@ The rooms, lift shaft, surface, bunker, survivors, enemies, icons, logo and titl
 | `vfx.py` | Effect flipbooks: `fx_explode`, `fx_dust`, `fx_spores`, `fx_sparks` |
 | `icons.py` | tab, upgrade, settings and gear icons (transparent) |
 | `logo.py` | `logo.png` (emblem + DEEPCELL wordmark) and `emblem.png` (launcher icon); uses `fonts/BarlowCondensed-ExtraBold.ttf` (SIL OFL) |
-| `title_shots.py` | `title_surface/dig/farm.png`, portrait shots for the title slideshow |
+| `title_shots.py` | `title_surface/dig/farm.png`, 1080x2340 title shots: 3D scenes with posed characters and depth of field. Slow; set `TITLE_SHOTS_ONLY = ("dig",)` to render one |
 | `render_all.py` | Runs all of the above |
-| `export_to_app.py` | Resizes `out/*.png` and writes `app/src/main/res/drawable-nodpi/*.webp`; adds contact shadows under survivors, lays the bunker over the surface title shot, makes the blurred title copies, exports the animation frames and writes their `animation-list` XML (`--frames` for frames only) |
+| `export_to_app.py` | Resizes `out/*.png` and writes `app/src/main/res/drawable-{xxhdpi,xhdpi,hdpi}/*.webp` (one size per screen density); adds contact shadows under survivors, lays the bunker over the surface title shot, makes the blurred title copies, exports the animation frames and writes their `animation-list` XML (`--frames` for frames only) |
 
 ## Use
 

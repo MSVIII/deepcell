@@ -33,10 +33,10 @@ The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. If Gradle can
 ```
 app/src/main/
   java/com/deepcell/game/
-    MainActivity.kt        title screen: bunker name, Play, Continue
+    MainActivity.kt        title screen: Continue, New game (name dialog), Settings
     GameActivity.kt        the game screen and the Handler game loop
     SurvivorsActivity.kt   survivor list, jobs, recruiting
-    SettingsActivity.kt    sound, difficulty, reset save, share, main menu
+    SettingsActivity.kt    sound, difficulty, detail, reset save, share, main menu
     model/Models.kt        data classes: Upgrade, Floor, Enemy, EnemyType, Wave, Survivor, GameState
     data/GameDatabase.kt   SQLiteOpenHelper: the save file
     data/JsonLoader.kt     reads assets/upgrades.json and assets/waves.json
@@ -47,6 +47,8 @@ app/src/main/
     ui/Fx.kt               plays rendered frame animations and effects
     ui/Sfx.kt              sound effects (SoundPool)
     ui/TitleSlideshow.kt   title screen camera shots
+    ui/TitleAmbience.kt    title screen dust and drones
+    ui/Quality.kt          detail level (Auto picks Low on weak phones)
   assets/                  upgrades.json, waves.json (game balance)
   res/                     layouts, strings, colors, themes, drawables, anim, raw (sounds)
 docs/                      design, module map, roadmap, decisions, testing

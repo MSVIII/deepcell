@@ -111,7 +111,8 @@ When the game screen resumes, the app counts the seconds since it was last pause
 - Effects: explosion when an enemy dies or hits the hatch, sparks when a bullet hits or the hatch is repaired, dust or spores when a room is worked.
 - Sound: dig, harvest, rifle, turret, bullet hit, explosion, hatch impact, repair, upgrade bought, wave cleared, breach alarm, tab click. The Sound switch mutes them.
 - Easing: movement uses ease-in/ease-out, not constant speed. Enemies drift towards the roof on a smoothstep curve with a sine sway that dies out near the hatch; the upgrade sheet eases in (decelerate) and out (accelerate); payout text pops with overshoot, rises with ease-out and fades with ease-in; tabs squash and spring back; HUD numbers pop when they go up; the title camera eases in and out of each pan. Continuous spins (gear, rotors) stay linear.
-- Resources still come from tapping a room: there is no collector yet, so workers add to each tap but the player collects.
+- Rooms produce by themselves: workers (and the Drill Rig) fill the bar; each full bar goes into the room's storage (shown as a chip, e.g. 12/50, red when full). Work stops when storage is full. Tapping a room adds a little work and collects the storage. The Collector, once bought, walks into each room in turn and collects for you, also while the app is closed.
+- Main menu: Continue (card with bunker name, wave, scrap, food, crew), New game (name dialog), Settings.
 
 ## Originality
 

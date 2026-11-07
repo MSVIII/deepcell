@@ -61,6 +61,12 @@ def basket():
         ball(f"Shroom{k}", 0.07, (0.4 + dx, -0.12, 0.56), "DC_MushroomCap", scale=(1, 1, 0.6))
 
 
+def sack():
+    """Collector's big sack on the back (sits over the backpack)."""
+    ball("Sack", 0.3, (0, 0.36, 0.98), "DC_Cloth", scale=(1.0, 0.75, 1.15), outline=0.025)
+    torus("SackTie", 0.1, 0.03, (0, 0.36, 1.32), "DC_Wood")
+
+
 def combat_helmet():
     ball("Helmet", 0.28, (0, 0.0, 1.35), "DC_Helmet", scale=(1, 1, 0.75), outline=0.025)
     box("Goggles", (0.34, 0.06, 0.08), (0, -0.24, 1.37), "DC_Dark")

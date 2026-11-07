@@ -16,15 +16,18 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/bg_hud"
-        android:paddingStart="10dp"
+        android:paddingStart="6dp"
         android:paddingEnd="2dp">
 
         <LinearLayout
             android:id="@+id/hudScrapGroup"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="34dp"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/np_pill"
             android:gravity="center_vertical"
+            android:minWidth="72dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -43,10 +46,13 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
+            android:layout_height="34dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/hudScrapGroup"
+            android:background="@drawable/np_pill"
             android:gravity="center_vertical"
+            android:minWidth="64dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -260,28 +266,76 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/tabDefense"
-            style="@style/TabButton"
-            android:contentDescription="@string/tab_defense"
-            android:src="@drawable/icon_tab_defense" />
+        <LinearLayout
+            style="@style/TabCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/tabSupplies"
-            style="@style/TabButton"
-            android:contentDescription="@string/tab_supplies"
-            android:src="@drawable/icon_tab_supplies" />
+            <ImageButton
+                android:id="@+id/tabDefense"
+                style="@style/TabButton"
+                android:contentDescription="@string/tab_defense"
+                android:src="@drawable/icon_tab_defense" />
 
-        <ImageButton
-            android:id="@+id/tabAutomation"
-            style="@style/TabButton"
-            android:contentDescription="@string/tab_automation"
-            android:src="@drawable/icon_tab_automation" />
+            <TextView
+                style="@style/TabLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_defense" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/tabSurvivors"
-            style="@style/TabButton"
-            android:contentDescription="@string/tab_survivors"
-            android:src="@drawable/icon_tab_survivors" />
+        <LinearLayout
+            style="@style/TabCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/tabSupplies"
+                style="@style/TabButton"
+                android:contentDescription="@string/tab_supplies"
+                android:src="@drawable/icon_tab_supplies" />
+
+            <TextView
+                style="@style/TabLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_supplies" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/TabCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/tabAutomation"
+                style="@style/TabButton"
+                android:contentDescription="@string/tab_automation"
+                android:src="@drawable/icon_tab_automation" />
+
+            <TextView
+                style="@style/TabLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_automation_short" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/TabCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/tabSurvivors"
+                style="@style/TabButton"
+                android:contentDescription="@string/tab_survivors"
+                android:src="@drawable/icon_tab_survivors" />
+
+            <TextView
+                style="@style/TabLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_survivors" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -32,13 +32,38 @@ data class Floor(
     var progress: Int = 0,
     var automated: Boolean = false,
     /** Amount the room just paid out; the adapter shows it as a "+5" popup, then sets it back to 0. */
-    var pendingPopup: Int = 0
+    var pendingPopup: Int = 0,
+    /** Finished resources waiting in the room's storage. Tap the room or send the Collector. */
+    var stock: Int = 0,
+    /** Most the storage holds. Work stops while it is full. */
+    var capacity: Int = 50
 ) {
+    val isFull: Boolean get() = stock >= capacity
+
     /** Adds progress and returns how many times the bar filled up. */
     fun addProgress(amount: Int): Int {
         val total = progress + amount
         progress = total % maxProgress
         return total / maxProgress
+    }
+
+    /**
+     * Work done in this room: fills the bar and puts each full bar's payout into storage.
+     * Nothing happens while the storage is full. Returns the amount stored.
+     */
+    fun work(amount: Int): Int {
+        if (isFull || amount <= 0) return 0
+        val stored = Math.min(addProgress(amount) * yieldPerFill, capacity - stock)
+        stock += stored
+        if (isFull) progress = 0
+        return stored
+    }
+
+    /** Empties the storage and returns what was in it. */
+    fun takeStock(): Int {
+        val amount = stock
+        stock = 0
+        return amount
     }
 }
 
@@ -98,6 +123,8 @@ data class GameState(
     var digProgress: Int,
     var farmProgress: Int,
     var lastPlayed: Long,
+    var digStock: Int = 0,
+    var farmStock: Int = 0,
     /** Level of every defense/supplies upgrade, by upgrade id. */
     val upgradeLevels: MutableMap<String, Int> = mutableMapOf(),
     /** Level of every automation machine, by upgrade id. Level 0 means not owned. */

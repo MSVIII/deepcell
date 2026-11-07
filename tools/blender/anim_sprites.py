@@ -3,7 +3,11 @@
 #
 #   survivor_digger_work_*   pickaxe swing (8)        survivor_farmer_work_*  pick and basket (8)
 #   survivor_guard_idle_*    scanning the sky (6)     survivor_guard_fire_*   shot with muzzle flash (3)
+#   survivor_collector_walk_* walk cycle (8)      survivor_collector_grab_* picks up a pile (4)
 #   enemy_scout_*, enemy_bomber_*, enemy_boss_*  spinning rotors (4)   enemy_shrike_*  wing flap (6)
+#
+# Each character function rigs and poses the model and returns (pose, keys). With frames=False
+# it renders nothing, so title_shots.py can drop a posed character into a room scene.
 #
 # Characters are rigged with empties (hips, shoulders, head) instead of bones: the parts are
 # rigid, so parenting is enough and keeps the toon outlines intact.
@@ -20,9 +24,10 @@ def _capture(filename, w, h, transparent=False):
 
 def build(fn, *args):
     global render
-    # Empty the earlier sprite scenes first, so part names stay exact (no Arm1.001).
+    # Empty the earlier sprite, effect and icon scenes first, so part names stay exact
+    # (no Arm1.001, no Flash.001 because vfx.py also has a "Flash").
     for sc in bpy.data.scenes:
-        if sc.name.startswith("Sprite_"):
+        if sc.name.startswith(("Sprite_", "Fx_", "Icon_")):
             for o in list(sc.objects):
                 bpy.data.objects.remove(o, do_unlink=True)
     real = render
@@ -82,13 +87,18 @@ def shoot(name, w, h, frames, pose):
 
 
 def rig_survivor():
-    """Root -> Hips -> (ShoulderR, ShoulderL, Head). Returns the pivots."""
+    """Root -> (LegR, LegL, Hips -> (ShoulderR, ShoulderL, Head)). Returns the upper pivots;
+    the leg pivots are in LEGS (only the walk cycle moves them)."""
     root = pivot("Root", (0, 0, 0))
     hips = pivot("Hips", (0, 0, 0.55), root)
     sh_r = pivot("ShoulderR", (0.33, -0.04, 0.92), hips)
     sh_l = pivot("ShoulderL", (-0.33, -0.04, 0.92), hips)
     head = pivot("HeadPivot", (0, 0, 1.05), hips)
-    attach([n for n in ("Leg-0.13", "Leg0.13", "Boot-0.13", "Boot0.13")], root)
+    LEGS.clear()
+    for sx, side in ((0.13, "R"), (-0.13, "L")):
+        leg = pivot("Leg" + side, (sx, 0, 0.55), root)
+        attach([f"Leg{sx}", f"Boot{sx}"], leg)
+        LEGS[side] = leg
     attach(["Body", "Belt", "Pack"], hips)
     attach(["Arm1", "Hand1"], sh_r)
     attach(["Arm-1", "Hand-1"], sh_l)
@@ -99,14 +109,17 @@ def rig_survivor():
     return root, hips, sh_r, sh_l, head
 
 
-def rot(p, x=0.0, y=0.0, z=0.0):
+LEGS = {}
+
+
+def turn(p, x=0.0, y=0.0, z=0.0):
     p.rotation_euler = (math.radians(x), math.radians(y), math.radians(z))
 
 
 # Arm angles: 0 hangs down, negative swings forward and up (-90 straight ahead).
 # Hips angle: positive bends the upper body forward.
 
-def digger():
+def digger(frames=True):
     build(survivor, "digger", ORANGE, YELLOW, lambda: (hard_hat(), pickaxe()))
     root, hips, sh_r, sh_l, head = rig_survivor()
     # Pickaxe held at the end of the handle, in line with the arm.
@@ -116,21 +129,23 @@ def digger():
     ob("PickHead").scale = (0.18, 9.0, 1.5)     # box was 0.5 wide along X; turn it along Y
     attach(["PickHandle", "PickHead"], sh_r)
     frame_camera(3.2, 1.05)
-    rot(root, z=62)
+    turn(root, z=62)
     keys = [  # arms, hips, dip
         (-100, -4, 0.0), (-145, -10, 0.0), (-162, -14, 0.0), (-120, 4, 0.0),
         (-62, 22, -0.03), (-52, 25, -0.045), (-56, 20, -0.03), (-78, 10, 0.0)]
 
     def pose(k):
         a, b, dz = k
-        rot(sh_r, a)
-        rot(sh_l, a)
-        rot(hips, b)
+        turn(sh_r, a)
+        turn(sh_l, a)
+        turn(hips, b)
         root.location.z = dz
-    shoot("survivor_digger_work", 512, 384, keys, pose)
+    if frames:
+        shoot("survivor_digger_work", 512, 384, keys, pose)
+    return pose, keys
 
 
-def farmer():
+def farmer(frames=True):
     build(survivor, "farmer", GREEN, BROWN, lambda: (cap(), basket()))
     root, hips, sh_r, sh_l, head = rig_survivor()
     # Basket hangs from the left hand; a picked mushroom rides in the right hand.
@@ -142,7 +157,7 @@ def farmer():
     cyl("PickedStem", 0.03, 0.08, (0.37, -0.12, 0.37), "DC_Mushroom", verts=8)
     attach(["Picked", "PickedStem"], sh_r)
     frame_camera(3.2, 1.05)
-    rot(root, z=62)
+    turn(root, z=62)
     # Reaches forward into the grow table at waist height, plucks, drops it in the basket.
     keys = [  # hips, right arm (x, y), left arm, mushroom in hand
         (0, -15, 0, -28, False), (10, -50, 0, -30, False), (20, -84, 0, -32, False),
@@ -151,15 +166,17 @@ def farmer():
 
     def pose(k):
         b, ax, ay, al, held = k
-        rot(hips, b)
-        rot(sh_r, ax, ay)
-        rot(sh_l, al)
+        turn(hips, b)
+        turn(sh_r, ax, ay)
+        turn(sh_l, al)
         for n in ("Picked", "PickedStem"):
             ob(n).hide_render = not held
-    shoot("survivor_farmer_work", 512, 384, keys, pose)
+    if frames:
+        shoot("survivor_farmer_work", 512, 384, keys, pose)
+    return pose, keys
 
 
-def guard():
+def guard(frames=True):
     build(survivor, "guard", OLIVE, OLIVE, lambda: (combat_helmet(), rifle()))
     root, hips, sh_r, sh_l, head = rig_survivor()
     # Rifle along the arms, barrel pointing away from the shoulder.
@@ -172,23 +189,57 @@ def guard():
     cyl("FlashCross", 0.07, 0.5, (0.33, -0.06, -0.33), "DC_Bulb", r2=0.0, verts=4, rot=(0, 0, 45))
     attach(["Flash", "FlashCross"], sh_r)
     frame_camera(2.4, 1.05)
-    rot(root, z=58)
+    turn(root, z=58)
 
     def pose(k):
         yaw, a, b, dz, fire = k
-        rot(root, z=58 + yaw)
-        rot(sh_r, a)
-        rot(sh_l, a + 12, 0, -18)
-        rot(hips, b)
-        rot(head, -abs(yaw) * 0.3, 0, yaw * 0.8)
+        turn(root, z=58 + yaw)
+        turn(sh_r, a)
+        turn(sh_l, a + 12, 0, -18)
+        turn(hips, b)
+        turn(head, -abs(yaw) * 0.3, 0, yaw * 0.8)
         root.location.z = dz
         for n in ("Flash", "FlashCross"):
             ob(n).hide_render = not fire
     idle = [(0, -140, 0, 0.0, False), (5, -142, 0, 0.008, False), (10, -145, 1, 0.012, False),
             (6, -143, 0, 0.008, False), (0, -140, 0, 0.0, False), (-5, -138, 0, -0.004, False)]
     fire = [(0, -141, 0, 0.0, True), (0, -152, -6, 0.0, False), (0, -145, -2, 0.0, False)]
-    shoot("survivor_guard_idle", 384, 384, idle, pose)
-    shoot("survivor_guard_fire", 384, 384, fire, pose)
+    if frames:
+        shoot("survivor_guard_idle", 384, 384, idle, pose)
+        shoot("survivor_guard_fire", 384, 384, fire, pose)
+    return pose, idle
+
+
+def collector(frames=True):
+    """The Collector: walks into each room, picks up the pile into a sack, walks back."""
+    build(survivor, "collector", STEEL_BLUE, GREY, lambda: (cap(), sack()))
+    root, hips, sh_r, sh_l, head = rig_survivor()
+    attach(["Sack", "SackTie"], hips)
+    frame_camera(2.4, 1.05)
+
+    def pose(k):
+        b, ar, al, lr, ll, dz, yaw = k
+        turn(root, z=yaw)
+        turn(hips, b)
+        turn(sh_r, ar)
+        turn(sh_l, al)
+        turn(LEGS["R"], lr)
+        turn(LEGS["L"], ll)
+        root.location.z = dz
+    # Walk to the right, seen three-quarter: legs swing opposite to the arms, the body dips
+    # when a foot lands and rises when the legs pass (two bobs per cycle).
+    walk = []
+    for i in range(8):
+        ph = i / 8 * 2 * math.pi
+        sw = math.sin(ph)
+        walk.append((6, 24 * sw, -24 * sw, -28 * sw, 28 * sw, -0.035 * abs(math.cos(ph)) + 0.01, 72))
+    # Grab: crouch, scoop with both hands, swing it over the shoulder into the sack.
+    grab = [(25, -40, -40, -10, 8, -0.05, 40), (40, -70, -70, -18, 14, -0.09, 40),
+            (15, -150, -150, -6, 4, -0.02, 40), (4, -20, -20, 0, 0, 0.0, 40)]
+    if frames:
+        shoot("survivor_collector_walk", 384, 384, walk, pose)
+        shoot("survivor_collector_grab", 384, 384, grab, pose)
+    return pose, walk
 
 
 def spin_rotors(name, builder, frames=4, size=256):
@@ -229,10 +280,16 @@ def shrike_flap():
     shoot("enemy_shrike", 256, 256, range(6), pose)
 
 
-digger()
-farmer()
-guard()
-spin_rotors("enemy_scout", scout)
-spin_rotors("enemy_bomber", bomber)
-spin_rotors("enemy_boss", boss, size=384)
-shrike_flap()
+STEEL_BLUE = ((0.22, 0.30, 0.40), (0.27, 0.36, 0.46))
+GREY = ((0.36, 0.36, 0.34), (0.42, 0.42, 0.40))
+
+# title_shots.py runs this file with ANIM_DEFS_ONLY = True to reuse the posed characters.
+if not globals().get("ANIM_DEFS_ONLY"):
+    digger()
+    farmer()
+    guard()
+    collector()
+    spin_rotors("enemy_scout", scout)
+    spin_rotors("enemy_bomber", bomber)
+    spin_rotors("enemy_boss", boss, size=384)
+    shrike_flap()

@@ -115,3 +115,23 @@ out("settings")
 setup("gear", 1.5, tilt=45)
 gear("Gear", 0.42, 0.22, "DC_Amber", teeth=8)
 out("gear")
+
+# ---- Collector: a full sack with a scrap nut and a mushroom poking out
+setup("up_collector", 1.45, tilt=65)
+ball("Sack", 0.42, (0, 0, -0.05), "DC_Cloth", scale=(1, 0.9, 1.05), outline=True)
+cyl("SackNeck", 0.17, 0.22, (0, 0, 0.45), "DC_Cloth", r2=0.11, outline=True)
+torus("Tie", 0.14, 0.04, (0, 0, 0.42), "DC_Brass")
+cyl("Nut", 0.16, 0.08, (0.25, -0.28, 0.4), "DC_Steel", verts=6, rot=(60, 0, 20), bevel=0.02, outline=True)
+cyl("NutHole", 0.06, 0.1, (0.25, -0.28, 0.4), "DC_Dark", verts=12, rot=(60, 0, 20))
+ball("Shroom", 0.14, (-0.22, -0.26, 0.5), "DC_MushroomCap", scale=(1, 1, 0.6), outline=True)
+out("up_collector")
+
+# ---- Storage Racks: a banded crate with a nut and a mushroom on top
+setup("up_storage", 1.5, tilt=60, yaw=30)
+box("Crate", (0.8, 0.8, 0.62), (0, 0, -0.1), "DC_Wood", bevel=0.05, outline=True)
+for z in (-0.32, 0.12):
+    box(f"Band{z}", (0.82, 0.82, 0.08), (0, 0, z), "DC_Steel", bevel=0.01)
+cyl("Nut", 0.16, 0.08, (-0.12, 0.05, 0.28), "DC_Steel", verts=6, bevel=0.02, outline=True)
+cyl("NutHole", 0.06, 0.1, (-0.12, 0.05, 0.28), "DC_Dark", verts=12)
+ball("Shroom", 0.13, (0.2, -0.1, 0.3), "DC_MushroomCap", scale=(1, 1, 0.6), outline=True)
+out("up_storage")

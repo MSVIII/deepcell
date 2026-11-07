@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- New Game: name the bunker. Shown by MainActivity in a Dialog. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/np_panel"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/BunkerHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/new_bunker" />
+
+    <!-- Only shown when a save exists: starting over replaces it. -->
+    <TextView
+        android:id="@+id/newGameWarning"
+        style="@style/BunkerSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:textColor="@color/alarm_red"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/newGameName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:autofillHints="name"
+        android:background="@drawable/np_field"
+        android:fontFamily="@font/barlow"
+        android:gravity="center"
+        android:hint="@string/bunker_name_hint"
+        android:imeOptions="actionDone"
+        android:inputType="textCapWords"
+        android:maxLength="20"
+        android:textColor="@color/text_main"
+        android:textColorHint="@color/text_dim" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/newGameCancel"
+            style="@style/BunkerButton.Dark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/newGameStart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/start" />
+    </LinearLayout>
+</LinearLayout>

@@ -47,6 +47,15 @@
 - Roof guards stand on the bunker deck; eased movement (enemy flight, sheet, popups, buttons, HUD); health label drawn over the enemies.
 - Settings has a Main menu button.
 
+## Done in the storage and Collector pass (2026-11-07)
+
+- Rooms produce by themselves into storage with a capacity; tap to collect; Storage Racks upgrade.
+- Collector: bought machine that walks to every room and collects (also offline).
+- Main menu: Continue with a save card, New game dialog, Settings.
+- Sharper 3D title shots with depth of field and moving dust and drones.
+- Louder sound effects; outlined icons; labelled tabs; HUD chips.
+- Performance: density-bucketed images, ViewHolder and in-place refresh, effect view reuse, Detail setting with automatic low mode.
+
 ## Known gaps
 
 - **Food**: food is only used for recruiting. The group should decide whether survivors eat.
@@ -61,7 +70,7 @@
 4. More floors, unlocked with scrap.
 5. Different boss per 10-wave cycle.
 6. Core Restored: the end goal once every machine is built.
-7. Collector NPC: carries finished resources so rooms don't need tapping (until then the player taps to collect).
+7. Lift (moves the Collector between more floors once there are more than two).
 8. Music.
 9. Final art.
 

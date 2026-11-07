@@ -306,6 +306,29 @@ w("res/anim/hud_pop.xml", f'''<?xml version="1.0" encoding="utf-8"?>
     android:pivotX="0%"
     android:pivotY="50%"
     android:interpolator="@android:anim/decelerate_interpolator" />''')
+w("res/drawable/fx_mote.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- A soft dust mote for the title screen: bright centre fading to nothing (tinted in code). -->
+<shape {NS} android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:centerColor="#88FFFFFF"
+        android:startColor="#FFFFFFFF"
+        android:endColor="#00FFFFFF" />
+</shape>''')
+w("res/anim/stock_pulse.xml", f'''<?xml version="1.0" encoding="utf-8"?>
+<!-- Storage chip with something to collect: a slow breathing pulse (ease in and out). -->
+<scale {NS}
+    android:duration="700"
+    android:fromXScale="1.0"
+    android:toXScale="1.08"
+    android:fromYScale="1.0"
+    android:toYScale="1.08"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator" />''')
 w("res/anim/enemy_in.xml", f'''<?xml version="1.0" encoding="utf-8"?>
 <!-- Enemy appears: fades in and grows into place (ease-out). -->
 <set {NS} android:interpolator="@android:anim/decelerate_interpolator">

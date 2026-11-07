@@ -2,6 +2,34 @@
 
 Record each build and test here, newest first. Say plainly what was not tested.
 
+## 2026-11-07: storage, Collector, main menu, title shots, sound loudness, performance
+
+- `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 63 warnings (most new ones are `IconDuplicates` from identical animation frames in each density folder).
+- Emulator `Medium_Phone` (API 37) only; **not installed on the phone**.
+
+| Check | Result |
+|---|---|
+| Save from version 1 opens (stock columns added by `onUpgrade`) | Pass |
+| Rooms fill storage on their own; chips show 50/50 and 30/30 in red when full | Pass (screenshot) |
+| Tapping a room collects its storage (scrap 23 → 73, food 10 → 40) | Pass |
+| Collector bought (level 1, next cost 66); walks into Scrap Dig, grabs, "+5", walks out; then Mushroom Farm | Pass (recording) |
+| Main menu: save card, Continue, New game, Settings; New game dialog with replace warning; Cancel keeps the save | Pass (screenshots) |
+| Settings from the menu; Detail spinner (Auto/High/Low) | Pass |
+| Title shots: farmer close-up and bunker under the logo, dust motes visible | Pass (screenshots) |
+| Outlined icons, HUD chips, tab labels | Pass (screenshot) |
+| Sound files: RMS now about −12 to −18 dBFS (was −17 to −31) | Measured; not listened to |
+| No crashes in `logcat -b crash` | Pass |
+
+Frame times on the game screen (`dumpsys gfxinfo`, 20 s each):
+
+| | Median | 90th | 99th | Native heap |
+|---|---|---|---|---|
+| Before this pass | 27 ms | 36 ms | 61 ms | 56 MB |
+| After, High detail | 18 ms | 27 ms | 46 ms | 47 MB |
+| After, Low detail | 18 ms | 19 ms | 34 ms | 51 MB |
+
+Not checked: a real low-end phone, how the sounds sound to a listener, the Storage Racks purchase, a full Collector run with the room scrolled off screen, the title in Low detail beyond a screenshot.
+
 ## 2026-11-07: animation, effects, sound, roof guards, easing, main menu
 
 - `gradlew assembleDebug`: **BUILD SUCCESSFUL**. `gradlew lintDebug`: 0 errors, 45 warnings (new: `IconDuplicates` for `anim_guard_idle_0` / `_4`, which are the same pose on purpose so the loop closes).

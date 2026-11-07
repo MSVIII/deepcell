@@ -30,6 +30,13 @@ def new_scene(name, haze=0.0):
     except TypeError:
         pass
     sc.eevee.use_volumetric_shadows = True
+    # Enough samples that lamp cones and haze come out smooth instead of grainy.
+    for attr, v in (("taa_render_samples", 128), ("volumetric_samples", 96),
+                    ("volumetric_shadow_samples", 32), ("volumetric_tile_size", "4")):
+        try:
+            setattr(sc.eevee, attr, v)
+        except (AttributeError, TypeError):
+            pass
     w = bpy.data.worlds.get("DC_World_" + name) or bpy.data.worlds.new("DC_World_" + name)
     sc.world = w
     w.use_nodes = True

@@ -24,15 +24,20 @@ class TitleSlideshow(
     private val stage: View,
     private val sharp: ImageView,
     private val blur: ImageView,
-    private val veil: View
+    private val veil: View,
+    /** False in low detail: shots cut through the dark veil only, without the blurred copy. */
+    private val blurCrossfade: Boolean = true,
+    /** Called with the shot index (0 surface, 1 dig, 2 farm) each time a shot starts. */
+    private val onShot: (Int) -> Unit = {}
 ) {
     private class Shot(val image: Int, val blurred: Int, val pan: FloatArray)
 
     // pan = fromScale, toScale, fromX, toX, fromY, toY (translation as a fraction of the size)
     private val shots = listOf(
-        Shot(R.drawable.title_surface, R.drawable.title_surface_blur, floatArrayOf(1.04f, 1.10f, -0.015f, 0.015f, 0.01f, -0.01f)),
-        Shot(R.drawable.title_dig, R.drawable.title_dig_blur, floatArrayOf(1.10f, 1.04f, 0.02f, -0.015f, 0f, 0f)),
-        Shot(R.drawable.title_farm, R.drawable.title_farm_blur, floatArrayOf(1.04f, 1.10f, 0f, 0f, 0.015f, -0.015f))
+        // Small moves only: the shots are rendered at screen size, so big zooms would soften them.
+        Shot(R.drawable.title_surface, R.drawable.title_surface_blur, floatArrayOf(1.02f, 1.06f, -0.01f, 0.01f, 0.008f, -0.008f)),
+        Shot(R.drawable.title_dig, R.drawable.title_dig_blur, floatArrayOf(1.06f, 1.02f, 0.012f, -0.01f, 0f, 0f)),
+        Shot(R.drawable.title_farm, R.drawable.title_farm_blur, floatArrayOf(1.02f, 1.06f, 0f, 0f, 0.01f, -0.01f))
     )
 
     private val handler = Handler(Looper.getMainLooper())
@@ -40,7 +45,10 @@ class TitleSlideshow(
     private var running = false
 
     private val nextShot = Runnable { showShot(index + 1, fromBlur = true) }
-    private val blurOut = Runnable { fade(blur, 0f, 1f, BLUR_MS); fade(veil, 0f, VEIL_ALPHA, BLUR_MS) }
+    private val blurOut = Runnable {
+        if (blurCrossfade) fade(blur, 0f, 1f, BLUR_MS)
+        fade(veil, 0f, if (blurCrossfade) VEIL_ALPHA else 1f, BLUR_MS)
+    }
 
     fun start() {
         if (running) return
@@ -62,11 +70,12 @@ class TitleSlideshow(
         index = i % shots.size
         val shot = shots[index]
         sharp.setImageResource(shot.image)
-        blur.setImageResource(shot.blurred)
+        if (blurCrossfade) blur.setImageResource(shot.blurred)
         stage.startAnimation(pan(shot.pan))
+        onShot(index)
         if (fromBlur) {
             // Arrive blurred and dimmed, then sharpen.
-            fade(blur, 1f, 0f, BLUR_MS)
+            if (blurCrossfade) fade(blur, 1f, 0f, BLUR_MS)
             fade(veil, VEIL_ALPHA, 0f, BLUR_MS)
         } else {
             blur.visibility = View.INVISIBLE

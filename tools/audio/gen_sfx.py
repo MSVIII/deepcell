@@ -177,6 +177,13 @@ def alarm():
     return 0.3 * s * e
 
 
+def collect():
+    """Collector picks up the pile: sack rustle and two coin-like clinks."""
+    rustle = lowpass(noise(0.3), 2500) * env(int(RATE * 0.3), 0.02, 0.15, 4)
+    clink = sum(np.sin(2 * np.pi * f * t(0.2)) * g for f, g in ((1800, 1.0), (2700, 0.5))) * env(int(RATE * 0.2), 0.001, 0.06, 5)
+    return mixdown(0.5 * rustle, 0.4 * at(clink, 0.08, 0.35), 0.3 * at(clink * 0.8, 0.16, 0.35))
+
+
 def tap():
     """UI button: short soft click."""
     n = int(RATE * 0.06)
@@ -186,16 +193,27 @@ def tap():
 SOUNDS = {
     "sfx_dig": dig, "sfx_harvest": harvest, "sfx_shot": shot, "sfx_turret": turret, "sfx_hit": hit,
     "sfx_explode": explode, "sfx_impact": impact, "sfx_repair": repair, "sfx_buy": buy,
-    "sfx_wave": wave_clear, "sfx_alarm": alarm, "sfx_tap": tap,
+    "sfx_wave": wave_clear, "sfx_alarm": alarm, "sfx_tap": tap, "sfx_collect": collect,
 }
 
 
-def write_ogg(name, x):
+# Loudness: every sound is brought to the same RMS level, then a soft limiter (tanh) keeps
+# the peaks under full scale. Without this the quiet ones (clicks, chimes) were 30 dB down
+# and could not be heard on a phone speaker. Per-sound offsets in dB keep a sensible mix.
+TARGET_DBFS = -13.0
+MIX_DB = {"sfx_tap": -4, "sfx_hit": -3, "sfx_turret": -2, "sfx_buy": -1, "sfx_alarm": -2,
+          "sfx_explode": 1, "sfx_impact": 1, "sfx_collect": -1}
+
+
+def loud(x, name):
     x = np.asarray(x, dtype=float)
-    peak = np.max(np.abs(x)) or 1.0
-    if peak > 0.95:
-        x = x * 0.95 / peak
-    x = pad(x, 0.02)
+    rms = np.sqrt(np.mean(x ** 2)) or 1e-6
+    gain = 10 ** ((TARGET_DBFS + MIX_DB.get(name, 0)) / 20) / rms
+    return np.tanh(x * gain * 1.2) / np.tanh(1.2) * 0.9
+
+
+def write_ogg(name, x):
+    x = pad(loud(x, name), 0.02)
     pcm = (x * 32767).astype(np.int16)
     with tempfile.TemporaryDirectory() as tmp:
         wav = os.path.join(tmp, name + ".wav")

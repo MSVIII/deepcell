@@ -87,6 +87,16 @@
             android:gravity="bottom"
             android:orientation="horizontal" />
 
+        <!-- The Collector walks in from the lift, picks up the storage and walks back. -->
+        <ImageView
+            android:id="@+id/roomCollector"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginBottom="10dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
+
         <!-- Dust and spores from the work play here. -->
         <FrameLayout
             android:id="@+id/roomFx"
@@ -152,6 +162,36 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="invisible" />
+
+        <!--
+            Storage: finished resources waiting to be collected (tap the room, or the Collector
+            fetches them). Pulses while there is something to collect; red when full.
+        -->
+        <LinearLayout
+            android:id="@+id/roomStorage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/np_label"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/roomStorageIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="4dp"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/roomStorageText"
+                style="@style/SceneLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/floorProgress"

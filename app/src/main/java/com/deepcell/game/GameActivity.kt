@@ -27,6 +27,7 @@ import com.deepcell.game.model.Wave
 import com.deepcell.game.ui.FloorAdapter
 import com.deepcell.game.ui.Fx
 import com.deepcell.game.ui.Notifier
+import com.deepcell.game.ui.Quality
 import com.deepcell.game.ui.Sfx
 import com.deepcell.game.ui.UpgradeAdapter
 import kotlin.random.Random
@@ -53,6 +54,7 @@ class GameActivity : AppCompatActivity() {
         private const val REPAIR_AMOUNT = 5
 
         private const val FRAME_MS = 33L                  // about 30 updates per second
+        private const val FRAME_MS_LOW = 50L              // 20 updates per second in low detail
         private const val AUTOMATION_TICK_MS = 1000L      // machines act once per second
         private const val WAVE_BREAK_MS = 2000L           // pause before the next wave
         private const val MAX_OFFLINE_SECONDS = 8 * 60 * 60L
@@ -65,6 +67,18 @@ class GameActivity : AppCompatActivity() {
         private const val UP_FARM_TOOLS = "farm_tools"
         private const val AUTO_TURRET = "auto_turret"
         private const val DRILL_RIG = "drill_rig"
+        private const val COLLECTOR = "collector"
+        private const val STORAGE = "storage"
+
+        // Rooms: each worker adds this much progress per second by themselves; storage holds
+        // ten full bars, plus STORAGE_PER_LEVEL per Storage Racks level.
+        private const val WORKER_RATE = 1
+        private const val STORAGE_BARS = 10
+        private const val STORAGE_PER_LEVEL = 25
+        // Collector walking speed in dp per second: base, plus per level after the first.
+        private const val COLLECTOR_SPEED_DP = 70f
+        private const val COLLECTOR_SPEED_PER_LEVEL = 25f
+        private const val COLLECTOR_GRAB_MS = 480L
 
         // Roof guards: spots on the deck as fractions of the bunker image (left of the hatch,
         // right of it, then closer in), the deck height, and the guard frame size.
@@ -89,6 +103,10 @@ class GameActivity : AppCompatActivity() {
     private lateinit var bunker: FrameLayout
     private lateinit var roofCrew: FrameLayout
     private lateinit var fxLayer: FrameLayout
+    private lateinit var floorList: ListView
+    /** Low detail (ui/Quality): fewer decorations, 20 updates a second. */
+    private var lowDetail = false
+    private var frameMs = FRAME_MS
     private lateinit var hatchBar: ProgressBar
     private lateinit var hatchText: TextView
     private lateinit var hudScrap: TextView
@@ -131,13 +149,14 @@ class GameActivity : AppCompatActivity() {
     private val gameLoop = object : Runnable {
         override fun run() {
             step()
-            handler.postDelayed(this, FRAME_MS)
+            handler.postDelayed(this, frameMs)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+        volumeControlStream = android.media.AudioManager.STREAM_MUSIC   // volume keys change game sounds
 
         db = GameDatabase(this)
         upgrades = JsonLoader.loadUpgrades(this)
@@ -161,7 +180,7 @@ class GameActivity : AppCompatActivity() {
         digFloor = Floor("dig", getString(R.string.floor_dig), "scrap", 10, 5)
         farmFloor = Floor("farm", getString(R.string.floor_farm), "food", 10, 3)
         floorAdapter = FloorAdapter(this, listOf(digFloor, farmFloor), { workersIn(it) }) { onFloorTapped(it) }
-        val floorList = findViewById<ListView>(R.id.floorList)
+        floorList = findViewById(R.id.floorList)
         floorList.addFooterView(layoutInflater.inflate(R.layout.footer_bedrock, floorList, false), null, false)
         floorList.adapter = floorAdapter
 
@@ -213,11 +232,17 @@ class GameActivity : AppCompatActivity() {
         state = loaded
         survivors = db.getSurvivors()
         sfx.enabled = db.getSetting(GameDatabase.SETTING_SOUND, "true") == "true"
+        lowDetail = Quality.lowDetail(this, db.getSetting(GameDatabase.SETTING_DETAIL, Quality.AUTO))
+        floorAdapter.lowDetail = lowDetail
+        frameMs = if (lowDetail) FRAME_MS_LOW else FRAME_MS
         showRoofCrew()
         difficultyHp = DIFFICULTY_HP[db.getSetting(GameDatabase.SETTING_DIFFICULTY, "1").toInt()]
 
         digFloor.progress = loaded.digProgress
         farmFloor.progress = loaded.farmProgress
+        digFloor.stock = loaded.digStock
+        farmFloor.stock = loaded.farmStock
+        updateCapacity(loaded)
         digFloor.automated = loaded.level(DRILL_RIG) > 0
         farmFloor.automated = false     // Sprinkler / Auto-Harvester is on the roadmap
 
@@ -231,6 +256,7 @@ class GameActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(gameLoop)
+        cancelCollector()
         saveNow()
     }
 
@@ -245,23 +271,56 @@ class GameActivity : AppCompatActivity() {
         val s = state ?: return
         s.digProgress = digFloor.progress
         s.farmProgress = farmFloor.progress
+        s.digStock = digFloor.stock
+        s.farmStock = farmFloor.stock
         s.lastPlayed = System.currentTimeMillis()
         db.saveState(s)
     }
 
-    /** Only automated rooms earn while the app is closed. Food has no machine yet. */
+    /**
+     * While the app was closed the workers and the Drill Rig kept working. Without a Collector
+     * their output waits in the rooms (up to the storage capacity); with one, it was carried up
+     * as it was made, so storage never filled.
+     */
     private fun addOfflineEarnings(s: GameState) {
         val now = System.currentTimeMillis()
         val seconds = ((now - s.lastPlayed) / 1000L).coerceIn(0L, MAX_OFFLINE_SECONDS)
         s.lastPlayed = now
-        val drillLevel = s.level(DRILL_RIG)
-        if (drillLevel <= 0 || seconds <= 0) return
+        if (seconds <= 0) return
+        val collector = s.level(COLLECTOR) > 0
+        var scrap = 0
+        var food = 0
+        for (floor in listOf(digFloor, farmFloor)) {
+            val amount = (productionPerSecond(floor, s) * seconds).toInt()
+            if (amount <= 0) continue
+            val made = if (collector) {
+                floor.addProgress(amount) * floor.yieldPerFill
+            } else {
+                floor.work(amount)
+            }
+            if (floor === digFloor) scrap += made else food += made
+        }
+        if (collector) {
+            s.scrap += scrap + digFloor.takeStock()
+            s.food += food + farmFloor.takeStock()
+        }
+        if ((scrap > 0 || food > 0) && seconds >= MIN_OFFLINE_SECONDS_FOR_TOAST) {
+            val text = if (collector) getString(R.string.collected, scrap, food)
+            else getString(R.string.offline_stored, scrap, food)
+            Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+        }
+    }
 
-        val fills = digFloor.addProgress((seconds * drillLevel).toInt())
-        val earned = fills * digFloor.yieldPerFill
-        s.scrap += earned
-        if (earned > 0 && seconds >= MIN_OFFLINE_SECONDS_FOR_TOAST) {
-            Toast.makeText(this, getString(R.string.offline_earned, earned), Toast.LENGTH_LONG).show()
+    /** Progress per second a room makes by itself: its workers, plus the Drill Rig in Scrap Dig. */
+    private fun productionPerSecond(floor: Floor, s: GameState): Int {
+        val machine = if (floor === digFloor) s.level(DRILL_RIG) else 0
+        return workersIn(floor) * WORKER_RATE + machine
+    }
+
+    /** Storage: ten full bars per room, more with Storage Racks. */
+    private fun updateCapacity(s: GameState) {
+        for (floor in listOf(digFloor, farmFloor)) {
+            floor.capacity = floor.yieldPerFill * STORAGE_BARS + STORAGE_PER_LEVEL * s.level(STORAGE)
         }
     }
 
@@ -274,7 +333,7 @@ class GameActivity : AppCompatActivity() {
         // Spawn the next enemy of the wave.
         val wave = currentWave
         val generation = waveGeneration
-        spawnTimerMs += FRAME_MS
+        spawnTimerMs += frameMs
         if (wave != null && spawnQueue.isNotEmpty() && spawnTimerMs >= wave.spawnMs) {
             spawnTimerMs = 0
             spawnEnemy(spawnQueue.removeAt(0))
@@ -286,7 +345,7 @@ class GameActivity : AppCompatActivity() {
         val pxPerDp = resources.displayMetrics.density
         val now = System.currentTimeMillis() / 1000f
         for (enemy in ArrayList(enemies)) {
-            enemy.y += enemy.type.speedDp * pxPerDp * FRAME_MS / 1000f
+            enemy.y += enemy.type.speedDp * pxPerDp * frameMs / 1000f
             val fallen = (enemy.y / sky.height).coerceIn(0f, 1f)
             // Drift towards the bunker with ease-in-out (smoothstep): it turns slowly at the
             // start, crosses fastest in the middle, and lines up gently over the roof.
@@ -309,8 +368,10 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
+        updateCollector()
+
         // Machines work once per second.
-        automationTimerMs += FRAME_MS
+        automationTimerMs += frameMs
         if (automationTimerMs >= AUTOMATION_TICK_MS) {
             automationTimerMs = 0
             automationTick(s)
@@ -329,15 +390,84 @@ class GameActivity : AppCompatActivity() {
                 hitEnemy(nearest, turret)
             }
         }
-        // Drill Rig: fills Scrap Dig by itself. Progress per second = its level.
-        val drill = s.level(DRILL_RIG)
-        if (drill > 0) {
-            val earned = digFloor.addProgress(drill) * digFloor.yieldPerFill
-            s.scrap += earned
-            digFloor.pendingPopup = earned
-            floorAdapter.notifyDataSetChanged()
-            refreshHud()
+        // Rooms work by themselves (workers, Drill Rig); the output goes into their storage.
+        var changed = false
+        for (floor in listOf(digFloor, farmFloor)) {
+            val rate = productionPerSecond(floor, s)
+            if (rate > 0 && !floor.isFull) {
+                floor.work(rate)
+                changed = true
+            }
         }
+        if (changed) floorAdapter.refresh(floorList)
+        // Collector: walks to the next room that has something stored.
+        if (s.level(COLLECTOR) > 0 && trip == null) startCollectorTrip(s)
+    }
+
+    // ---------------- collector ----------------
+
+    /** One Collector trip through a room: walk in, grab, walk out. Driven by the game loop. */
+    private class Trip(val floor: Floor, val index: Int, val walkMs: Long) {
+        var phase = 0
+        var phaseStart = System.currentTimeMillis()
+    }
+
+    private var trip: Trip? = null
+    private var collectorNext = 0
+
+    /** Sends the Collector to the next room (in order) with something in storage. */
+    private fun startCollectorTrip(s: GameState) {
+        val floors = listOf(digFloor, farmFloor)
+        val index = (0 until floors.size).map { (collectorNext + it) % floors.size }
+            .firstOrNull { floors[it].stock > 0 } ?: return
+        collectorNext = index + 1
+        val speed = (COLLECTOR_SPEED_DP + COLLECTOR_SPEED_PER_LEVEL * (s.level(COLLECTOR) - 1)) *
+            resources.displayMetrics.density
+        val walkMs = (floorAdapter.collectorDistancePx() / speed * 1000).toLong().coerceAtLeast(400L)
+        trip = Trip(floors[index], index, walkMs)
+    }
+
+    /** Called every frame: moves the trip on and draws the Collector in its room. */
+    private fun updateCollector() {
+        val t = trip ?: return
+        val now = System.currentTimeMillis()
+        val elapsed = now - t.phaseStart
+        when (t.phase) {
+            0 -> if (elapsed >= t.walkMs) { t.phase = 1; t.phaseStart = now }
+            1 -> if (elapsed >= COLLECTOR_GRAB_MS) { collectFrom(t.floor); t.phase = 2; t.phaseStart = now }
+            2 -> if (elapsed >= t.walkMs) { t.phase = 3 }
+        }
+        val list = findViewById<ListView>(R.id.floorList)
+        val row = list.getChildAt(t.index - list.firstVisiblePosition)
+        if (t.phase == 3) {
+            row?.let { floorAdapter.drawCollector(it, -1, 0f) }
+            trip = null
+            return
+        }
+        val progress = if (t.phase == 1) 1f else (now - t.phaseStart).toFloat() / t.walkMs
+        row?.let { floorAdapter.drawCollector(it, t.phase, progress) }
+    }
+
+    /** Leaving the screen: the trip is dropped (offline earnings collect for the Collector). */
+    private fun cancelCollector() {
+        val t = trip ?: return
+        val list = findViewById<ListView>(R.id.floorList)
+        list.getChildAt(t.index - list.firstVisiblePosition)?.let { floorAdapter.drawCollector(it, -1, 0f) }
+        trip = null
+    }
+
+    /** Empties a room's storage into the bunker's resources, with the "+N" popup and a sound. */
+    private fun collectFrom(floor: Floor): Int {
+        val s = state ?: return 0
+        val amount = floor.takeStock()
+        if (amount <= 0) return 0
+        if (floor === digFloor) s.scrap += amount else s.food += amount
+        floor.pendingPopup = amount
+        sfx.play(Sfx.Sound.COLLECT)
+        floorAdapter.refresh(floorList)
+        refreshUpgrades()
+        refreshHud()
+        return amount
     }
 
     // ---------------- waves and enemies ----------------
@@ -408,7 +538,7 @@ class GameActivity : AppCompatActivity() {
             removeEnemy(enemy)
             s.scrap += enemy.type.reward
             refreshHud()
-            upgradeAdapter.notifyDataSetChanged()
+            refreshUpgrades()
         } else {
             Fx.burst(fxLayer, R.drawable.fx_sparks, cx, cy, enemy.view.width)
             sfx.play(Sfx.Sound.HIT)
@@ -469,7 +599,7 @@ class GameActivity : AppCompatActivity() {
             this, Notifier.ID_HATCH_BREACHED,
             getString(R.string.notif_breach_title), getString(R.string.notif_breach_text, s.wave, lost)
         )
-        upgradeAdapter.notifyDataSetChanged()
+        refreshUpgrades()
     }
 
     /** Manual repair: tap the hatch. Costs scrap; the Repair Arm will automate this later. */
@@ -491,20 +621,17 @@ class GameActivity : AppCompatActivity() {
 
     // ---------------- floors and upgrades ----------------
 
-    /** Manual dig/harvest: 1 + tools level + one per survivor working in that room. */
+    /**
+     * Tapping a room: the player lends a hand (1 + tools level of progress, into storage) and
+     * collects whatever is in storage. Workers work on their own, so they no longer add to taps.
+     */
     private fun onFloorTapped(floor: Floor) {
         val s = state ?: return
         val isDig = floor === digFloor
         val tools = s.level(if (isDig) UP_DIG_TOOLS else UP_FARM_TOOLS)
-        val workers = workersIn(floor)
         sfx.play(if (isDig) Sfx.Sound.DIG else Sfx.Sound.HARVEST, 0.92f + Random.nextFloat() * 0.16f)
-        val fills = floor.addProgress(1 + tools + workers)
-        val earned = fills * floor.yieldPerFill
-        if (isDig) s.scrap += earned else s.food += earned
-        floor.pendingPopup = earned
-        floorAdapter.notifyDataSetChanged()
-        refreshHud()
-        if (fills > 0) upgradeAdapter.notifyDataSetChanged()
+        floor.work(1 + tools)
+        if (collectFrom(floor) == 0) floorAdapter.refresh(floorList)
     }
 
     private fun buyUpgrade(upgrade: Upgrade) {
@@ -525,6 +652,7 @@ class GameActivity : AppCompatActivity() {
         when (upgrade.id) {
             UP_HATCH_PLATING -> s.hatchHp += HATCH_HP_PER_PLATING
             DRILL_RIG -> digFloor.automated = true
+            STORAGE -> updateCapacity(s)
         }
         saveNow()   // purchases are saved straight away
         Toast.makeText(this, getString(R.string.bought, upgrade.name, level + 1), Toast.LENGTH_SHORT).show()
@@ -603,6 +731,11 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    /** Prices in the upgrade sheet follow the scrap count; only redraw them while it is open. */
+    private fun refreshUpgrades() {
+        if (currentTab != null) upgradeAdapter.notifyDataSetChanged()
+    }
+
     // ---------------- HUD ----------------
 
     private fun refreshAll() {
@@ -619,8 +752,9 @@ class GameActivity : AppCompatActivity() {
     /** Sets a HUD number; when it goes up, it pops so the gain is noticed. */
     private fun setCount(view: TextView, value: Int) {
         val old = view.text.toString().toIntOrNull()
+        if (old == value) return                     // nothing changed: no relayout, no redraw
         view.text = value.toString()
-        if (old != null && value > old) view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hud_pop))
+        if (old != null && value > old && !lowDetail) view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.hud_pop))
     }
 
     private fun refreshHud() {

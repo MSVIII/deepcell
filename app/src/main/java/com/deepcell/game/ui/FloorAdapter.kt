@@ -9,6 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.deepcell.game.R
@@ -17,7 +18,12 @@ import com.deepcell.game.model.Floor
 /**
  * Shows the underground rooms in a ListView (Module 6). Each row is a cutaway room:
  * floor number in the lift shaft, the rendered room, the survivors working there,
- * and a progress bar. Tapping the room works it.
+ * the storage chip and a progress bar. Tapping the room works it and collects the storage.
+ *
+ * Speed: rows keep their views in a [Holder] (no findViewById per bind), and the game calls
+ * [refresh] for the numbers that change every second, which updates the visible rows in
+ * place instead of re-binding the whole list. [lowDetail] drops the purely decorative
+ * animations (lamp flicker, storage pulse, dust/spore bursts) on weak phones.
  *
  * [workersIn] returns how many survivors work in a room, so the row can draw them.
  */
@@ -45,94 +51,198 @@ class FloorAdapter(
         private const val TABLES_X = 0.36f
     }
 
+    var lowDetail = false
+
+    private val density = context.resources.displayMetrics.density
+
+    /** The row's views, found once when the row is inflated. */
+    private class Holder(row: View) {
+        val floorNumber: TextView = row.findViewById(R.id.floorNumber)
+        val roomName: TextView = row.findViewById(R.id.roomName)
+        val roomArt: ImageView = row.findViewById(R.id.roomArt)
+        val glow: View = row.findViewById(R.id.roomGlow)
+        val yieldText: TextView = row.findViewById(R.id.roomYield)
+        val yieldIcon: ImageView = row.findViewById(R.id.roomYieldIcon)
+        val bar: ProgressBar = row.findViewById(R.id.floorProgress)
+        val storage: View = row.findViewById(R.id.roomStorage)
+        val storageIcon: ImageView = row.findViewById(R.id.roomStorageIcon)
+        val storageText: TextView = row.findViewById(R.id.roomStorageText)
+        val workers: LinearLayout = row.findViewById(R.id.roomWorkers)
+        val gear: ImageView = row.findViewById(R.id.roomGear)
+        val popup: TextView = row.findViewById(R.id.roomPopup)
+        val room: FrameLayout = row.findViewById(R.id.room)
+        val fx: FrameLayout = row.findViewById(R.id.roomFx)
+        val collector: ImageView = row.findViewById(R.id.roomCollector)
+        var art = 0                  // room image shown, so it is only set when it changes
+        var position = -1
+        var shownStock = -1          // storage text shown, same idea
+        var shownCapacity = -1
+    }
+
     override fun getCount(): Int = floors.size
     override fun getItem(position: Int): Floor = floors[position]
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val row = convertView ?: LayoutInflater.from(context).inflate(R.layout.row_floor, parent, false)
+        val row = convertView ?: LayoutInflater.from(context).inflate(R.layout.row_floor, parent, false).also {
+            it.tag = Holder(it)
+        }
+        val h = row.tag as Holder
         val floor = floors[position]
         val isScrap = floor.resource == "scrap"
 
-        row.findViewById<TextView>(R.id.floorNumber).text = context.getString(R.string.floor_number, position + 1)
-        row.findViewById<TextView>(R.id.roomName).text = floor.name
-        row.findViewById<ImageView>(R.id.roomArt).setImageResource(
-            when {
-                !isScrap -> R.drawable.room_farm
-                floor.automated -> R.drawable.room_dig_auto   // same room with the Drill Rig in it
-                else -> R.drawable.room_dig
+        if (h.position != position) {
+            h.position = position
+            h.floorNumber.text = context.getString(R.string.floor_number, position + 1)
+            h.roomName.text = floor.name
+            h.yieldText.text = context.getString(R.string.plus_amount, floor.yieldPerFill)
+            val icon = if (isScrap) R.drawable.icon_scrap else R.drawable.icon_food
+            h.yieldIcon.setImageResource(icon)
+            h.storageIcon.setImageResource(icon)
+            h.room.contentDescription = floor.name
+            h.room.setOnClickListener {
+                if (!lowDetail) showWorkEffect(h, isScrap)
+                onAction(floor)
             }
-        )
+        }
+        val art = when {
+            !isScrap -> R.drawable.room_farm
+            floor.automated -> R.drawable.room_dig_auto   // same room with the Drill Rig in it
+            else -> R.drawable.room_dig
+        }
+        if (h.art != art) {
+            h.art = art
+            h.roomArt.setImageResource(art)
+        }
         // Lamp light breathes; rows start at different points so they don't pulse together.
-        val glow = row.findViewById<View>(R.id.roomGlow)
-        if (glow.animation == null) {
+        // Off in low detail: it repaints the whole room every frame.
+        if (lowDetail) {
+            h.glow.clearAnimation()
+        } else if (h.glow.animation == null) {
             val flicker = AnimationUtils.loadAnimation(context, R.anim.lamp_flicker)
             flicker.startOffset = position * 700L
-            glow.startAnimation(flicker)
+            h.glow.startAnimation(flicker)
         }
-        row.findViewById<TextView>(R.id.roomYield).text = context.getString(R.string.plus_amount, floor.yieldPerFill)
-        row.findViewById<ImageView>(R.id.roomYieldIcon)
-            .setImageResource(if (isScrap) R.drawable.icon_scrap else R.drawable.icon_food)
-
-        val bar = row.findViewById<ProgressBar>(R.id.floorProgress)
-        bar.max = floor.maxProgress
-        bar.progress = floor.progress
 
         // Workers: one figure per survivor in this room, each looping its work animation
         // (pickaxe swing or picking mushrooms), started a little apart so they don't swing in step.
-        val workers = row.findViewById<LinearLayout>(R.id.roomWorkers)
         val count = Math.min(workersIn(floor), MAX_WORKERS_SHOWN)
-        val density = context.resources.displayMetrics.density
-        if (workers.childCount != count) {
-            workers.removeAllViews()
-            placeInWorkZone(workers, count, isScrap, density)
+        if (h.workers.childCount != count) {
+            h.workers.removeAllViews()
+            placeInWorkZone(h.workers, count, isScrap)
             repeat(count) {
                 val figure = ImageView(context)
                 val params = LinearLayout.LayoutParams((WORKER_W_DP * density).toInt(), (WORKER_H_DP * density).toInt())
                 if (it > 0) params.marginStart = ((if (isScrap) DIG_OVERLAP_DP else FARM_OVERLAP_DP) * density).toInt()
                 figure.layoutParams = params
                 figure.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-                workers.addView(figure)
+                h.workers.addView(figure)
                 Fx.loop(figure, if (isScrap) R.drawable.anim_digger_work else R.drawable.anim_farmer_work, it * 170L)
             }
         }
 
         // Automation: the room art shows the machine; the payout label gets a spinning gear.
-        val gear = row.findViewById<ImageView>(R.id.roomGear)
         if (floor.automated) {
-            gear.visibility = View.VISIBLE
+            h.gear.visibility = View.VISIBLE
             // Only start the animation once, otherwise every refresh restarts it.
-            if (gear.animation == null) {
-                gear.startAnimation(AnimationUtils.loadAnimation(context, R.anim.gear_spin))
-            }
+            if (h.gear.animation == null) h.gear.startAnimation(AnimationUtils.loadAnimation(context, R.anim.gear_spin))
         } else {
-            gear.clearAnimation()
-            gear.visibility = View.GONE
+            h.gear.clearAnimation()
+            h.gear.visibility = View.GONE
+        }
+        bindDynamic(h, floor)
+        return row
+    }
+
+    /**
+     * The parts that change every second: progress bar, storage chip, "+N" popup. Only touches
+     * a view when its value really changed, so most calls draw nothing.
+     */
+    private fun bindDynamic(h: Holder, floor: Floor) {
+        if (h.bar.max != floor.maxProgress) h.bar.max = floor.maxProgress
+        if (h.bar.progress != floor.progress) h.bar.progress = floor.progress
+
+        // Storage chip: amount waiting / capacity. Pulses while there is something to collect.
+        if (h.shownStock != floor.stock || h.shownCapacity != floor.capacity) {
+            h.shownStock = floor.stock
+            h.shownCapacity = floor.capacity
+            h.storageText.text = context.getString(R.string.storage_amount, floor.stock, floor.capacity)
+            h.storageText.setTextColor(context.getColor(if (floor.isFull) R.color.alarm_red else R.color.text_main))
+            h.storage.contentDescription = context.getString(R.string.storage_description, floor.stock, floor.capacity)
+        }
+        val pulse = floor.stock > 0 && !lowDetail
+        if (pulse && h.storage.animation == null) {
+            h.storage.startAnimation(AnimationUtils.loadAnimation(context, R.anim.stock_pulse))
+        } else if (!pulse && h.storage.animation != null) {
+            h.storage.clearAnimation()
         }
 
-        // "+5" popup after the bar fills.
+        // "+5" popup after the storage is collected.
         if (floor.pendingPopup > 0) {
-            val popup = row.findViewById<TextView>(R.id.roomPopup)
-            popup.text = context.getString(R.string.plus_amount, floor.pendingPopup)
-            popup.visibility = View.VISIBLE
-            popup.startAnimation(AnimationUtils.loadAnimation(context, R.anim.float_up))
+            h.popup.text = context.getString(R.string.plus_amount, floor.pendingPopup)
+            h.popup.visibility = View.VISIBLE
+            h.popup.startAnimation(AnimationUtils.loadAnimation(context, R.anim.float_up))
             floor.pendingPopup = 0
         }
+    }
 
-        val room = row.findViewById<FrameLayout>(R.id.room)
-        room.contentDescription = floor.name
-        room.setOnClickListener {
-            showWorkEffect(row, workers, isScrap, density)
-            onAction(floor)
+    /** Updates the numbers of the rows on screen without re-binding the list. */
+    fun refresh(list: ListView) {
+        for (i in 0 until list.childCount) {
+            val h = list.getChildAt(i).tag as? Holder ?: continue
+            if (h.position in floors.indices) bindDynamic(h, floors[h.position])
         }
-        return row
+    }
+
+    /**
+     * Draws the Collector in a room row for the current moment of its trip. The game loop calls
+     * this every frame (the row may be re-bound at any time, so nothing here relies on a running
+     * animation). [phase]: 0 walking in, 1 grabbing, 2 walking out, -1 hidden. [t] is 0..1 of
+     * the walk; it is eased (slow start, slow stop) here.
+     */
+    fun drawCollector(row: View, phase: Int, t: Float) {
+        val h = row.tag as? Holder ?: return
+        val walker = h.collector
+        if (phase < 0) {
+            if (walker.visibility != View.GONE) {
+                walker.visibility = View.GONE
+                walker.tag = null
+            }
+            return
+        }
+        val start = -walker.layoutParams.width.toFloat()
+        val target = h.storage.left - walker.layoutParams.width * 0.7f
+        // Swap the animation only when the phase changes, not every frame.
+        val wanted = if (phase == 1) R.drawable.anim_collector_grab else R.drawable.anim_collector_walk
+        if (walker.tag != wanted) {
+            walker.tag = wanted
+            walker.visibility = View.VISIBLE
+            if (phase == 1) {
+                walker.setImageResource(wanted)
+                (walker.drawable as? android.graphics.drawable.AnimationDrawable)?.start()
+            } else {
+                Fx.loop(walker, wanted)
+            }
+        }
+        val eased = (1 - Math.cos(Math.PI * t.coerceIn(0f, 1f)).toFloat()) / 2   // ease in and out
+        when (phase) {
+            0 -> { walker.scaleX = 1f; walker.translationX = start + (target - start) * eased }
+            1 -> walker.translationX = target
+            else -> { walker.scaleX = -1f; walker.translationX = target + (start - target) * eased }
+        }
+    }
+
+    /** Width the Collector walks in a room, in pixels (for the trip time). */
+    fun collectorDistancePx(): Float {
+        val shaft = context.resources.getDimensionPixelSize(R.dimen.shaft_width)
+        return (context.resources.displayMetrics.widthPixels - shaft) * 0.85f
     }
 
     /**
      * Shifts the row of workers so they stand in the room's work zone: diggers lined up left of
      * the scrap heap with the last pickaxe landing in it, farmers along the grow tables.
      */
-    private fun placeInWorkZone(workers: LinearLayout, count: Int, isScrap: Boolean, density: Float) {
+    private fun placeInWorkZone(workers: LinearLayout, count: Int, isScrap: Boolean) {
         val shaft = context.resources.getDimensionPixelSize(R.dimen.shaft_width)
         val roomWidth = context.resources.displayMetrics.widthPixels - shaft
         val frame = WORKER_W_DP * density
@@ -146,21 +256,21 @@ class FloorAdapter(
     }
 
     /** Dust where each pickaxe lands, or spores where each mushroom is picked. */
-    private fun showWorkEffect(row: View, workers: LinearLayout, isScrap: Boolean, density: Float) {
-        val layer = row.findViewById<FrameLayout>(R.id.roomFx)
+    private fun showWorkEffect(h: Holder, isScrap: Boolean) {
         val fx = if (isScrap) R.drawable.fx_dust else R.drawable.fx_spores
         val size = (FX_SIZE_DP * density).toInt()
+        val workers = h.workers
         if (workers.childCount == 0) {
             // Nobody working here: the player works the zone alone (heap or first table).
-            val x = row.findViewById<View>(R.id.room).width * (if (isScrap) HEAP_X else TABLES_X + 0.1f)
-            Fx.burst(layer, fx, x, workers.bottom - 10 * density, size)
+            val x = h.room.width * (if (isScrap) HEAP_X else TABLES_X + 0.1f)
+            Fx.burst(h.fx, fx, x, workers.bottom - 10 * density, size)
             return
         }
         for (i in 0 until workers.childCount) {
             val figure = workers.getChildAt(i)
             val x = workers.left + figure.left + figure.width * (if (isScrap) PICK_X else HAND_X)
             val y = workers.top + figure.top + figure.height * (if (isScrap) 0.9f else 0.78f)
-            Fx.burst(layer, fx, x, y, size)
+            Fx.burst(h.fx, fx, x, y, size)
         }
     }
 }

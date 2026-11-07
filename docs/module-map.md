@@ -25,5 +25,9 @@ These are small, needed by Android itself, and explained in `docs/decisions.md`:
 - Android 13+ `POST_NOTIFICATIONS` runtime permission request in `MainActivity`. Without it, notifications don't appear on new phones.
 - `Animation` / `AnimationUtils.loadAnimation` to play the `res/anim` tweens.
 - `AnimationDrawable` (frame animation from an `animation-list`) for survivors, enemies and effects (`ui/Fx.kt`).
-- `SoundPool` with `AudioAttributes` for sound effects (`ui/Sfx.kt`).
+- `SoundPool` with `AudioAttributes` for sound effects (`ui/Sfx.kt`); `volumeControlStream` so the volume keys change game sound.
+- `Dialog` with a custom layout for New Game (`dialog_new_game.xml`).
+- ViewHolder pattern in `FloorAdapter` (row views found once, stored in the row's tag).
+- `ActivityManager` (`isLowRamDevice`, `memoryClass`) to pick the detail level (`ui/Quality.kt`).
+- Density-specific resource folders (`drawable-xxhdpi/xhdpi/hdpi`) so each phone decodes images at its own size.
 - `kotlin.random.Random` for the enemy spawn position.

@@ -78,6 +78,28 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical" />
         </TableRow>
+
+        <View
+            android:layout_height="1dp"
+            android:background="#338FA3B0" />
+
+        <!-- Detail: Auto picks Low on weak phones (see ui/Quality). -->
+        <TableRow
+            android:gravity="center_vertical"
+            android:minHeight="60dp">
+
+            <TextView
+                style="@style/BunkerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detail" />
+
+            <Spinner
+                android:id="@+id/detailSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical" />
+        </TableRow>
     </TableLayout>
 
     <Button
