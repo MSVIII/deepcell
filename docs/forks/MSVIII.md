@@ -7,17 +7,20 @@ Started from: `fork-base` (`d814c79ba6132058e5b96e633ee1c6a936f30963`)
 
 | Change | Files | Notes |
 |---|---|---|
+| Freeze every tutorial instruction | `GameActivity.kt`, `ui/Tutorial.kt`, `data/GameDatabase.kt`, tutorial layout and strings | Manual actions remain usable; a stationary wave target keeps step 1 playable; tutorial time is excluded from offline catch-up. |
+| Unify resource price icons | `ui/ResourceIcons.kt`, `ui/UpgradeAdapter.kt`, `SurvivorsActivity.kt`, price layouts and dimensions | Reuse HUD scrap/food artwork at 24dp; keep feature-specific icons. |
+| Match food and scrap payouts | `assets/floors.json`, `data/JsonLoader.kt`, `GameActivity.kt` | Both rooms yield 5 per full bar; balance is JSON-driven. |
 | Document initial fork setup | `docs/forks/MSVIII.md` | 2026-11-10: cloned the personal fork, verified the starting commit, configured origin and upstream, and read the onboarding guides. No game code changed. |
 
 Local setup: `origin` is this fork. `upstream` fetches from Yauren/deepcell and has its push URL disabled. The local Android SDK path is in ignored `local.properties`; personal paths are not committed. Android Studio's generated daemon JVM settings are ignored locally as well.
 
 ## Balance changes
 
-None. The base balance files are unchanged.
+`assets/floors.json`: Mushroom Farm payout 3 → 5 food per completed 10-progress bar. Scrap remains 5. Base farm storage follows the existing ten-bar formula, 30 → 50 food. Progress speed, upkeep, recruitment and upgrade prices are unchanged.
 
 ## Database changes
 
-None. No tables, columns, database version or save migration changed.
+No tables, columns, database version or save migration changed. Added the `tutorial_paused` key to the existing settings table to exclude frozen tutorial time on resume. Existing resources, progress and upgrades are retained.
 
 ## Assets
 
@@ -28,6 +31,14 @@ None. No generation scripts or exported assets changed. At the user's request, i
 None.
 
 ## Tested
+
+### 2026-11-10 requested changes
+
+- Updated APK builds successfully; inspected its packaged floor balance values (both payouts 5, both bars 10). Code/resource review found no legacy currency icon references in Kotlin or layouts.
+- Installed on a temporary read-only API 37.1 emulator. Runtime verification was blocked by System UI stalls and UI Automation timeouts/exit 137, including after a 2 GB-memory restart. The initial title screen was reached; tutorial, payout, icon layout, resume/skip/offline behavior and save compatibility were not verified in play.
+- No physical phone installation or test. No new app dependencies, asset regeneration, schema changes or save deletion.
+
+### Initial fork setup
 
 - Verified that the GitHub repository is a fork of Yauren/deepcell and the initial checkout matches `fork-base`.
 - Checked Git, Android Studio, Java, the Android SDK and Python availability.
